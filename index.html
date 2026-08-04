@@ -536,6 +536,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAWXjT6O0vZZGjDzj-W3byBvR4ndhr52vU",
@@ -547,46 +548,53 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ihelp-app-default';
+        let isCloudMode = false;
+        let cloudUnsubs = [];
 
         let currentUser = 'Preview User';
         let currentUserEmail = 'preview@inventi.ph';
-        let currentUserRoleType = 'Root'; // Preview has Root by default
+        let currentUserRoleType = 'Root'; 
         
         let currentContext = 'users'; 
         let currentViewedTicketId = null;
         let pendingDeleteId = null;
         let pendingDeleteTicketId = null;
+        
+        const genId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2);
 
-        // Enhanced Data Store with RBAC
+        // Enhanced Data Store with RBAC (Used as defaults/fallback)
         const dataStore = {
             roles: [
-                { _internalId: 1, id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 2, id: 'ROLE-ADMIN', name: 'System Administrator', type: 'Admin', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 3, id: 'ROLE-APPROVER', name: 'Department Head', type: 'Approver', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 4, id: 'ROLE-USER', name: 'Standard Staff', type: 'System User', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'ROLE-ADMIN', name: 'System Administrator', type: 'Admin', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'ROLE-APPROVER', name: 'Department Head', type: 'Approver', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'ROLE-USER', name: 'Standard Staff', type: 'System User', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             users: [
-                { _internalId: 1, id: 'arkin.paroan@inventi.ph', name: 'Arkin Paroan', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 2, id: 'devops@inventi.ph', name: 'DevOps Lead', roleId: 'ROLE-ADMIN', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 3, id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { id: 'arkin.paroan@inventi.ph', name: 'Arkin Paroan', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'devops@inventi.ph', name: 'DevOps Lead', roleId: 'ROLE-ADMIN', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             acc: [
-                { _internalId: 1, id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
+                { id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
             ],
             env: [
-                { _internalId: 1, id: 'ENV-PRD', name: 'Production Global', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
+                { id: 'ENV-PRD', name: 'Production Global', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
             ],
             sev: [
-                { _internalId: 1, id: 'SEV-1', name: 'Critical / Outage', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 2, id: 'SEV-2', name: 'High', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 3, id: 'SEV-3', name: 'Medium', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { id: 'SEV-1', name: 'Critical / Outage', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'SEV-2', name: 'High', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'SEV-3', name: 'Medium', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             status: [
-                { _internalId: 1, id: 'STAT-OPN', name: 'Open', type: 'Open-Start', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 2, id: 'STAT-INP', name: 'In Progress', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 3, id: 'STAT-APP', name: 'For Approval', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 4, id: 'STAT-RES', name: 'Resolved', type: 'Closed-End', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { id: 'STAT-OPN', name: 'Open', type: 'Open-Start', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'STAT-INP', name: 'In Progress', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'STAT-APP', name: 'For Approval', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'STAT-RES', name: 'Resolved', type: 'Closed-End', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             mod: [],
             tickets: [
@@ -594,12 +602,82 @@
                 { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001' }
             ],
             messages: [
-                { ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned.' }
+                { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned.' }
             ],
             internalNotes: [
-                { ticketId: 'ARK-1042', sender: 'Arkin Paroan', timestamp: '2026-08-03 10:15', tag: 'Finding', text: 'Confirmed memory leak on node 4.' }
+                { id: 'NOTE-1', ticketId: 'ARK-1042', sender: 'Arkin Paroan', timestamp: '2026-08-03 10:15', tag: 'Finding', text: 'Confirmed memory leak on node 4.' }
             ]
         };
+
+        // --- CLOUD SYNC & DB WRAPPERS ---
+        async function initCloudSync() {
+            const collections = ['users', 'roles', 'acc', 'env', 'sev', 'status', 'mod', 'tickets', 'messages', 'internalNotes'];
+            
+            // Seed Firestore with defaults if empty
+            try {
+                const rolesSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'roles'));
+                if (rolesSnap.empty) {
+                    for (const col of collections) {
+                        if(dataStore[col]) {
+                            for (const item of dataStore[col]) {
+                                const docId = item.id || genId();
+                                item.id = docId;
+                                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', col, docId), item);
+                            }
+                        }
+                    }
+                }
+            } catch(e) { console.error("Seeding error:", e); }
+
+            // Setup Real-time Listeners
+            collections.forEach(col => {
+                const unsub = onSnapshot(
+                    collection(db, 'artifacts', appId, 'public', 'data', col),
+                    (snap) => {
+                        dataStore[col] = snap.docs.map(d => d.data());
+                        refreshActiveViews();
+                    },
+                    (err) => console.error(`Sync error on ${col}:`, err)
+                );
+                cloudUnsubs.push(unsub);
+            });
+        }
+
+        async function dbSave(colName, docId, dataObj) {
+            if (isCloudMode) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', colName, docId), dataObj, { merge: true });
+            } else {
+                const idx = dataStore[colName].findIndex(x => x.id === docId);
+                if (idx > -1) dataStore[colName][idx] = { ...dataStore[colName][idx], ...dataObj };
+                else dataStore[colName].push(dataObj);
+                refreshActiveViews();
+            }
+        }
+
+        async function dbDeleteRecord(colName, docId) {
+            if (isCloudMode) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', colName, docId));
+            } else {
+                dataStore[colName] = dataStore[colName].filter(x => x.id !== docId);
+                refreshActiveViews();
+            }
+        }
+
+        function refreshActiveViews() {
+            if(getEl('content-dashboard').classList.contains('active')) renderDashboard();
+            if(getEl('content-tickets').classList.contains('active')) renderTickets();
+            if(getEl('content-settings').classList.contains('active')) renderSettings();
+            if(getEl('content-ticket-details').classList.contains('active')) {
+                renderMessages(); renderInternalNotes();
+                // Refresh details dropdowns to keep in sync
+                const ticket = dataStore.tickets.find(t => t.id === currentViewedTicketId);
+                if(ticket) {
+                    getEl('detail-status-select').value = ticket.statusId;
+                    getEl('detail-assignee-select').value = ticket.assigneeEmail || '';
+                }
+            }
+        }
+        // --------------------------------
 
         function getName(type, id) { const item = (dataStore[type] || []).find(x => x.id === id); return item ? item.name : id; }
         function getUserName(email) { const u = dataStore.users.find(x => x.id === email); return u ? u.name : email; }
@@ -699,17 +777,13 @@
             
             // Dynamic Table Headers
             if (currentContext === 'users') {
-                getEl('settings-th-1').textContent = 'User Details';
-                getEl('settings-th-2').textContent = 'Assigned Role';
+                getEl('settings-th-1').textContent = 'User Details'; getEl('settings-th-2').textContent = 'Assigned Role';
             } else if (currentContext === 'roles') {
-                getEl('settings-th-1').textContent = 'Role ID';
-                getEl('settings-th-2').textContent = 'Role Details';
+                getEl('settings-th-1').textContent = 'Role ID'; getEl('settings-th-2').textContent = 'Role Details';
             } else if (currentContext === 'status') {
-                getEl('settings-th-1').textContent = 'Status ID';
-                getEl('settings-th-2').textContent = 'Status Details';
+                getEl('settings-th-1').textContent = 'Status ID'; getEl('settings-th-2').textContent = 'Status Details';
             } else {
-                getEl('settings-th-1').textContent = 'ID Code';
-                getEl('settings-th-2').textContent = 'Display Name';
+                getEl('settings-th-1').textContent = 'ID Code'; getEl('settings-th-2').textContent = 'Display Name';
             }
             
             document.querySelectorAll('.sub-nav-link').forEach(link => {
@@ -745,9 +819,9 @@
                         <td class="px-5 py-3 text-sm font-medium text-slate-800 relative pr-24">
                             ${nameCol}
                             <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
-                                <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                                <button class="btn-crud-action p-1.5 text-blue-400 hover:text-blue-700 hover:bg-blue-50 rounded" data-action="edit" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                                <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                <button class="btn-crud-action p-1.5 text-blue-400 hover:text-blue-700 hover:bg-blue-50 rounded" data-action="edit" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                             </div>
                         </td>
                         <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.createdBy||'-'}</div><div class="text-[10px] text-slate-500">${item.createdDate||'-'}</div></td>
@@ -831,12 +905,14 @@
                             currentUser = result.user.displayName || email.split('@')[0];
                             currentUserEmail = email;
                             
-                            // Map local user role
+                            isCloudMode = true;
+                            await initCloudSync(); // This seeds defaults and hooks up onSnapshot
+                            
+                            // Map local user role securely using Firebase response
                             let localUser = dataStore.users.find(u => u.id === email);
                             if(!localUser) {
-                                // Auto register
-                                localUser = { _internalId: Date.now(), id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
-                                dataStore.users.push(localUser);
+                                localUser = { id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
+                                await dbSave('users', email, localUser);
                             }
                             const role = dataStore.roles.find(r => r.id === localUser.roleId);
                             currentUserRoleType = role ? role.type : 'System User';
@@ -862,6 +938,7 @@
                 
                 // Bypass
                 if (e.target.closest('#btn-bypass-login')) {
+                    isCloudMode = false;
                     currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
                     getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
                     getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
@@ -870,6 +947,7 @@
 
                 if (e.target.closest('#btn-logout')) {
                     try { await signOut(auth); } catch(e){}
+                    cloudUnsubs.forEach(unsub => unsub()); cloudUnsubs = []; // Detach listeners
                     getEl('view-app').classList.remove('active'); getEl('view-login').classList.add('active');
                     getEl('login-error').classList.add('hidden');
                 }
@@ -923,10 +1001,12 @@
                         const oldEmail = ticket.assigneeEmail; const newEmail = getEl('quick-assign-select').value;
                         if (oldEmail !== newEmail) {
                             ticket.assigneeEmail = newEmail;
+                            await dbSave('tickets', ticket.id, ticket);
                             const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
+                            const msgId = genId();
+                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
                         }
-                        renderTickets(); renderDashboard(); getEl('quick-assign-modal').classList.add('hidden');
+                        getEl('quick-assign-modal').classList.add('hidden');
                     }
                 }
 
@@ -938,10 +1018,12 @@
                         const oldStatusId = ticket.statusId; const newStatusId = getEl('quick-status-select').value;
                         if (oldStatusId !== newStatusId) {
                             ticket.statusId = newStatusId;
+                            await dbSave('tickets', ticket.id, ticket);
                             const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldStatusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                            const msgId = genId();
+                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldStatusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
                         }
-                        renderTickets(); renderDashboard(); getEl('quick-status-modal').classList.add('hidden');
+                        getEl('quick-status-modal').classList.add('hidden');
                     }
                 }
                 
@@ -955,15 +1037,18 @@
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         
                         if (ticket.statusId !== newStatusId) {
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                            const msgId = genId();
+                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
                             ticket.statusId = newStatusId; changed = true;
                         }
                         if (ticket.assigneeEmail !== newEmail) {
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
+                            const msgId = genId();
+                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
                             ticket.assigneeEmail = newEmail; changed = true;
                         }
 
-                        if(changed) renderMessages(); renderTickets(); renderDashboard();
+                        if(changed) await dbSave('tickets', ticket.id, ticket);
+
                         const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
                         btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
                         setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
@@ -975,8 +1060,9 @@
                     const input = getEl('input-reply'); const text = input.value.trim();
                     if(text && currentViewedTicketId) {
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        dataStore.messages.push({ ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, text: text });
-                        input.value = ''; renderMessages();
+                        const msgId = genId();
+                        await dbSave('messages', msgId, { id: msgId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, text: text });
+                        input.value = '';
                     }
                 }
                 if (e.target.closest('#btn-send-internal')) {
@@ -984,8 +1070,9 @@
                     if(text && currentViewedTicketId) {
                         const tag = getEl('internal-note-tag').value;
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        dataStore.internalNotes.push({ ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text });
-                        input.value = ''; renderInternalNotes();
+                        const noteId = genId();
+                        await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text });
+                        input.value = '';
                     }
                 }
                 
@@ -993,8 +1080,8 @@
                 if (e.target.closest('#btn-add-setting')) {
                     getEl('modal-crud-title').textContent = "Add Record";
                     getEl('setting-id').value = ''; getEl('setting-id').disabled = false;
-                    getEl('setting-name').value = ''; getEl('setting-name').disabled = false;
-                    getEl('setting-internal-id').value = '';
+                    getEl('setting-name').value = '';
+                    getEl('setting-is-new').value = 'true';
                     getEl('btn-save-crud').style.display = 'block';
                     
                     getEl('setting-role').disabled = false;
@@ -1022,11 +1109,13 @@
                 
                 const crudBtn = e.target.closest('.btn-crud-action');
                 if (crudBtn) {
-                    const action = crudBtn.dataset.action; const id = parseInt(crudBtn.dataset.internal);
-                    const item = dataStore[currentContext].find(x => x._internalId === id);
+                    const action = crudBtn.dataset.action; const id = crudBtn.dataset.id;
+                    const item = dataStore[currentContext].find(x => x.id === id);
                     if (action === 'del') { pendingDeleteId = id; getEl('delete-confirm-modal').classList.remove('hidden'); } 
                     else if (item) {
-                        getEl('setting-id').value = item.id; getEl('setting-name').value = item.name; getEl('setting-internal-id').value = item._internalId;
+                        getEl('setting-id').value = item.id; getEl('setting-name').value = item.name;
+                        getEl('setting-is-new').value = 'false';
+                        
                         if (currentContext === 'users') {
                             getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
                             getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
@@ -1053,7 +1142,8 @@
                             getEl('btn-save-crud').style.display = 'none';
                         } else if (action === 'edit') {
                             getEl('modal-crud-title').textContent = "Edit Record";
-                            getEl('setting-id').disabled = false; getEl('setting-name').disabled = false;
+                            getEl('setting-id').disabled = true; // Block changing ID to prevent DB drift
+                            getEl('setting-name').disabled = false;
                             if(currentContext === 'users') getEl('setting-role').disabled = false;
                             if(currentContext === 'roles') getEl('setting-role-type').disabled = false;
                             if(currentContext === 'status') getEl('setting-status-type').disabled = false;
@@ -1066,26 +1156,27 @@
                 if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) getEl('crud-modal').classList.add('hidden');
                 
                 if (e.target.closest('#btn-save-crud')) {
-                    const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim(); const intId = getEl('setting-internal-id').value;
+                    const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim();
+                    const isNew = getEl('setting-is-new').value === 'true';
                     if(!idVal || !nameVal) return;
                     
-                    if (intId) {
-                        const item = dataStore[currentContext].find(x => x._internalId === parseInt(intId));
-                        if(item) {
-                            item.id = idVal; item.name = nameVal; item.modifiedBy = currentUser; item.modifiedDate = getTodayStr();
-                            if (currentContext === 'users') item.roleId = getEl('setting-role').value;
-                            if (currentContext === 'roles') item.type = getEl('setting-role-type').value;
-                            if (currentContext === 'status') item.type = getEl('setting-status-type').value;
-                        }
-                    } else {
-                        const newInt = dataStore[currentContext].length > 0 ? Math.max(...dataStore[currentContext].map(x => x._internalId)) + 1 : 1;
-                        const newItem = { _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
-                        if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
-                        if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
-                        if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
-                        dataStore[currentContext].push(newItem);
-                    }
-                    getEl('crud-modal').classList.add('hidden'); renderSettings();
+                    const existing = dataStore[currentContext].find(x => x.id === idVal);
+                    
+                    const newItem = {
+                        id: idVal,
+                        name: nameVal,
+                        createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
+                        createdDate: isNew ? getTodayStr() : (existing ? existing.createdDate : getTodayStr()),
+                        modifiedBy: currentUser,
+                        modifiedDate: getTodayStr()
+                    };
+
+                    if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
+                    if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
+                    if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
+
+                    await dbSave(currentContext, idVal, newItem);
+                    getEl('crud-modal').classList.add('hidden');
                 }
                 
                 // Delete Confirmation Flow
@@ -1093,8 +1184,8 @@
                     getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
                 }
                 if (e.target.closest('#btn-confirm-delete')) {
-                    if (pendingDeleteId !== null) { dataStore[currentContext] = dataStore[currentContext].filter(x => x._internalId !== pendingDeleteId); renderSettings(); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; } 
-                    else if (pendingDeleteTicketId !== null) { dataStore.tickets = dataStore.tickets.filter(x => x.id !== pendingDeleteTicketId); renderTickets(); renderDashboard(); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
+                    if (pendingDeleteId !== null) { await dbDeleteRecord(currentContext, pendingDeleteId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; } 
+                    else if (pendingDeleteTicketId !== null) { await dbDeleteRecord('tickets', pendingDeleteTicketId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
                 }
                 
                 // Create Ticket Flow
@@ -1109,19 +1200,18 @@
                     const subj = getEl('new-ticket-subject').value.trim(); const desc = getEl('new-ticket-desc').value.trim();
                     if(!subj || !desc) return;
                     const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
-                    dataStore.tickets.unshift({
+                    await dbSave('tickets', newId, {
                         id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
                         statusId: 'STAT-OPN', accId: getEl('new-ticket-acc').value, envId: getEl('new-ticket-env').value, sevId: getEl('new-ticket-sev').value
                     });
-                    getEl('ticket-modal').classList.add('hidden'); renderTickets(); renderDashboard();
+                    getEl('ticket-modal').classList.add('hidden');
                 }
 
-                //                // CSV Template Download
+                // CSV Template Download
                 if (e.target.closest('#btn-download-template')) {
                     let csvContent = "ID Code,Display Name\n";
                     if(currentContext === 'users') csvContent = "Email Address,Full Name\n";
                     else if(currentContext === 'roles') csvContent = "Role ID,Role Name\n";
-                    
                     csvContent += "TEST-001,Example Data 1\nTEST-002,Example Data 2";
                     
                     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1129,9 +1219,7 @@
                     const link = document.createElement("a");
                     link.setAttribute("href", url);
                     link.setAttribute("download", `iHelp_${currentContext}_template.csv`);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 }
             });
 
@@ -1149,29 +1237,23 @@
                     if (!file) return;
                     
                     const reader = new FileReader();
-                    reader.onload = function(evt) {
+                    reader.onload = async function(evt) {
                         const text = evt.target.result;
                         const rows = text.split(/\r?\n/).map(row => row.trim()).filter(row => row);
                         
                         if(rows.length > 1) {
-                            let addedCount = 0;
                             for(let i = 1; i < rows.length; i++) { // Skip header
                                 const cols = rows[i].split(',').map(c => c.trim());
                                 if (cols.length >= 2) {
                                     const idVal = cols[0]; const nameVal = cols[1];
                                     if (idVal && nameVal && !dataStore[currentContext].find(x => x.id === idVal)) {
-                                        const newInt = dataStore[currentContext].length > 0 ? Math.max(...dataStore[currentContext].map(x => x._internalId)) + 1 : 1;
-                                        const newItem = { _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
-                                        
+                                        const newItem = { id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
                                         if (currentContext === 'users') newItem.roleId = 'ROLE-USER';
                                         if (currentContext === 'roles') newItem.type = 'System User';
-                                        
-                                        dataStore[currentContext].push(newItem);
-                                        addedCount++;
+                                        await dbSave(currentContext, idVal, newItem);
                                     }
                                 }
                             }
-                            if(addedCount > 0) renderSettings();
                         }
                         e.target.value = ''; // Reset input to allow re-upload
                     };
