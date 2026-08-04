@@ -241,42 +241,37 @@
                         <div class="md:col-span-2 space-y-6">
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
                                 <h2 id="detail-subject" class="text-base font-bold text-slate-900 mb-2">Subject</h2>
-                                <p id="detail-desc" class="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-100 min-h-[80px] whitespace-pre-wrap leading-relaxed"></p>
+                                <p id="detail-desc" class="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-100 min-h-[100px] whitespace-pre-wrap leading-relaxed"></p>
                             </div>
                             
-                            <!-- Tabbed Communications & Internal Diagnostics -->
-                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[450px]">
-                                <div class="flex border-b border-slate-200 bg-slate-50 rounded-t-xl px-2">
-                                    <button class="detail-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2" data-tab="comms">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Communications
-                                    </button>
-                                    <button class="detail-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hidden flex items-center gap-2" data-tab="internal" id="tab-internal-btn">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Internal Diagnostics
-                                    </button>
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-[400px]">
+                                <div class="flex border-b border-slate-200 bg-slate-50">
+                                    <button data-tab="comms" class="detail-tab-btn flex-1 px-4 py-3 text-xs font-bold border-b-2 border-blue-600 text-blue-600 transition-colors">Communications</button>
+                                    <button data-tab="internal" id="tab-internal-btn" class="detail-tab-btn flex-1 px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Internal Diagnostics</button>
                                 </div>
-
-                                <!-- Communications Tab -->
-                                <div id="tab-comms" class="detail-tab-content flex-1 flex flex-col p-5 overflow-hidden">
+                                
+                                <!-- Comms Tab -->
+                                <div id="tab-comms" class="detail-tab-content flex-1 flex flex-col p-4 bg-white">
                                     <div id="ticket-messages-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-100 flex gap-2 shrink-0">
-                                        <textarea id="input-reply" rows="2" placeholder="Type a message (Press Enter to send)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                                    <div class="mt-auto pt-3 border-t border-slate-100 flex gap-2">
+                                        <textarea id="input-reply" rows="2" placeholder="Type a message (Press Enter to send)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-shadow"></textarea>
                                         <button id="btn-send-reply" class="bg-blue-600 text-white px-5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">Send</button>
                                     </div>
                                 </div>
 
-                                <!-- Internal Diagnostics Tab -->
-                                <div id="tab-internal" class="detail-tab-content flex-1 flex flex-col p-5 overflow-hidden hidden bg-slate-50/50">
-                                    <div id="ticket-internal-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2 shrink-0">
+                                <!-- Internal Tab -->
+                                <div id="tab-internal" class="detail-tab-content hidden flex-1 flex flex-col p-4 bg-slate-50">
+                                    <div id="ticket-internal-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-3"></div>
+                                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2">
                                         <div class="flex gap-2">
-                                            <select id="internal-note-tag" class="w-36 px-2 py-2 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-100">
+                                            <select id="internal-note-tag" class="w-1/3 px-2 py-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-white">
                                                 <option value="Finding">Finding</option>
                                                 <option value="Recommendation">Recommendation</option>
                                                 <option value="Resolution">Resolution</option>
                                             </select>
-                                            <input type="text" id="internal-note-text" placeholder="Admin narration or findings..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
-                                            <button id="btn-send-internal" class="bg-slate-800 text-white px-4 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Save Note</button>
+                                            <input type="text" id="internal-note-text" placeholder="Internal notes (e.g., Checking logs on node 4)..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-white">
                                         </div>
+                                        <button id="btn-send-internal" class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors shadow-sm">Add Diagnostic Note</button>
                                     </div>
                                 </div>
                             </div>
@@ -285,7 +280,7 @@
                         <div class="space-y-6">
                             <!-- Ticket Information Card -->
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-                                <h3 class="text-sm font-bold text-slate-800 mb-4">Ticket Details</h3>
+                                <h3 class="text-sm font-bold text-slate-800 mb-4">Ticket Properties</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Submitted By</span>
@@ -307,15 +302,15 @@
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Severity</span>
                                         <span class="text-xs font-semibold" id="detail-severity"></span>
                                     </div>
-                                    <div class="flex flex-col gap-1 border-b border-slate-100 pb-3 pt-1">
+                                    <div class="flex flex-col gap-1.5 pt-1 pb-1 border-b border-slate-100">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Assignee</span>
                                         <select id="detail-assignee-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
                                     </div>
-                                    <div class="flex flex-col gap-1 pt-1">
+                                    <div class="flex flex-col gap-1.5 pt-1 pb-1">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Status</span>
                                         <select id="detail-status-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
                                     </div>
-                                    <button id="btn-update-details" class="w-full bg-slate-800 text-white py-2 mt-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Update Details</button>
+                                    <button id="btn-update-details" class="w-full bg-slate-800 text-white py-2 mt-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Save Properties</button>
                                 </div>
                             </div>
                         </div>
@@ -329,18 +324,16 @@
                             <p class="text-xs text-slate-500 mt-1">Add, edit, view, or remove configuration data.</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <!-- CSV Bulk Actions -->
-                            <button id="btn-download-template" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm border border-slate-200" title="Download CSV Template">
+                            <button id="btn-download-template" class="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                 Template
                             </button>
-                            <label class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm cursor-pointer" title="Upload CSV File">
+                            <label class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm cursor-pointer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                                 Upload
                                 <input type="file" id="input-csv-upload" accept=".csv" class="hidden">
                             </label>
-
-                            <button id="btn-add-setting" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200">
+                            <button id="btn-add-setting" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 ml-1">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                 Add New
                             </button>
@@ -352,13 +345,14 @@
                             <table class="w-full text-left text-sm whitespace-nowrap">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-400">
                                     <tr>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">ID Code</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Display Name</th>
+                                        <th id="settings-th-1" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">ID Code</th>
+                                        <th id="settings-th-2" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Display Name</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Created</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Last Modified</th>
                                     </tr>
                                 </thead>
                                 <tbody id="settings-table-body" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Dynamic with tooltips -->
                                 </tbody>
                             </table>
                         </div>
@@ -368,7 +362,7 @@
                                 <svg class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
                             </div>
                             <h3 class="text-sm font-bold text-slate-800">No records found</h3>
-                            <p class="text-slate-500 text-xs mt-1">Create or upload entries to populate this list.</p>
+                            <p class="text-slate-500 text-xs mt-1">Create your first entry to populate this list.</p>
                         </div>
                     </div>
                 </div>
@@ -411,10 +405,19 @@
                             <option value="Root">Root (Super Administrator)</option>
                         </select>
                     </div>
+                    <!-- Status Category Dropdown (Only for Statuses) -->
+                    <div id="setting-status-type-container" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Category *</label>
+                        <select id="setting-status-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
+                            <option value="Open-Start">Open-Start (Initial state)</option>
+                            <option value="Open-Ongoing">Open-Ongoing (Work in progress)</option>
+                            <option value="Closed-End">Closed-End (Resolved/Closed)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
                     <button id="btn-cancel-crud" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Save</button>
+                    <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Save Record</button>
                 </div>
             </div>
         </div>
@@ -433,24 +436,24 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Account *</label>
-                            <select id="new-ticket-acc" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                            <select id="new-ticket-acc" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Environment *</label>
-                            <select id="new-ticket-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                            <select id="new-ticket-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity *</label>
-                        <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                        <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Subject *</label>
-                        <input type="text" id="new-ticket-subject" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500" placeholder="Brief summary">
+                        <input type="text" id="new-ticket-subject" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white" placeholder="Brief summary">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Description *</label>
-                        <textarea id="new-ticket-desc" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none" placeholder="Detailed explanation..."></textarea>
+                        <textarea id="new-ticket-desc" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none bg-slate-50 focus:bg-white" placeholder="Detailed explanation..."></textarea>
                     </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
@@ -580,10 +583,10 @@
                 { _internalId: 3, id: 'SEV-3', name: 'Medium', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             status: [
-                { _internalId: 1, id: 'STAT-OPN', name: 'Open', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 2, id: 'STAT-INP', name: 'In Progress', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 3, id: 'STAT-APP', name: 'For Approval', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { _internalId: 4, id: 'STAT-RES', name: 'Resolved', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { _internalId: 1, id: 'STAT-OPN', name: 'Open', type: 'Open-Start', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 2, id: 'STAT-INP', name: 'In Progress', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 3, id: 'STAT-APP', name: 'For Approval', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 4, id: 'STAT-RES', name: 'Resolved', type: 'Closed-End', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             mod: [],
             tickets: [
@@ -694,6 +697,21 @@
             const titles = { users: 'Manage Users', roles: 'Manage Roles', acc: 'Manage Accounts', env: 'Manage Environments', sev: 'Manage Severities', status: 'Manage Statuses', mod: 'Manage Modules' };
             getEl('settings-page-title').textContent = titles[currentContext] || 'Manage Settings';
             
+            // Dynamic Table Headers
+            if (currentContext === 'users') {
+                getEl('settings-th-1').textContent = 'User Details';
+                getEl('settings-th-2').textContent = 'Assigned Role';
+            } else if (currentContext === 'roles') {
+                getEl('settings-th-1').textContent = 'Role ID';
+                getEl('settings-th-2').textContent = 'Role Details';
+            } else if (currentContext === 'status') {
+                getEl('settings-th-1').textContent = 'Status ID';
+                getEl('settings-th-2').textContent = 'Status Details';
+            } else {
+                getEl('settings-th-1').textContent = 'ID Code';
+                getEl('settings-th-2').textContent = 'Display Name';
+            }
+            
             document.querySelectorAll('.sub-nav-link').forEach(link => {
                 if(link.dataset.context === currentContext) { link.classList.add('text-white', 'bg-white/5'); link.classList.remove('text-slate-400'); }
                 else { link.classList.remove('text-white', 'bg-white/5'); link.classList.add('text-slate-400'); }
@@ -713,6 +731,13 @@
                     let nameCol = item.name;
                     if(currentContext === 'users') nameCol = `<span class="px-2 py-1 rounded bg-slate-100 text-[10px] font-bold text-slate-600">${getName('roles', item.roleId)}</span>`;
                     else if(currentContext === 'roles') nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] text-blue-600 font-bold mt-0.5">${item.type}</div>`;
+                    else if(currentContext === 'status') {
+                        let badgeColor = 'text-slate-500';
+                        if(item.type === 'Open-Start') badgeColor = 'text-blue-500';
+                        if(item.type === 'Open-Ongoing') badgeColor = 'text-amber-500';
+                        if(item.type === 'Closed-End') badgeColor = 'text-emerald-500';
+                        nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] ${badgeColor} font-bold mt-0.5">${item.type || 'Open-Start'}</div>`;
+                    }
 
                     return `
                     <tr class="hover:bg-slate-50 transition-colors group relative">
@@ -972,16 +997,25 @@
                     getEl('setting-internal-id').value = '';
                     getEl('btn-save-crud').style.display = 'block';
                     
+                    getEl('setting-role').disabled = false;
+                    getEl('setting-role-type').disabled = false;
+                    getEl('setting-role-type').value = 'System User';
+                    getEl('setting-status-type').disabled = false;
+                    getEl('setting-status-type').value = 'Open-Start';
+                    
                     if (currentContext === 'users') {
                         getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
-                        getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                        getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                         getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
                     } else if (currentContext === 'roles') {
                         getEl('label-setting-id').textContent = 'Role ID (e.g. ROLE-01) *'; getEl('label-setting-name').textContent = 'Role Name *';
-                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden');
+                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden'); getEl('setting-status-type-container').classList.add('hidden');
+                    } else if (currentContext === 'status') {
+                        getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
+                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.remove('hidden');
                     } else {
                         getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
-                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                     }
                     getEl('crud-modal').classList.remove('hidden');
                 }
@@ -995,15 +1029,19 @@
                         getEl('setting-id').value = item.id; getEl('setting-name').value = item.name; getEl('setting-internal-id').value = item._internalId;
                         if (currentContext === 'users') {
                             getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
-                            getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                            getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                             getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}" ${r.id === item.roleId ? 'selected' : ''}>${r.name}</option>`).join('');
                         } else if (currentContext === 'roles') {
                             getEl('label-setting-id').textContent = 'Role ID *'; getEl('label-setting-name').textContent = 'Role Name *';
-                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden');
+                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                             getEl('setting-role-type').value = item.type;
+                        } else if (currentContext === 'status') {
+                            getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
+                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.remove('hidden');
+                            getEl('setting-status-type').value = item.type || 'Open-Start';
                         } else {
                             getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
-                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                         }
 
                         if (action === 'view') {
@@ -1011,12 +1049,14 @@
                             getEl('setting-id').disabled = true; getEl('setting-name').disabled = true;
                             if(currentContext === 'users') getEl('setting-role').disabled = true;
                             if(currentContext === 'roles') getEl('setting-role-type').disabled = true;
+                            if(currentContext === 'status') getEl('setting-status-type').disabled = true;
                             getEl('btn-save-crud').style.display = 'none';
                         } else if (action === 'edit') {
                             getEl('modal-crud-title').textContent = "Edit Record";
                             getEl('setting-id').disabled = false; getEl('setting-name').disabled = false;
                             if(currentContext === 'users') getEl('setting-role').disabled = false;
                             if(currentContext === 'roles') getEl('setting-role-type').disabled = false;
+                            if(currentContext === 'status') getEl('setting-status-type').disabled = false;
                             getEl('btn-save-crud').style.display = 'block';
                         }
                         getEl('crud-modal').classList.remove('hidden');
@@ -1035,12 +1075,14 @@
                             item.id = idVal; item.name = nameVal; item.modifiedBy = currentUser; item.modifiedDate = getTodayStr();
                             if (currentContext === 'users') item.roleId = getEl('setting-role').value;
                             if (currentContext === 'roles') item.type = getEl('setting-role-type').value;
+                            if (currentContext === 'status') item.type = getEl('setting-status-type').value;
                         }
                     } else {
                         const newInt = dataStore[currentContext].length > 0 ? Math.max(...dataStore[currentContext].map(x => x._internalId)) + 1 : 1;
                         const newItem = { _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
                         if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
                         if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
+                        if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
                         dataStore[currentContext].push(newItem);
                     }
                     getEl('crud-modal').classList.add('hidden'); renderSettings();
