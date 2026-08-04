@@ -14,7 +14,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animated Background Orbs for Glass Refraction */
         .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: float 10s infinite ease-in-out alternate; pointer-events: none; z-index: 0; }
         .orb-1 { width: 350px; height: 350px; background: #3b82f6; top: 10%; left: 10%; }
         .orb-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: 10%; right: 10%; animation-delay: -5s; }
@@ -25,57 +24,31 @@
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-            z-index: 10;
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative; z-index: 10;
         }
 
         .sidebar { width: 80px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 40; }
         .sidebar:hover { width: 260px; }
-        
-        .sidebar:not(:hover) .sidebar-brand-text { display: none; }
-        .sidebar:not(:hover) .nav-text { display: none; }
-        .sidebar:not(:hover) .logout-text { display: none; }
-        .sidebar:not(:hover) .submenu-chevron { display: none; }
-        .sidebar:not(:hover) .submenu-container { display: none !important; }
-        
+        .sidebar:not(:hover) .sidebar-brand-text, .sidebar:not(:hover) .nav-text, .sidebar:not(:hover) .logout-text, 
+        .sidebar:not(:hover) .chevron-icon, .sidebar:not(:hover) .submenu-container { display: none !important; }
         .sidebar:hover .sidebar-brand-icon { display: none; }
         .sidebar:not(:hover) .sidebar-brand-icon { display: flex; }
         .sidebar:not(:hover) .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
 
-        /* View Switching Logic */
         .view-section { display: none !important; opacity: 0; transition: opacity 0.3s ease; }
         .view-section.active { display: flex !important; opacity: 1; z-index: 50; }
         
         .content-section { display: none; animation: fadeIn 0.3s ease forwards; }
-        .content-section.active { display: flex; flex-direction: column; }
+        .content-section.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .modal-enter { animation: modalFadeIn 0.2s ease-out forwards; }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         
-        .action-tooltip {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(10px);
-            transition: all 0.2s ease;
-        }
-        tr.group:hover .action-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
+        .action-tooltip { opacity: 0; visibility: hidden; transform: translateX(10px); transition: all 0.2s ease; }
+        tr.group:hover .action-tooltip { opacity: 1; visibility: visible; transform: translateX(0); }
     </style>
 </head>
 <body class="text-slate-800 h-screen w-screen flex relative overflow-hidden">
@@ -111,7 +84,6 @@
     </div>
 
     <div id="view-app" class="view-section fixed inset-0 flex h-full w-full bg-slate-50">
-        
         <aside class="sidebar bg-[#0f172a] flex flex-col z-30 text-white shrink-0 shadow-xl overflow-hidden whitespace-nowrap border-r border-slate-800 relative" id="app-sidebar">
             <div class="h-16 flex items-center px-6 border-b border-white/5 shrink-0">
                 <div class="sidebar-brand-icon w-full items-center justify-center font-bold text-xl text-blue-500">
@@ -124,50 +96,30 @@
             </div>
             
             <ul class="flex-1 py-4 flex flex-col gap-1 overflow-y-auto custom-scrollbar overflow-x-hidden px-3">
-                <li>
-                    <button data-target="dashboard" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium">
-                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
-                        <span class="nav-text">Dashboard</span>
-                    </button>
-                </li>
-                <li>
-                    <button data-target="tickets" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium">
-                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                        <span class="nav-text">Tickets</span>
-                    </button>
-                </li>
+                <li><button data-target="dashboard" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium"><svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg><span class="nav-text">Dashboard</span></button></li>
+                <li><button data-target="tickets" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium"><svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span class="nav-text">Tickets</span></button></li>
                 
-                <li class="mt-4 mb-1 px-3 sidebar-brand-text">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Administration</span>
-                </li>
-
-                <!-- Access Control Menu -->
+                <li class="mt-4 mb-1 px-3 sidebar-brand-text"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Administration</span></li>
+                
                 <li>
-                    <button class="btn-submenu-toggle nav-link w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium" data-submenu="access-submenu-container">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                            <span class="nav-text">Access Control</span>
-                        </div>
-                        <svg class="submenu-chevron w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <button class="nav-link btn-menu-toggle w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium" data-menu="access">
+                        <div class="flex items-center gap-3"><svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span class="nav-text">Access Control</span></div>
+                        <svg class="w-4 h-4 transition-transform duration-200 chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
-                    <div id="access-submenu-container" class="submenu-container hidden">
+                    <div id="submenu-access" class="hidden submenu-container">
                         <ul class="mt-1 ml-9 pl-3 border-l border-slate-700 flex flex-col gap-1 py-1">
-                            <li><button data-target="settings" data-context="user" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Users</button></li>
-                            <li><button data-target="settings" data-context="role" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Roles</button></li>
+                            <li><button data-target="settings" data-context="users" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Users</button></li>
+                            <li><button data-target="settings" data-context="roles" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Roles</button></li>
                         </ul>
                     </div>
                 </li>
-
-                <!-- System Settings Menu -->
+                
                 <li>
-                    <button class="btn-submenu-toggle nav-link w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium" data-submenu="settings-submenu-container">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                            <span class="nav-text">System Settings</span>
-                        </div>
-                        <svg class="submenu-chevron w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <button class="nav-link btn-menu-toggle w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium" data-menu="settings">
+                        <div class="flex items-center gap-3"><svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span class="nav-text">System Settings</span></div>
+                        <svg class="w-4 h-4 transition-transform duration-200 chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
-                    <div id="settings-submenu-container" class="submenu-container hidden">
+                    <div id="submenu-settings" class="hidden submenu-container">
                         <ul class="mt-1 ml-9 pl-3 border-l border-slate-700 flex flex-col gap-1 py-1">
                             <li><button data-target="settings" data-context="acc" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Accounts</button></li>
                             <li><button data-target="settings" data-context="env" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Environments</button></li>
@@ -188,7 +140,6 @@
         </aside>
 
         <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative h-full">
-            
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 w-full shadow-sm">
                 <div class="flex items-center gap-4">
                     <h2 class="text-lg font-bold text-slate-800" id="topbar-title">Client Dashboard</h2>
@@ -198,20 +149,21 @@
                         <div class="font-semibold text-slate-700" id="user-display-name">Preview User</div>
                         <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400" id="user-display-role">System Admin</div>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white">PU</div>
+                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
                 </div>
             </header>
 
             <div class="flex-1 overflow-auto custom-scrollbar relative">
                 
-                <!-- Dashboard Content -->
                 <div id="content-dashboard" class="content-section active p-6 max-w-7xl mx-auto w-full">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 hover:shadow-md transition-all widget-card">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tickets</h3>
                             <div class="text-3xl font-black text-slate-800" id="dash-total">0</div>
                         </div>
-                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 hover:shadow-md transition-all widget-card">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Open / Active</h3>
                             <div class="text-3xl font-black text-blue-600" id="dash-open">0</div>
                         </div>
@@ -231,11 +183,12 @@
                                 <thead class="bg-white border-b border-slate-100 text-slate-400">
                                     <tr>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Ticket ID</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Subject & Account</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Subject</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Status & Priority</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashboard-recent-table" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Dynamic rows -->
                                 </tbody>
                             </table>
                         </div>
@@ -266,6 +219,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tickets-table-body" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Dynamic rows -->
                                 </tbody>
                             </table>
                         </div>
@@ -284,49 +238,45 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="md:col-span-2 flex flex-col gap-6">
+                        <div class="md:col-span-2 space-y-6">
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
                                 <h2 id="detail-subject" class="text-base font-bold text-slate-900 mb-2">Subject</h2>
                                 <p id="detail-desc" class="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-100 min-h-[80px] whitespace-pre-wrap leading-relaxed"></p>
                             </div>
                             
-                            <!-- Tabbed Communications / Diagnostics Workspace -->
+                            <!-- Tabbed Communications & Internal Diagnostics -->
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[450px]">
-                                <!-- Tab Header -->
-                                <div class="flex items-end bg-slate-50 border-b border-slate-200 px-4 pt-3 gap-2 rounded-t-xl">
-                                    <button id="tab-btn-comms" class="px-4 py-2.5 text-sm font-bold text-blue-600 border-b-2 border-blue-600 bg-white flex items-center gap-2 rounded-t-lg transition-colors">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                        Communications
+                                <div class="flex border-b border-slate-200 bg-slate-50 rounded-t-xl px-2">
+                                    <button class="detail-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2" data-tab="comms">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Communications
                                     </button>
-                                    <button id="tab-btn-notes" class="hidden px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                        Internal Diagnostics
+                                    <button class="detail-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hidden flex items-center gap-2" data-tab="internal" id="tab-internal-btn">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Internal Diagnostics
                                     </button>
                                 </div>
 
-                                <!-- Comms Area -->
-                                <div id="area-comms" class="flex-1 flex flex-col p-5 overflow-hidden">
+                                <!-- Communications Tab -->
+                                <div id="tab-comms" class="detail-tab-content flex-1 flex flex-col p-5 overflow-hidden">
                                     <div id="ticket-messages-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-100 flex gap-2">
-                                        <textarea id="input-reply" rows="2" placeholder="Type a message (Press Enter to send)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-shadow"></textarea>
+                                    <div class="mt-auto pt-3 border-t border-slate-100 flex gap-2 shrink-0">
+                                        <textarea id="input-reply" rows="2" placeholder="Type a message (Press Enter to send)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
                                         <button id="btn-send-reply" class="bg-blue-600 text-white px-5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">Send</button>
                                     </div>
                                 </div>
 
-                                <!-- Notes Area (Admin Only) -->
-                                <div id="area-notes" class="flex-1 flex flex-col p-5 overflow-hidden hidden">
-                                    <div id="ticket-notes-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-100 flex flex-col gap-2">
+                                <!-- Internal Diagnostics Tab -->
+                                <div id="tab-internal" class="detail-tab-content flex-1 flex flex-col p-5 overflow-hidden hidden bg-slate-50/50">
+                                    <div id="ticket-internal-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
+                                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2 shrink-0">
                                         <div class="flex gap-2">
-                                            <select id="input-note-tag" class="w-1/3 px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 bg-slate-50">
+                                            <select id="internal-note-tag" class="w-36 px-2 py-2 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-100">
                                                 <option value="Finding">Finding</option>
                                                 <option value="Recommendation">Recommendation</option>
                                                 <option value="Resolution">Resolution</option>
-                                                <option value="General">General Note</option>
                                             </select>
-                                            <textarea id="input-note-text" rows="2" placeholder="Add secure diagnostic narration..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-shadow"></textarea>
+                                            <input type="text" id="internal-note-text" placeholder="Admin narration or findings..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
+                                            <button id="btn-send-internal" class="bg-slate-800 text-white px-4 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Save Note</button>
                                         </div>
-                                        <button id="btn-save-note" class="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm">Save Diagnostic Log</button>
                                     </div>
                                 </div>
                             </div>
@@ -357,15 +307,15 @@
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Severity</span>
                                         <span class="text-xs font-semibold" id="detail-severity"></span>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2 pt-1">
+                                    <div class="flex flex-col gap-1 border-b border-slate-100 pb-3 pt-1">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Assignee</span>
-                                        <select id="detail-assignee-select" class="w-32 border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                                        <select id="detail-assignee-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
                                     </div>
-                                    <div class="flex justify-between items-center pt-1 pb-1">
+                                    <div class="flex flex-col gap-1 pt-1">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase">Status</span>
-                                        <select id="detail-status-select" class="w-32 border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                                        <select id="detail-status-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
                                     </div>
-                                    <button id="btn-update-details" class="w-full bg-slate-800 text-white py-2 mt-1 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Update Details</button>
+                                    <button id="btn-update-details" class="w-full bg-slate-800 text-white py-2 mt-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Update Details</button>
                                 </div>
                             </div>
                         </div>
@@ -378,19 +328,32 @@
                             <h1 id="settings-page-title" class="text-xl font-bold text-slate-900">Manage Settings</h1>
                             <p class="text-xs text-slate-500 mt-1">Add, edit, view, or remove configuration data.</p>
                         </div>
-                        <button id="btn-add-setting" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            Add New
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <!-- CSV Bulk Actions -->
+                            <button id="btn-download-template" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm border border-slate-200" title="Download CSV Template">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Template
+                            </button>
+                            <label class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm cursor-pointer" title="Upload CSV File">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                Upload
+                                <input type="file" id="input-csv-upload" accept=".csv" class="hidden">
+                            </label>
+
+                            <button id="btn-add-setting" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Add New
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto custom-scrollbar pb-16"> 
+                        <div class="overflow-x-auto custom-scrollbar pb-16">
                             <table class="w-full text-left text-sm whitespace-nowrap">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-400">
                                     <tr>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">ID Code</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Display Info</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Display Name</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Created</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Last Modified</th>
                                     </tr>
@@ -405,7 +368,7 @@
                                 <svg class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
                             </div>
                             <h3 class="text-sm font-bold text-slate-800">No records found</h3>
-                            <p class="text-slate-500 text-xs mt-1">Create your first entry to populate this list.</p>
+                            <p class="text-slate-500 text-xs mt-1">Create or upload entries to populate this list.</p>
                         </div>
                     </div>
                 </div>
@@ -426,30 +389,26 @@
                 <div class="p-5 space-y-4">
                     <input type="hidden" id="setting-internal-id">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ID Code <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-id">ID Code *</label>
                         <input type="text" id="setting-id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Display Name <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-name">Display Name *</label>
                         <input type="text" id="setting-name" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
                     </div>
-                    
-                    <div id="setting-email-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
-                        <input type="email" id="setting-email" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                    <!-- Role Dropdown (Only for Users) -->
+                    <div id="setting-role-container" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Role *</label>
+                        <select id="setting-role" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100"></select>
                     </div>
-                    <div id="setting-roleid-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Role <span class="text-red-500">*</span></label>
-                        <select id="setting-roleid" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
-                    </div>
-
-                    <div id="setting-roletype-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Role Type <span class="text-red-500">*</span></label>
-                        <select id="setting-roletype" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
-                            <option value="System User">System User</option>
-                            <option value="Approver">Approver</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Root">Root</option>
+                    <!-- Role Type Dropdown (Only for Roles) -->
+                    <div id="setting-role-type-container" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Role Type *</label>
+                        <select id="setting-role-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
+                            <option value="System User">System User (Own Tickets Only)</option>
+                            <option value="Approver">Approver (For Approval Only)</option>
+                            <option value="Admin">Admin (All Access)</option>
+                            <option value="Root">Root (Super Administrator)</option>
                         </select>
                     </div>
                 </div>
@@ -502,23 +461,24 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-confirm-modal" class="fixed inset-0 z-[250] hidden">
-        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="delete-modal-bg"></div>
+    <!-- Quick Assign Modal -->
+    <div id="quick-assign-modal" class="fixed inset-0 z-[250] hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="quick-assign-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
-                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-red-50 rounded-t-xl">
-                    <h3 class="text-sm font-bold text-red-700 flex items-center gap-2">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        Confirm Deletion
-                    </h3>
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h3 class="text-sm font-bold text-slate-900">Assign Ticket</h3>
+                    <button id="btn-close-quick-assign" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
-                <div class="p-5">
-                    <p class="text-sm text-slate-600">Are you sure you want to delete this record? This action cannot be undone.</p>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Assign To</label>
+                        <select id="quick-assign-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                    </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-delete" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-confirm-delete" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">Yes, Delete</button>
+                    <button id="btn-cancel-quick-assign" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
+                    <button id="btn-save-quick-assign" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Assign</button>
                 </div>
             </div>
         </div>
@@ -547,34 +507,33 @@
         </div>
     </div>
 
-    <!-- Quick Assign Modal -->
-    <div id="quick-assign-modal" class="fixed inset-0 z-[250] hidden">
-        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="quick-assign-modal-bg"></div>
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="fixed inset-0 z-[250] hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="delete-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
-                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
-                    <h3 class="text-sm font-bold text-slate-900">Assign Ticket</h3>
-                    <button id="btn-close-quick-assign" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-red-50 rounded-t-xl">
+                    <h3 class="text-sm font-bold text-red-700 flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Confirm Deletion
+                    </h3>
                 </div>
-                <div class="p-5 space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Assign To</label>
-                        <select id="quick-assign-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
-                    </div>
+                <div class="p-5">
+                    <p class="text-sm text-slate-600">Are you sure you want to delete this record? This action cannot be undone.</p>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-quick-assign" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-quick-assign" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Assign</button>
+                    <button id="btn-cancel-delete" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
+                    <button id="btn-confirm-delete" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">Yes, Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Initialize Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAWXjT6O0vZZGjDzj-W3byBvR4ndhr52vU",
             authDomain: "helpdesk-22cc8.firebaseapp.com",
@@ -587,30 +546,30 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Application State
         let currentUser = 'Preview User';
-        let currentContext = 'user'; 
+        let currentUserEmail = 'preview@inventi.ph';
+        let currentUserRoleType = 'Root'; // Preview has Root by default
+        
+        let currentContext = 'users'; 
         let currentViewedTicketId = null;
         let pendingDeleteId = null;
         let pendingDeleteTicketId = null;
 
-        // Mock Database with RBAC Data
+        // Enhanced Data Store with RBAC
         const dataStore = {
-            role: [
-                { _internalId: 1, id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 2, id: 'ROLE-ADMIN', name: 'System Administrator', type: 'Admin', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 3, id: 'ROLE-APPR', name: 'Department Approver', type: 'Approver', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 4, id: 'ROLE-USER', name: 'Standard User', type: 'System User', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' }
+            roles: [
+                { _internalId: 1, id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 2, id: 'ROLE-ADMIN', name: 'System Administrator', type: 'Admin', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 3, id: 'ROLE-APPROVER', name: 'Department Head', type: 'Approver', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 4, id: 'ROLE-USER', name: 'Standard Staff', type: 'System User', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
-            user: [
-                { _internalId: 1, id: 'USR-001', name: 'Preview User', email: 'preview@inventi.com', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 2, id: 'USR-002', name: 'Bob Approver', email: 'bob@inventi.com', roleId: 'ROLE-APPR', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 3, id: 'USR-003', name: 'Jane Tech', email: 'jane@inventi.com', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 4, id: 'USR-004', name: 'Arkin Paroan', email: 'arkin.paroan@inventi.ph', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2026-08-04', modifiedBy: 'System', modifiedDate: '2026-08-04' }
+            users: [
+                { _internalId: 1, id: 'arkin.paroan@inventi.ph', name: 'Arkin Paroan', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 2, id: 'devops@inventi.ph', name: 'DevOps Lead', roleId: 'ROLE-ADMIN', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { _internalId: 3, id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             acc: [
-                { _internalId: 1, id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' },
-                { _internalId: 2, id: 'ACC-002', name: 'Global Tech', createdBy: 'SysAdmin', createdDate: '2025-10-15', modifiedBy: 'DevOps_Lead', modifiedDate: '2026-08-01' }
+                { _internalId: 1, id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
             ],
             env: [
                 { _internalId: 1, id: 'ENV-PRD', name: 'Production Global', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
@@ -626,167 +585,114 @@
                 { _internalId: 3, id: 'STAT-APP', name: 'For Approval', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { _internalId: 4, id: 'STAT-RES', name: 'Resolved', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
-            mod: [
-                { _internalId: 1, id: 'MOD-LOC', name: 'Location', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 2, id: 'MOD-EQP', name: 'Equipment', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 3, id: 'MOD-INV', name: 'Inventory', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 4, id: 'MOD-VND', name: 'Vendor', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 5, id: 'MOD-CHK', name: 'Checklist', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' },
-                { _internalId: 6, id: 'MOD-MTR', name: 'Meters & Gauges', createdBy: 'System', createdDate: '2026-01-01', modifiedBy: 'System', modifiedDate: '2026-01-01' }
-            ],
+            mod: [],
             tickets: [
-                { id: 'ARK-1042', subject: 'Database Connection Timeout in EU Region', desc: 'Multiple timeouts on primary read replica.', createdDate: '2026-08-03', submittedBy: 'Jane Tech', assigneeId: 'USR-001', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001' },
-                { id: 'ARK-1041', subject: 'Requesting Developer Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedBy: 'Bob Approver', assigneeId: '', statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-002' }
+                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001' },
+                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001' }
             ],
             messages: [
                 { ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned.' }
             ],
-            ticketNotes: [
-                { ticketId: 'ARK-1042', sender: 'Preview User', timestamp: '2026-08-03 10:15', tag: 'Finding', text: 'Found multiple slow queries locking the database. Analyzing logs now.' }
+            internalNotes: [
+                { ticketId: 'ARK-1042', sender: 'Arkin Paroan', timestamp: '2026-08-03 10:15', tag: 'Finding', text: 'Confirmed memory leak on node 4.' }
             ]
         };
 
-        function getName(type, id) {
-            const item = (dataStore[type] || []).find(x => x.id === id);
-            return item ? item.name : id;
-        }
+        function getName(type, id) { const item = (dataStore[type] || []).find(x => x.id === id); return item ? item.name : id; }
+        function getUserName(email) { const u = dataStore.users.find(x => x.id === email); return u ? u.name : email; }
         function getTodayStr() { return new Date().toISOString().split('T')[0]; }
         function getEl(id) { return document.getElementById(id); }
 
         function getStatusBadge(statusId) {
             const name = getName('status', statusId);
-            if (statusId === 'STAT-OPN') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700 uppercase">${name}</span>`;
-            if (statusId === 'STAT-INP') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">${name}</span>`;
-            if (statusId === 'STAT-APP') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700 uppercase">${name}</span>`;
-            if (statusId === 'STAT-RES') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">${name}</span>`;
-            return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 uppercase">${name}</span>`;
+            if (statusId === 'STAT-OPN') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700">${name}</span>`;
+            if (statusId === 'STAT-INP') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700">${name}</span>`;
+            if (statusId === 'STAT-APP') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700">${name}</span>`;
+            if (statusId === 'STAT-RES') return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700">${name}</span>`;
+            return `<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700">${name}</span>`;
         }
-        
+
         function getSevBadge(sevId) {
             const name = getName('sev', sevId);
             if (sevId === 'SEV-1') return `<span class="text-red-600 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>${name}</span>`;
             if (sevId === 'SEV-2') return `<span class="text-amber-500 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${name}</span>`;
             return `<span class="text-slate-500 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>${name}</span>`;
         }
-        
-        function getDiagnosticTagBadge(tag) {
-            if (tag === 'Finding') return `<span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">${tag}</span>`;
-            if (tag === 'Recommendation') return `<span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">${tag}</span>`;
-            if (tag === 'Resolution') return `<span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">${tag}</span>`;
-            return `<span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">${tag}</span>`;
-        }
 
-        function getRoleType() {
-            const userObj = dataStore.user.find(u => u.name === currentUser);
-            if (!userObj) return 'System User';
-            const roleObj = dataStore.role.find(r => r.id === userObj.roleId);
-            return roleObj ? roleObj.type : 'System User';
-        }
-
+        // RBAC Filtering Core Logic
         function getFilteredTickets() {
-            const roleType = getRoleType();
-            if (roleType === 'Root' || roleType === 'Admin') return dataStore.tickets;
-            if (roleType === 'Approver') return dataStore.tickets.filter(t => t.statusId === 'STAT-APP');
-            return dataStore.tickets.filter(t => t.submittedBy === currentUser);
-        }
-
-        function switchView(targetId, title = '') {
-            try {
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    if(link.dataset.target === targetId) { link.classList.add('bg-white/5', 'text-white'); link.classList.remove('text-slate-400'); }
-                    else { link.classList.remove('bg-white/5', 'text-white'); link.classList.add('text-slate-400'); }
-                });
-                
-                document.querySelectorAll('.content-section').forEach(section => {
-                    if (section.id === `content-${targetId}`) {
-                        section.classList.add('active');
-                    } else {
-                        section.classList.remove('active');
-                    }
-                });
-                
-                if(title) getEl('topbar-title').textContent = title;
-                
-                if (targetId === 'dashboard') renderDashboard();
-                if (targetId === 'tickets') renderTickets();
-                if (targetId === 'settings') renderSettings();
-            } catch(e) { console.error(e); }
-        }
-        
-        function switchToTab(targetTab) {
-            const btnComms = getEl('tab-btn-comms');
-            const btnNotes = getEl('tab-btn-notes');
-            const areaComms = getEl('area-comms');
-            const areaNotes = getEl('area-notes');
-            
-            if (targetTab === 'comms') {
-                btnComms.className = "px-4 py-2.5 text-sm font-bold text-blue-600 border-b-2 border-blue-600 bg-white flex items-center gap-2 rounded-t-lg transition-colors";
-                btnNotes.className = "px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors";
-                
-                areaComms.classList.remove('hidden'); areaComms.classList.add('flex');
-                areaNotes.classList.add('hidden'); areaNotes.classList.remove('flex');
-            } else if (targetTab === 'notes') {
-                btnNotes.className = "px-4 py-2.5 text-sm font-bold text-purple-600 border-b-2 border-purple-600 bg-white flex items-center gap-2 rounded-t-lg transition-colors";
-                btnComms.className = "px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors";
-                
-                areaNotes.classList.remove('hidden'); areaNotes.classList.add('flex');
-                areaComms.classList.add('hidden'); areaComms.classList.remove('flex');
+            if (currentUserRoleType === 'Root' || currentUserRoleType === 'Admin') {
+                return dataStore.tickets;
+            } else if (currentUserRoleType === 'Approver') {
+                return dataStore.tickets.filter(t => t.statusId === 'STAT-APP' || t.submittedByEmail === currentUserEmail);
+            } else {
+                return dataStore.tickets.filter(t => t.submittedByEmail === currentUserEmail);
             }
         }
 
+        function switchView(targetId, title = '') {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if(link.dataset.target === targetId) { link.classList.add('bg-white/5', 'text-white'); link.classList.remove('text-slate-400'); }
+                else { link.classList.remove('bg-white/5', 'text-white'); link.classList.add('text-slate-400'); }
+            });
+            document.querySelectorAll('.content-section').forEach(section => {
+                if (section.id === `content-${targetId}`) { section.classList.add('active'); } else { section.classList.remove('active'); }
+            });
+            if(title) getEl('topbar-title').textContent = title;
+            if (targetId === 'dashboard') renderDashboard();
+            if (targetId === 'tickets') renderTickets();
+            if (targetId === 'settings') renderSettings();
+        }
+
+        function switchDetailsTab(tabId) {
+            document.querySelectorAll('.detail-tab-btn').forEach(b => {
+                if(b.dataset.tab === tabId) { b.classList.add('border-blue-600', 'text-blue-600'); b.classList.remove('border-transparent', 'text-slate-500'); }
+                else { b.classList.remove('border-blue-600', 'text-blue-600'); b.classList.add('border-transparent', 'text-slate-500'); }
+            });
+            document.querySelectorAll('.detail-tab-content').forEach(c => {
+                if(c.id === `tab-${tabId}`) c.classList.remove('hidden'); else c.classList.add('hidden');
+            });
+        }
+
         function renderDashboard() {
-            const viewableTickets = getFilteredTickets();
-            getEl('dash-total').textContent = viewableTickets.length;
-            getEl('dash-open').textContent = viewableTickets.filter(t => t.statusId === 'STAT-OPN').length;
-            getEl('dash-resolved').textContent = viewableTickets.filter(t => t.statusId === 'STAT-RES').length;
+            const allowedTickets = getFilteredTickets();
+            getEl('dash-total').textContent = allowedTickets.length;
+            getEl('dash-open').textContent = allowedTickets.filter(t => t.statusId === 'STAT-OPN' || t.statusId === 'STAT-INP').length;
+            getEl('dash-resolved').textContent = allowedTickets.filter(t => t.statusId === 'STAT-RES').length;
             
-            const recent = viewableTickets.slice(0, 5);
-            getEl('dashboard-recent-table').innerHTML = recent.map(t => `
+            getEl('dashboard-recent-table').innerHTML = allowedTickets.slice(0, 5).map(t => `
                 <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
                     <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
-                    <td class="px-5 py-3 relative">
-                        <span class="truncate block max-w-[200px] text-sm font-medium text-slate-800">${t.subject}</span>
-                        <span class="truncate block max-w-[200px] text-[10px] text-slate-500 mt-0.5 uppercase tracking-wide font-bold">${getName('acc', t.accId)}</span>
-                    </td>
-                    <td class="px-5 py-3">
-                        <div class="flex flex-col items-start gap-1.5">
-                            ${getStatusBadge(t.statusId)}
-                            ${getSevBadge(t.sevId)}
-                        </div>
-                    </td>
+                    <td class="px-5 py-3 text-sm font-medium relative pr-10 text-slate-800"><span class="truncate block max-w-[200px]">${t.subject}</span></td>
+                    <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
                 </tr>
             `).join('');
         }
 
         function renderTickets() {
-            const viewableTickets = getFilteredTickets();
-            getEl('tickets-table-body').innerHTML = viewableTickets.map(t => `
+            const allowedTickets = getFilteredTickets();
+            getEl('tickets-table-body').innerHTML = allowedTickets.map(t => `
                 <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
                     <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
                     <td class="px-5 py-3 relative pr-28">
                         <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800">${t.subject}</span>
                         <span class="truncate block max-w-[250px] text-[10px] text-slate-500 mt-0.5 uppercase tracking-wide font-bold">${getName('acc', t.accId)}</span>
                         <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
-                            <button class="btn-ticket-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors" data-action="view" data-id="${t.id}" title="View Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-purple-400 hover:text-purple-700 hover:bg-purple-50 rounded transition-colors" data-action="assign" data-id="${t.id}" title="Assign Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition-colors" data-action="status" data-id="${t.id}" title="Update Status"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded transition-colors" data-action="del" data-id="${t.id}" title="Delete Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                            <button class="btn-ticket-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${t.id}" title="View Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                            <button class="btn-ticket-action p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded" data-action="assign" data-id="${t.id}" title="Assign Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></button>
+                            <button class="btn-ticket-action p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded" data-action="status" data-id="${t.id}" title="Update Status"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                            <button class="btn-ticket-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${t.id}" title="Delete Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                         </div>
                     </td>
                     <td class="px-5 py-3 text-xs text-slate-500">${t.createdDate}</td>
-                    <td class="px-5 py-3">
-                        <div class="flex flex-col items-start gap-1.5">
-                            ${getStatusBadge(t.statusId)}
-                            ${getSevBadge(t.sevId)}
-                        </div>
-                    </td>
+                    <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
                 </tr>
             `).join('');
         }
 
         function renderSettings() {
-            const titles = { user: 'Users', role: 'Roles', acc: 'Accounts', env: 'Environments', sev: 'Severities', status: 'Statuses', mod: 'Modules' };
-            getEl('settings-page-title').textContent = `Manage ${titles[currentContext]}`;
+            const titles = { users: 'Manage Users', roles: 'Manage Roles', acc: 'Manage Accounts', env: 'Manage Environments', sev: 'Manage Severities', status: 'Manage Statuses', mod: 'Manage Modules' };
+            getEl('settings-page-title').textContent = titles[currentContext] || 'Manage Settings';
             
             document.querySelectorAll('.sub-nav-link').forEach(link => {
                 if(link.dataset.context === currentContext) { link.classList.add('text-white', 'bg-white/5'); link.classList.remove('text-slate-400'); }
@@ -801,24 +707,26 @@
                 getEl('settings-empty-state').classList.add('hidden'); getEl('settings-empty-state').classList.remove('flex');
                 
                 getEl('settings-table-body').innerHTML = arr.map(item => {
-                    let subtext = '';
-                    if (currentContext === 'user') subtext = `<span class="block text-[10px] text-slate-500 mt-0.5">${item.email} &bull; <span class="font-bold">${getName('role', item.roleId)}</span></span>`;
-                    else if (currentContext === 'role') subtext = `<span class="inline-block mt-0.5 px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-600">${item.type}</span>`;
+                    let idCol = item.id;
+                    if(currentContext === 'users') idCol = `<div class="font-bold text-slate-800">${item.name}</div><div class="text-[10px] text-slate-500 font-normal">${item.id}</div>`;
                     
+                    let nameCol = item.name;
+                    if(currentContext === 'users') nameCol = `<span class="px-2 py-1 rounded bg-slate-100 text-[10px] font-bold text-slate-600">${getName('roles', item.roleId)}</span>`;
+                    else if(currentContext === 'roles') nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] text-blue-600 font-bold mt-0.5">${item.type}</div>`;
+
                     return `
                     <tr class="hover:bg-slate-50 transition-colors group relative">
-                        <td class="px-5 py-3 font-mono text-xs font-bold text-slate-800">${item.id}</td>
+                        <td class="px-5 py-3 font-mono text-xs text-slate-800">${idCol}</td>
                         <td class="px-5 py-3 text-sm font-medium text-slate-800 relative pr-24">
-                            <span class="block">${item.name}</span>
-                            ${subtext}
+                            ${nameCol}
                             <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
-                                <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors" data-action="view" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                                <button class="btn-crud-action p-1.5 text-blue-400 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" data-action="edit" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                                <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded transition-colors" data-action="del" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                <button class="btn-crud-action p-1.5 text-blue-400 hover:text-blue-700 hover:bg-blue-50 rounded" data-action="edit" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-internal="${item._internalId}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                             </div>
                         </td>
-                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.createdBy || '-'}</div><div class="text-[10px] text-slate-500">${item.createdDate || '-'}</div></td>
-                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.modifiedBy || '-'}</div><div class="text-[10px] text-slate-500">${item.modifiedDate || '-'}</div></td>
+                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.createdBy||'-'}</div><div class="text-[10px] text-slate-500">${item.createdDate||'-'}</div></td>
+                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.modifiedBy||'-'}</div><div class="text-[10px] text-slate-500">${item.modifiedDate||'-'}</div></td>
                     </tr>
                 `}).join('');
             }
@@ -828,34 +736,28 @@
             const ticket = dataStore.tickets.find(t => t.id === ticketId);
             if (!ticket) return;
             currentViewedTicketId = ticket.id;
-            
-            // RBAC Tab Protection
-            const rType = getRoleType();
-            const btnNotes = getEl('tab-btn-notes');
-            if (rType === 'Admin' || rType === 'Root') {
-                btnNotes.classList.remove('hidden');
-                btnNotes.classList.add('flex');
-            } else {
-                btnNotes.classList.add('hidden');
-                btnNotes.classList.remove('flex');
-            }
-            switchToTab('comms'); // Ensure default is comms
-            
             getEl('detail-header-id').textContent = `Ticket ${ticket.id}`;
             getEl('detail-subject').textContent = ticket.subject;
             getEl('detail-desc').textContent = ticket.desc;
             
-            getEl('detail-submitted-by').textContent = ticket.submittedBy || 'System User';
+            getEl('detail-submitted-by').textContent = getUserName(ticket.submittedByEmail);
             getEl('detail-created-date').textContent = ticket.createdDate || '-';
             getEl('detail-account').textContent = getName('acc', ticket.accId);
             getEl('detail-env').textContent = getName('env', ticket.envId);
             getEl('detail-severity').innerHTML = getSevBadge(ticket.sevId);
             
-            getEl('detail-assignee-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.user.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeId ? 'selected' : ''}>${u.name}</option>`).join('');
             getEl('detail-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join('');
+            getEl('detail-assignee-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join('');
             
+            if(currentUserRoleType === 'Admin' || currentUserRoleType === 'Root') {
+                getEl('tab-internal-btn').classList.remove('hidden');
+            } else {
+                getEl('tab-internal-btn').classList.add('hidden');
+            }
+
+            switchDetailsTab('comms');
             renderMessages();
-            renderNotes();
+            renderInternalNotes();
             switchView('ticket-details', `Ticket ${ticket.id}`);
         }
 
@@ -865,129 +767,96 @@
             if (msgs.length === 0) { container.innerHTML = `<div class="text-center text-slate-400 text-xs italic mt-8">No communications yet.</div>`; return; }
             
             container.innerHTML = msgs.map(m => {
-                if (m.sender === 'System') return `<div class="flex flex-col items-center my-3"><div class="px-3 py-1.5 rounded-lg text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200 text-center max-w-[90%] shadow-sm"><span class="font-bold">${m.timestamp}</span> &bull; ${m.text}</div></div>`;
+                if (m.sender === 'System') {
+                    return `<div class="flex flex-col items-center my-3"><div class="px-3 py-1.5 rounded-lg text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200 text-center max-w-[90%] shadow-sm"><span class="font-bold">${m.timestamp}</span> &bull; ${m.text}</div></div>`;
+                }
                 const isMe = m.sender === currentUser;
                 return `<div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}"><span class="text-[10px] font-bold text-slate-400 mb-1">${m.sender} &bull; ${m.timestamp}</span><div class="px-4 py-2.5 rounded-xl text-sm shadow-sm max-w-[85%] ${isMe ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-sm'}">${m.text.replace(/\n/g, '<br>')}</div></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         }
 
-        function renderNotes() {
-            const container = getEl('ticket-notes-container');
-            const notes = dataStore.ticketNotes.filter(n => n.ticketId === currentViewedTicketId);
-            if (notes.length === 0) { container.innerHTML = `<div class="text-center text-slate-400 text-xs italic mt-8">No diagnostic logs attached to this ticket.</div>`; return; }
+        function renderInternalNotes() {
+            const container = getEl('ticket-internal-container');
+            const notes = dataStore.internalNotes.filter(n => n.ticketId === currentViewedTicketId);
+            if (notes.length === 0) { container.innerHTML = `<div class="text-center text-slate-400 text-xs italic mt-8">No internal diagnostics logged.</div>`; return; }
             
             container.innerHTML = notes.map(n => {
-                return `
-                    <div class="flex flex-col items-start w-full bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-sm">
-                        <div class="flex justify-between items-center w-full mb-2">
-                            <span class="text-[10px] font-bold text-slate-500">${n.sender} &bull; ${n.timestamp}</span>
-                            ${getDiagnosticTagBadge(n.tag)}
-                        </div>
-                        <div class="text-sm text-slate-700 leading-relaxed w-full">${n.text.replace(/\n/g, '<br>')}</div>
-                    </div>
-                `;
+                let tagColor = 'bg-slate-100 text-slate-700';
+                if(n.tag === 'Finding') tagColor = 'bg-amber-100 text-amber-800';
+                if(n.tag === 'Recommendation') tagColor = 'bg-blue-100 text-blue-800';
+                if(n.tag === 'Resolution') tagColor = 'bg-emerald-100 text-emerald-800';
+                return `<div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm mb-3"><div class="flex justify-between items-center mb-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${tagColor}">${n.tag}</span><span class="text-[10px] font-bold text-slate-400">${n.sender} &bull; ${n.timestamp}</span></div><p class="text-sm text-slate-700">${n.text}</p></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Set initial user role
-            getRoleType();
-            getEl('user-display-role').textContent = getRoleType();
-
             document.body.addEventListener('click', async (e) => {
                 
-                // --- LOGIN FLOW ---
+                // Login Auth Flow
                 if (e.target.closest('#btn-google-login')) {
                     const errEl = getEl('login-error'); errEl.classList.add('hidden');
                     try {
                         const result = await signInWithPopup(auth, provider);
-                        const email = result.user.email || "";
+                        const email = result.user.email;
                         
-                        // Domain Restriction Check
                         if (email.endsWith('@inventi.ph') || email.endsWith('@inventi.asia')) {
                             currentUser = result.user.displayName || email.split('@')[0];
-                            getEl('user-display-name').textContent = currentUser;
+                            currentUserEmail = email;
                             
-                            // Auto-register new users as System User to maintain RBAC functionality
-                            if (!dataStore.user.find(u => u.email === email)) {
-                                const newInt = dataStore.user.length > 0 ? Math.max(...dataStore.user.map(x => x._internalId)) + 1 : 1;
-                                dataStore.user.push({ _internalId: newInt, id: `USR-${100 + newInt}`, name: currentUser, email: email, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() });
+                            // Map local user role
+                            let localUser = dataStore.users.find(u => u.id === email);
+                            if(!localUser) {
+                                // Auto register
+                                localUser = { _internalId: Date.now(), id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
+                                dataStore.users.push(localUser);
                             }
+                            const role = dataStore.roles.find(r => r.id === localUser.roleId);
+                            currentUserRoleType = role ? role.type : 'System User';
+
+                            getEl('user-display-name').textContent = currentUser;
+                            getEl('user-display-role').textContent = currentUserRoleType;
                             
-                            getEl('user-display-role').textContent = getRoleType();
                             getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
                             switchView('dashboard', 'Client Dashboard');
                         } else {
-                            // Reject invalid domains
                             await signOut(auth);
-                            errEl.textContent = "Access restricted to @inventi.ph and @inventi.asia accounts.";
+                            errEl.textContent = "Access Denied: Please use a valid @inventi.ph or @inventi.asia email.";
                             errEl.classList.remove('hidden');
                         }
                     } catch (error) {
-                        let errorMsg = "An unexpected error occurred during login.";
-                        
-                        switch (error.code) {
-                            case 'auth/unauthorized-domain':
-                                errorMsg = "This app's domain is not authorized in Firebase. Please use Bypass.";
-                                break;
-                            case 'auth/operation-not-allowed':
-                                errorMsg = "Google Sign-In is not enabled in Firebase settings. Please use Bypass.";
-                                break;
-                            case 'auth/invalid-api-key':
-                                errorMsg = "Firebase configuration is missing or invalid.";
-                                break;
-                            case 'auth/popup-blocked':
-                                errorMsg = "Login popup was blocked by your browser. Please allow popups for this site.";
-                                break;
-                            case 'auth/popup-closed-by-user':
-                            case 'auth/cancelled-popup-request':
-                                errorMsg = ""; // Silent ignore if user intentionally closes the window
-                                break;
-                            case 'auth/network-request-failed':
-                                errorMsg = "Network error. Please check your internet connection and try again.";
-                                break;
-                            default:
-                                console.error("Unhandled Firebase Auth Error:", error);
-                                errorMsg = `Login Failed: ${error.message}`;
-                        }
-                        
-                        if (errorMsg) {
-                            errEl.textContent = errorMsg;
-                            errEl.classList.remove('hidden');
-                        }
+                        let msg = "Authentication Failed.";
+                        if(error.code === 'auth/popup-closed-by-user') msg = "Login popup was closed before finishing.";
+                        else if(error.code === 'auth/unauthorized-domain') msg = "Domain not authorized in Firebase config.";
+                        else if(error.code === 'auth/network-request-failed') msg = "Network error. Please check your connection.";
+                        errEl.textContent = msg; errEl.classList.remove('hidden');
                     }
                 }
                 
+                // Bypass
                 if (e.target.closest('#btn-bypass-login')) {
-                    currentUser = "Preview User";
-                    getEl('user-display-name').textContent = currentUser;
-                    getEl('user-display-role').textContent = getRoleType();
-                    
+                    currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
+                    getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
                     getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
                     switchView('dashboard', 'Client Dashboard');
                 }
-                
+
                 if (e.target.closest('#btn-logout')) {
+                    try { await signOut(auth); } catch(e){}
                     getEl('view-app').classList.remove('active'); getEl('view-login').classList.add('active');
+                    getEl('login-error').classList.add('hidden');
                 }
                 
-                // --- NAVIGATION ---
-                if (e.target.closest('.btn-submenu-toggle')) {
-                    const btn = e.target.closest('.btn-submenu-toggle');
-                    const submenuId = btn.dataset.submenu;
-                    const submenu = getEl(submenuId);
-                    const chevron = btn.querySelector('.submenu-chevron');
-                    
-                    if(submenu.classList.contains('hidden')) { 
-                        submenu.classList.remove('hidden'); 
-                        chevron.style.transform = 'rotate(180deg)'; 
-                    } else { 
-                        submenu.classList.add('hidden'); 
-                        chevron.style.transform = 'rotate(0deg)'; 
-                    }
+                // Sidebar Setup
+                const menuBtn = e.target.closest('.btn-menu-toggle');
+                if (menuBtn) {
+                    const menuTarget = menuBtn.dataset.menu;
+                    const submenu = getEl(`submenu-${menuTarget}`);
+                    const chevron = menuBtn.querySelector('.chevron-icon');
+                    if(submenu.classList.contains('hidden')) { submenu.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; } 
+                    else { submenu.classList.add('hidden'); chevron.style.transform = 'rotate(0deg)'; }
                 }
 
                 const navBtn = e.target.closest('.nav-link[data-target]');
@@ -998,135 +867,123 @@
                 
                 if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) switchView('tickets', 'Tickets');
                 
-                // --- TICKET TAB SWITCHING ---
-                if (e.target.closest('#tab-btn-comms')) switchToTab('comms');
-                if (e.target.closest('#tab-btn-notes')) switchToTab('notes');
+                // Details Tabs
+                const tabBtn = e.target.closest('.detail-tab-btn');
+                if(tabBtn) switchDetailsTab(tabBtn.dataset.tab);
 
-                // --- TICKET HOVER ACTIONS ---
+                // Ticket Row Actions
                 const ticketBtn = e.target.closest('.btn-ticket-action');
                 if (ticketBtn) {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     const action = ticketBtn.dataset.action; const ticketId = ticketBtn.dataset.id;
-                    if (action === 'view') openTicketDetails(ticketId);
-                    else if (action === 'assign') {
-                        const ticket = dataStore.tickets.find(t => t.id === ticketId);
-                        if (ticket) {
-                            currentViewedTicketId = ticket.id;
-                            getEl('quick-assign-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.user.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeId ? 'selected' : ''}>${u.name}</option>`).join('');
-                            getEl('quick-assign-modal').classList.remove('hidden');
-                        }
-                    }
+                    if (action === 'view') { openTicketDetails(ticketId); } 
                     else if (action === 'status') {
                         const ticket = dataStore.tickets.find(t => t.id === ticketId);
-                        if (ticket) {
-                            currentViewedTicketId = ticket.id;
-                            getEl('quick-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join('');
-                            getEl('quick-status-modal').classList.remove('hidden');
-                        }
-                    } else if (action === 'del') {
-                        pendingDeleteTicketId = ticketId; getEl('delete-confirm-modal').classList.remove('hidden');
+                        if (ticket) { currentViewedTicketId = ticket.id; getEl('quick-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); getEl('quick-status-modal').classList.remove('hidden'); }
+                    } 
+                    else if (action === 'assign') {
+                        const ticket = dataStore.tickets.find(t => t.id === ticketId);
+                        if (ticket) { currentViewedTicketId = ticket.id; getEl('quick-assign-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join(''); getEl('quick-assign-modal').classList.remove('hidden'); }
                     }
-                } else if (e.target.closest('.ticket-row')) openTicketDetails(e.target.closest('.ticket-row').dataset.id);
+                    else if (action === 'del') { pendingDeleteTicketId = ticketId; getEl('delete-confirm-modal').classList.remove('hidden'); }
+                } else if (e.target.closest('.ticket-row')) { openTicketDetails(e.target.closest('.ticket-row').dataset.id); }
                 
                 if (e.target.closest('#btn-back-tickets')) switchView('tickets', 'Tickets');
 
-                // --- QUICK MODALS (Status/Assign) ---
-                if (e.target.closest('#btn-close-quick-status') || e.target.closest('#btn-cancel-quick-status') || e.target.closest('#quick-status-modal-bg')) getEl('quick-status-modal').classList.add('hidden');
-                if (e.target.closest('#btn-save-quick-status')) {
-                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                    if (ticket) {
-                        const oldId = ticket.statusId; const newId = getEl('quick-status-select').value;
-                        if (oldId !== newId) {
-                            ticket.statusId = newId;
-                            const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldId)}] to [${getName('status', newId)}] by ${currentUser}.` });
-                        }
-                        renderTickets(); renderDashboard(); getEl('quick-status-modal').classList.add('hidden');
-                    }
-                }
-
+                // Quick Assign Modal
                 if (e.target.closest('#btn-close-quick-assign') || e.target.closest('#btn-cancel-quick-assign') || e.target.closest('#quick-assign-modal-bg')) getEl('quick-assign-modal').classList.add('hidden');
                 if (e.target.closest('#btn-save-quick-assign')) {
                     const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
                     if (ticket) {
-                        const oldId = ticket.assigneeId; const newId = getEl('quick-assign-select').value;
-                        if (oldId !== newId) {
-                            ticket.assigneeId = newId;
-                            const oldName = oldId ? getName('user', oldId) : 'Unassigned';
-                            const newName = newId ? getName('user', newId) : 'Unassigned';
-                            const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned from [${oldName}] to [${newName}] by ${currentUser}.` });
+                        const oldEmail = ticket.assigneeEmail; const newEmail = getEl('quick-assign-select').value;
+                        if (oldEmail !== newEmail) {
+                            ticket.assigneeEmail = newEmail;
+                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
                         }
-                        renderTickets(); getEl('quick-assign-modal').classList.add('hidden');
+                        renderTickets(); renderDashboard(); getEl('quick-assign-modal').classList.add('hidden');
+                    }
+                }
+
+                // Quick Status Modal
+                if (e.target.closest('#btn-close-quick-status') || e.target.closest('#btn-cancel-quick-status') || e.target.closest('#quick-status-modal-bg')) getEl('quick-status-modal').classList.add('hidden');
+                if (e.target.closest('#btn-save-quick-status')) {
+                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                    if (ticket) {
+                        const oldStatusId = ticket.statusId; const newStatusId = getEl('quick-status-select').value;
+                        if (oldStatusId !== newStatusId) {
+                            ticket.statusId = newStatusId;
+                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldStatusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                        }
+                        renderTickets(); renderDashboard(); getEl('quick-status-modal').classList.add('hidden');
                     }
                 }
                 
-                // --- IN-VIEW TICKET DETAILS UPDATES ---
+                // Detailed View Updates
                 if (e.target.closest('#btn-update-details')) {
                     const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
                     if (ticket) {
                         let changed = false;
-                        const oldStatus = ticket.statusId; const newStatus = getEl('detail-status-select').value;
-                        if (oldStatus !== newStatus) {
-                            ticket.statusId = newStatus; changed = true;
-                            const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldStatus)}] to [${getName('status', newStatus)}] by ${currentUser}.` });
+                        const newStatusId = getEl('detail-status-select').value;
+                        const newEmail = getEl('detail-assignee-select').value;
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        if (ticket.statusId !== newStatusId) {
+                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                            ticket.statusId = newStatusId; changed = true;
+                        }
+                        if (ticket.assigneeEmail !== newEmail) {
+                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
+                            ticket.assigneeEmail = newEmail; changed = true;
                         }
 
-                        const oldAss = ticket.assigneeId; const newAss = getEl('detail-assignee-select').value;
-                        if (oldAss !== newAss) {
-                            ticket.assigneeId = newAss; changed = true;
-                            const oName = oldAss ? getName('user', oldAss) : 'Unassigned'; const nName = newAss ? getName('user', newAss) : 'Unassigned';
-                            const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-                            dataStore.messages.push({ ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned from [${oName}] to [${nName}] by ${currentUser}.` });
-                        }
-
-                        if(changed) { renderMessages(); renderTickets(); renderDashboard(); }
-                        const btn = e.target.closest('#btn-update-details');
-                        const originalText = btn.textContent;
-                        btn.textContent = "Details Updated!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+                        if(changed) renderMessages(); renderTickets(); renderDashboard();
+                        const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
+                        btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
                         setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
                     }
                 }
                 
-                // --- COMMUNICATIONS & NOTES ---
+                // Chat and Notes
                 if (e.target.closest('#btn-send-reply')) {
                     const input = getEl('input-reply'); const text = input.value.trim();
                     if(text && currentViewedTicketId) {
-                        const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         dataStore.messages.push({ ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, text: text });
                         input.value = ''; renderMessages();
                     }
                 }
-                if (e.target.closest('#btn-save-note')) {
-                    const input = getEl('input-note-text'); const text = input.value.trim();
-                    const tag = getEl('input-note-tag').value;
+                if (e.target.closest('#btn-send-internal')) {
+                    const input = getEl('internal-note-text'); const text = input.value.trim();
                     if(text && currentViewedTicketId) {
-                        const ts = new Date().toISOString().split('T')[0] + ' ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-                        dataStore.ticketNotes.push({ ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text });
-                        input.value = ''; renderNotes();
+                        const tag = getEl('internal-note-tag').value;
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        dataStore.internalNotes.push({ ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text });
+                        input.value = ''; renderInternalNotes();
                     }
                 }
                 
-                // --- SETTINGS CRUD ---
+                // Settings CRUD
                 if (e.target.closest('#btn-add-setting')) {
                     getEl('modal-crud-title').textContent = "Add Record";
                     getEl('setting-id').value = ''; getEl('setting-id').disabled = false;
                     getEl('setting-name').value = ''; getEl('setting-name').disabled = false;
                     getEl('setting-internal-id').value = '';
+                    getEl('btn-save-crud').style.display = 'block';
                     
-                    if(currentContext === 'user') {
-                        getEl('setting-email-container').classList.remove('hidden'); getEl('setting-roleid-container').classList.remove('hidden');
-                        getEl('setting-email').value = ''; getEl('setting-email').disabled = false;
-                        getEl('setting-roleid').innerHTML = dataStore.role.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-                        getEl('setting-roleid').disabled = false;
-                    } else { getEl('setting-email-container').classList.add('hidden'); getEl('setting-roleid-container').classList.add('hidden'); }
-
-                    if(currentContext === 'role') {
-                        getEl('setting-roletype-container').classList.remove('hidden'); getEl('setting-roletype').disabled = false;
-                    } else { getEl('setting-roletype-container').classList.add('hidden'); }
-
-                    getEl('btn-save-crud').style.display = 'block'; getEl('crud-modal').classList.remove('hidden');
+                    if (currentContext === 'users') {
+                        getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
+                        getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                        getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                    } else if (currentContext === 'roles') {
+                        getEl('label-setting-id').textContent = 'Role ID (e.g. ROLE-01) *'; getEl('label-setting-name').textContent = 'Role Name *';
+                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden');
+                    } else {
+                        getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
+                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                    }
+                    getEl('crud-modal').classList.remove('hidden');
                 }
                 
                 const crudBtn = e.target.closest('.btn-crud-action');
@@ -1136,59 +993,74 @@
                     if (action === 'del') { pendingDeleteId = id; getEl('delete-confirm-modal').classList.remove('hidden'); } 
                     else if (item) {
                         getEl('setting-id').value = item.id; getEl('setting-name').value = item.name; getEl('setting-internal-id').value = item._internalId;
-                        const isView = action === 'view';
-                        getEl('modal-crud-title').textContent = isView ? "View Record" : "Edit Record";
-                        getEl('setting-id').disabled = isView; getEl('setting-name').disabled = isView;
-                        
-                        if(currentContext === 'user') {
-                            getEl('setting-email-container').classList.remove('hidden'); getEl('setting-roleid-container').classList.remove('hidden');
-                            getEl('setting-email').value = item.email||''; getEl('setting-email').disabled = isView;
-                            getEl('setting-roleid').innerHTML = dataStore.role.map(r => `<option value="${r.id}" ${r.id===item.roleId?'selected':''}>${r.name}</option>`).join('');
-                            getEl('setting-roleid').disabled = isView;
-                        } else { getEl('setting-email-container').classList.add('hidden'); getEl('setting-roleid-container').classList.add('hidden'); }
+                        if (currentContext === 'users') {
+                            getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
+                            getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                            getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}" ${r.id === item.roleId ? 'selected' : ''}>${r.name}</option>`).join('');
+                        } else if (currentContext === 'roles') {
+                            getEl('label-setting-id').textContent = 'Role ID *'; getEl('label-setting-name').textContent = 'Role Name *';
+                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden');
+                            getEl('setting-role-type').value = item.type;
+                        } else {
+                            getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
+                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden');
+                        }
 
-                        if(currentContext === 'role') {
-                            getEl('setting-roletype-container').classList.remove('hidden'); getEl('setting-roletype').value = item.type||'System User'; getEl('setting-roletype').disabled = isView;
-                        } else { getEl('setting-roletype-container').classList.add('hidden'); }
-
-                        getEl('btn-save-crud').style.display = isView ? 'none' : 'block'; getEl('crud-modal').classList.remove('hidden');
+                        if (action === 'view') {
+                            getEl('modal-crud-title').textContent = "View Record";
+                            getEl('setting-id').disabled = true; getEl('setting-name').disabled = true;
+                            if(currentContext === 'users') getEl('setting-role').disabled = true;
+                            if(currentContext === 'roles') getEl('setting-role-type').disabled = true;
+                            getEl('btn-save-crud').style.display = 'none';
+                        } else if (action === 'edit') {
+                            getEl('modal-crud-title').textContent = "Edit Record";
+                            getEl('setting-id').disabled = false; getEl('setting-name').disabled = false;
+                            if(currentContext === 'users') getEl('setting-role').disabled = false;
+                            if(currentContext === 'roles') getEl('setting-role-type').disabled = false;
+                            getEl('btn-save-crud').style.display = 'block';
+                        }
+                        getEl('crud-modal').classList.remove('hidden');
                     }
                 }
 
                 if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) getEl('crud-modal').classList.add('hidden');
+                
                 if (e.target.closest('#btn-save-crud')) {
                     const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim(); const intId = getEl('setting-internal-id').value;
                     if(!idVal || !nameVal) return;
                     
-                    let extra = {};
-                    if(currentContext === 'user') extra = { email: getEl('setting-email').value, roleId: getEl('setting-roleid').value };
-                    if(currentContext === 'role') extra = { type: getEl('setting-roletype').value };
-
                     if (intId) {
                         const item = dataStore[currentContext].find(x => x._internalId === parseInt(intId));
-                        if(item) { item.id = idVal; item.name = nameVal; item.modifiedBy = currentUser; item.modifiedDate = getTodayStr(); Object.assign(item, extra); }
+                        if(item) {
+                            item.id = idVal; item.name = nameVal; item.modifiedBy = currentUser; item.modifiedDate = getTodayStr();
+                            if (currentContext === 'users') item.roleId = getEl('setting-role').value;
+                            if (currentContext === 'roles') item.type = getEl('setting-role-type').value;
+                        }
                     } else {
                         const newInt = dataStore[currentContext].length > 0 ? Math.max(...dataStore[currentContext].map(x => x._internalId)) + 1 : 1;
-                        dataStore[currentContext].push({ _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr(), ...extra });
+                        const newItem = { _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
+                        if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
+                        if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
+                        dataStore[currentContext].push(newItem);
                     }
                     getEl('crud-modal').classList.add('hidden'); renderSettings();
                 }
                 
-                // --- DELETION ---
+                // Delete Confirmation Flow
                 if (e.target.closest('#btn-cancel-delete') || e.target.closest('#delete-modal-bg')) {
                     getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
                 }
                 if (e.target.closest('#btn-confirm-delete')) {
-                    if (pendingDeleteId !== null) { dataStore[currentContext] = dataStore[currentContext].filter(x => x._internalId !== pendingDeleteId); renderSettings(); } 
-                    else if (pendingDeleteTicketId !== null) { dataStore.tickets = dataStore.tickets.filter(x => x.id !== pendingDeleteTicketId); renderTickets(); renderDashboard(); }
-                    getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
+                    if (pendingDeleteId !== null) { dataStore[currentContext] = dataStore[currentContext].filter(x => x._internalId !== pendingDeleteId); renderSettings(); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; } 
+                    else if (pendingDeleteTicketId !== null) { dataStore.tickets = dataStore.tickets.filter(x => x.id !== pendingDeleteTicketId); renderTickets(); renderDashboard(); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
                 }
                 
-                // --- NEW TICKET ---
+                // Create Ticket Flow
                 if (e.target.closest('#btn-new-ticket')) {
                     const popSel = (id, type) => getEl(id).innerHTML = (dataStore[type]||[]).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
                     popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev');
-                    getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = ''; getEl('ticket-modal').classList.remove('hidden');
+                    getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = '';
+                    getEl('ticket-modal').classList.remove('hidden');
                 }
                 if (e.target.closest('#btn-close-ticket') || e.target.closest('#btn-cancel-ticket') || e.target.closest('#ticket-modal-bg')) getEl('ticket-modal').classList.add('hidden');
                 if (e.target.closest('#btn-save-ticket')) {
@@ -1196,17 +1068,74 @@
                     if(!subj || !desc) return;
                     const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
                     dataStore.tickets.unshift({
-                        id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedBy: currentUser, assigneeId: '',
+                        id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
                         statusId: 'STAT-OPN', accId: getEl('new-ticket-acc').value, envId: getEl('new-ticket-env').value, sevId: getEl('new-ticket-sev').value
                     });
                     getEl('ticket-modal').classList.add('hidden'); renderTickets(); renderDashboard();
                 }
+
+                //                // CSV Template Download
+                if (e.target.closest('#btn-download-template')) {
+                    let csvContent = "ID Code,Display Name\n";
+                    if(currentContext === 'users') csvContent = "Email Address,Full Name\n";
+                    else if(currentContext === 'roles') csvContent = "Role ID,Role Name\n";
+                    
+                    csvContent += "TEST-001,Example Data 1\nTEST-002,Example Data 2";
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", `iHelp_${currentContext}_template.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             });
 
+            // Handle Keydowns
             document.body.addEventListener('keydown', (e) => {
                 if (e.target.id === 'input-reply' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-reply').click(); }
-                if (e.target.id === 'input-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-save-note').click(); }
+                if (e.target.id === 'internal-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-internal').click(); }
             });
+
+            // CSV Upload Handler setup
+            const csvInput = getEl('input-csv-upload');
+            if (csvInput) {
+                csvInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        const text = evt.target.result;
+                        const rows = text.split(/\r?\n/).map(row => row.trim()).filter(row => row);
+                        
+                        if(rows.length > 1) {
+                            let addedCount = 0;
+                            for(let i = 1; i < rows.length; i++) { // Skip header
+                                const cols = rows[i].split(',').map(c => c.trim());
+                                if (cols.length >= 2) {
+                                    const idVal = cols[0]; const nameVal = cols[1];
+                                    if (idVal && nameVal && !dataStore[currentContext].find(x => x.id === idVal)) {
+                                        const newInt = dataStore[currentContext].length > 0 ? Math.max(...dataStore[currentContext].map(x => x._internalId)) + 1 : 1;
+                                        const newItem = { _internalId: newInt, id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
+                                        
+                                        if (currentContext === 'users') newItem.roleId = 'ROLE-USER';
+                                        if (currentContext === 'roles') newItem.type = 'System User';
+                                        
+                                        dataStore[currentContext].push(newItem);
+                                        addedCount++;
+                                    }
+                                }
+                            }
+                            if(addedCount > 0) renderSettings();
+                        }
+                        e.target.value = ''; // Reset input to allow re-upload
+                    };
+                    reader.readAsText(file);
+                });
+            }
         });
     </script>
 </body>
