@@ -201,21 +201,59 @@
                             <h1 class="text-xl font-bold text-slate-900">Tickets</h1>
                             <p class="text-xs text-slate-500 mt-1">Manage active and closed support requests.</p>
                         </div>
-                        <button id="btn-new-ticket" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            New Ticket
-                        </button>
+                        <div class="flex flex-col sm:flex-row items-center gap-2">
+                            <div class="relative w-full sm:w-auto">
+                                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="search-tickets" placeholder="Search tickets..." class="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 w-full sm:w-56 shadow-sm">
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="relative group">
+                                    <button id="btn-toggle-filters" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Filter</div>
+                                </div>
+                                <div class="relative group">
+                                    <button id="btn-export-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Export Tickets</div>
+                                </div>
+                                <div class="relative group">
+                                    <button id="btn-new-ticket" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none">
+                                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">New Ticket</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto custom-scrollbar pb-16">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-400">
+
+                    <!-- Filter Panel -->
+                    <div id="tickets-filter-panel" class="hidden mb-6 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Advanced Filters</h3>
+                            <button id="btn-clear-filters" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 focus:outline-none">Clear All</button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                            <select id="filter-acc" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
+                            <select id="filter-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
+                            <select id="filter-mod" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
+                            <select id="filter-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
+                            <select id="filter-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
+                        </div>
+                    </div>
+
+                    <!-- Tickets Table -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative">
+                        <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 relative">
+                            <table class="w-full text-left text-sm whitespace-nowrap min-w-full">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-400 sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Ticket ID</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Subject & Account</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Created Date</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Status & Priority</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Ticket ID</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Subject & Details</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Created Date</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Status & Priority</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tickets-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -223,132 +261,174 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between rounded-b-xl shrink-0 mt-auto z-20">
+                            <span class="text-xs font-medium text-slate-500" id="tickets-page-info">Showing 0 entries</span>
+                            <div class="flex items-center gap-1" id="tickets-pagination"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="content-ticket-details" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex items-center gap-3 mb-6">
-                        <button id="btn-back-tickets" class="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition-colors">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        </button>
-                        <div>
-                            <h1 id="detail-header-id" class="text-xl font-bold text-slate-900">Ticket Details</h1>
-                            <p class="text-xs text-slate-500">View information and communications.</p>
-                        </div>
+                        <button id="btn-back-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+                        <h1 id="detail-header-id" class="text-xl font-bold text-slate-900">Ticket Details</h1>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="md:col-span-2 space-y-6">
-                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-                                <h2 id="detail-subject" class="text-base font-bold text-slate-900 mb-2">Subject</h2>
-                                <p id="detail-desc" class="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-100 min-h-[100px] whitespace-pre-wrap leading-relaxed"></p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Main Content Area -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Ticket Info -->
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                                    <h2 id="detail-subject" class="text-base font-bold text-slate-800">Subject</h2>
+                                </div>
+                                <div class="p-5">
+                                    <p id="detail-desc" class="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed"></p>
+                                </div>
                             </div>
-                            
-                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-[400px]">
-                                <div class="flex border-b border-slate-200 bg-slate-50">
-                                    <button data-tab="comms" class="detail-tab-btn flex-1 px-4 py-3 text-xs font-bold border-b-2 border-blue-600 text-blue-600 transition-colors">Communications</button>
-                                    <button data-tab="internal" id="tab-internal-btn" class="detail-tab-btn flex-1 px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Internal Diagnostics</button>
+
+                            <!-- Communications & Notes Tabs -->
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px]">
+                                <!-- Tabs Header -->
+                                <div class="flex border-b border-slate-200 bg-slate-50 rounded-t-xl px-2 pt-2">
+                                    <button class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2 transition-colors" data-tab="comms">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                        Communications
+                                    </button>
+                                    <button id="tab-internal-btn" class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors hidden" data-tab="internal">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                        Internal Diagnostics
+                                    </button>
                                 </div>
                                 
-                                <!-- Comms Tab -->
-                                <div id="tab-comms" class="detail-tab-content flex-1 flex flex-col p-4 bg-white">
-                                    <div id="ticket-messages-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-4"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-100 flex gap-2">
-                                        <textarea id="input-reply" rows="2" placeholder="Type a message (Press Enter to send)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-shadow"></textarea>
-                                        <button id="btn-send-reply" class="bg-blue-600 text-white px-5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">Send</button>
+                                <!-- Communications Tab -->
+                                <div id="tab-comms" class="detail-tab-content flex-1 flex flex-col min-h-0 relative">
+                                    <div id="ticket-messages-container" class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4"></div>
+                                    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-xl flex gap-3 shrink-0">
+                                        <textarea id="input-reply" rows="1" placeholder="Type a message (Press Enter to send)..." class="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none custom-scrollbar"></textarea>
+                                        <button id="btn-send-reply" class="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm shrink-0">
+                                            <svg class="w-4 h-4 translate-x-px -translate-y-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                        </button>
                                     </div>
                                 </div>
 
-                                <!-- Internal Tab -->
-                                <div id="tab-internal" class="detail-tab-content hidden flex-1 flex flex-col p-4 bg-slate-50">
-                                    <div id="ticket-internal-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-3"></div>
-                                    <div class="mt-auto pt-3 border-t border-slate-200 flex flex-col gap-2">
+                                <!-- Internal Notes Tab -->
+                                <div id="tab-internal" class="detail-tab-content flex-1 flex flex-col min-h-0 relative hidden bg-slate-50/50">
+                                    <div id="ticket-internal-container" class="flex-1 overflow-y-auto custom-scrollbar p-5"></div>
+                                    <div class="p-4 border-t border-slate-200 bg-white rounded-b-xl flex flex-col gap-2 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                                         <div class="flex gap-2">
-                                            <select id="internal-note-tag" class="w-1/3 px-2 py-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-white">
+                                            <select id="internal-note-tag" class="px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold outline-none focus:ring-2 focus:ring-slate-200 bg-slate-50">
                                                 <option value="Finding">Finding</option>
                                                 <option value="Recommendation">Recommendation</option>
                                                 <option value="Resolution">Resolution</option>
                                             </select>
-                                            <input type="text" id="internal-note-text" placeholder="Internal notes (e.g., Checking logs on node 4)..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-white">
+                                            <textarea id="internal-note-text" rows="1" placeholder="Add internal narration..." class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none custom-scrollbar"></textarea>
                                         </div>
-                                        <button id="btn-send-internal" class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors shadow-sm">Add Diagnostic Note</button>
+                                        <div class="flex justify-end">
+                                            <button id="btn-send-internal" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm flex items-center gap-2">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                                Log Narration
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Properties Sidebar -->
                         <div class="space-y-6">
-                            <!-- Ticket Information Card -->
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-                                <h3 class="text-sm font-bold text-slate-800 mb-4">Ticket Properties</h3>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Submitted By</span>
-                                        <span class="text-xs font-semibold text-slate-700" id="detail-submitted-by"></span>
+                                <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Ticket Properties</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                                        <select id="detail-status-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white transition-colors"></select>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Created Date</span>
-                                        <span class="text-xs font-semibold text-slate-700" id="detail-created-date"></span>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Assignee</label>
+                                        <select id="detail-assignee-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white transition-colors"></select>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Account</span>
-                                        <span class="text-xs font-semibold text-slate-700" id="detail-account"></span>
+                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2">
+                                        Save Properties
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Severity</label>
+                                        <div id="detail-severity" class="mt-1"></div>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Environment</span>
-                                        <span class="text-xs font-semibold text-slate-700" id="detail-env"></span>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account</label>
+                                        <div id="detail-account" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Severity</span>
-                                        <span class="text-xs font-semibold" id="detail-severity"></span>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Environment</label>
+                                        <div id="detail-env" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
                                     </div>
-                                    <div class="flex flex-col gap-1.5 pt-1 pb-1 border-b border-slate-100">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Assignee</span>
-                                        <select id="detail-assignee-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Submitted By</label>
+                                        <div id="detail-submitted-by" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
                                     </div>
-                                    <div class="flex flex-col gap-1.5 pt-1 pb-1">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Status</span>
-                                        <select id="detail-status-select" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Created Date</label>
+                                        <div id="detail-created-date" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
                                     </div>
-                                    <button id="btn-update-details" class="w-full bg-slate-800 text-white py-2 mt-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">Save Properties</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div id="content-settings" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
-                            <h1 id="settings-page-title" class="text-xl font-bold text-slate-900">Manage Settings</h1>
-                            <p class="text-xs text-slate-500 mt-1">Add, edit, view, or remove configuration data.</p>
+                            <h1 id="settings-page-title" class="text-xl font-bold text-slate-900">System Settings</h1>
+                            <p class="text-xs text-slate-500 mt-1">Manage system configurations, users, and roles.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button id="btn-download-template" class="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Template
-                            </button>
-                            <label class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm cursor-pointer">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                Upload
-                                <input type="file" id="input-csv-upload" accept=".csv" class="hidden">
-                            </label>
-                            <button id="btn-add-setting" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 ml-1">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                Add New
-                            </button>
+                        <div class="flex flex-col sm:flex-row items-center gap-2">
+                            <div class="relative w-full sm:w-auto">
+                                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="search-settings" placeholder="Search settings..." class="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 w-full sm:w-56 shadow-sm">
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="relative group">
+                                    <button id="btn-export-settings" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Export</div>
+                                </div>
+                                <div class="relative group">
+                                    <button id="btn-download-template" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="18"></line><line x1="15" y1="15" x2="12" y2="18"></line></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Template</div>
+                                </div>
+                                <div class="relative group">
+                                    <label class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus-within:ring-2 focus-within:ring-emerald-200 cursor-pointer">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <input type="file" id="input-csv-upload" accept=".csv" class="hidden">
+                                    </label>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Upload</div>
+                                </div>
+                                <div class="relative group">
+                                    <button id="btn-add-setting" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none">
+                                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    </button>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Add New</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto custom-scrollbar pb-16">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-400">
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative">
+                        <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 relative">
+                            <table class="w-full text-left text-sm whitespace-nowrap min-w-full">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-400 sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th id="settings-th-1" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">ID Code</th>
-                                        <th id="settings-th-2" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Display Name</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Created</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Last Modified</th>
+                                        <th id="settings-th-1" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">ID Code</th>
+                                        <th id="settings-th-2" class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Display Name</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Created</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Last Modified</th>
                                     </tr>
                                 </thead>
                                 <tbody id="settings-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -357,12 +437,17 @@
                             </table>
                         </div>
                         
-                        <div id="settings-empty-state" class="hidden flex-col items-center justify-center py-12 px-4 text-center bg-slate-50/50">
+                        <div id="settings-empty-state" class="hidden flex-col items-center justify-center absolute inset-0 z-10 bg-slate-50/95 backdrop-blur-sm rounded-xl pb-12">
                             <div class="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center mb-3 shadow-sm">
                                 <svg class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
                             </div>
                             <h3 class="text-sm font-bold text-slate-800">No records found</h3>
                             <p class="text-slate-500 text-xs mt-1">Create your first entry to populate this list.</p>
+                        </div>
+                        
+                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between rounded-b-xl shrink-0 mt-auto z-20">
+                            <span class="text-xs font-medium text-slate-500" id="settings-page-info">Showing 0 entries</span>
+                            <div class="flex items-center gap-1" id="settings-pagination"></div>
                         </div>
                     </div>
                 </div>
@@ -565,6 +650,13 @@
         let pendingDeleteId = null;
         let pendingDeleteTicketId = null;
         
+        const ITEMS_PER_PAGE = 8;
+        let ticketsPage = 1;
+        let ticketsSearch = '';
+        let activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
+        let settingsPage = 1;
+        let settingsSearch = '';
+        
         const genId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2);
 
         // Enhanced Data Store with RBAC (Used as defaults/fallback)
@@ -664,6 +756,21 @@
             }
         }
 
+        function populateFilters() {
+            const pop = (id, type, allText) => {
+                const el = getEl(id);
+                if(el) {
+                    el.innerHTML = `<option value="">${allText}</option>` + (dataStore[type] || []).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
+                    el.value = activeFilters[type] || '';
+                }
+            };
+            pop('filter-acc', 'acc', 'All Accounts');
+            pop('filter-env', 'env', 'All Environments');
+            pop('filter-status', 'status', 'All Statuses');
+            pop('filter-sev', 'sev', 'All Priorities');
+            pop('filter-mod', 'mod', 'All Modules');
+        }
+
         function refreshActiveViews() {
             if(getEl('content-dashboard').classList.contains('active')) renderDashboard();
             if(getEl('content-tickets').classList.contains('active')) renderTickets();
@@ -712,6 +819,27 @@
             }
         }
 
+        function renderPaginationControls(containerId, currentPage, totalItems, actionName) {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+            let html = '';
+            
+            const prevDisabled = currentPage === 1;
+            html += `<button class="p-1 rounded-md ${prevDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-200 transition-colors'}" ${prevDisabled ? 'disabled' : ''} data-paginate="${actionName}" data-page="${currentPage - 1}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>`;
+            
+            for(let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="px-2.5 py-1 text-xs font-bold rounded-md ${currentPage === i ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200 transition-colors'}" data-paginate="${actionName}" data-page="${i}">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="px-1 text-xs text-slate-400">...</span>`;
+                }
+            }
+            
+            const nextDisabled = currentPage === totalPages;
+            html += `<button class="p-1 rounded-md ${nextDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-200 transition-colors'}" ${nextDisabled ? 'disabled' : ''} data-paginate="${actionName}" data-page="${currentPage + 1}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button>`;
+            
+            getEl(containerId).innerHTML = html;
+        }
+
         function switchView(targetId, title = '') {
             document.querySelectorAll('.nav-link').forEach(link => {
                 if(link.dataset.target === targetId) { link.classList.add('bg-white/5', 'text-white'); link.classList.remove('text-slate-400'); }
@@ -753,23 +881,54 @@
 
         function renderTickets() {
             const allowedTickets = getFilteredTickets();
-            getEl('tickets-table-body').innerHTML = allowedTickets.map(t => `
-                <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
-                    <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
-                    <td class="px-5 py-3 relative pr-28">
-                        <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800">${t.subject}</span>
-                        <span class="truncate block max-w-[250px] text-[10px] text-slate-500 mt-0.5 uppercase tracking-wide font-bold">${getName('acc', t.accId)}</span>
-                        <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
-                            <button class="btn-ticket-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${t.id}" title="View Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded" data-action="assign" data-id="${t.id}" title="Assign Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded" data-action="status" data-id="${t.id}" title="Update Status"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                            <button class="btn-ticket-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${t.id}" title="Delete Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-                        </div>
-                    </td>
-                    <td class="px-5 py-3 text-xs text-slate-500">${t.createdDate}</td>
-                    <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
-                </tr>
-            `).join('');
+            const filteredTickets = allowedTickets.filter(t => {
+                // Apply advanced dropdown filters
+                if (activeFilters.acc && t.accId !== activeFilters.acc) return false;
+                if (activeFilters.env && t.envId !== activeFilters.env) return false;
+                if (activeFilters.status && t.statusId !== activeFilters.status) return false;
+                if (activeFilters.sev && t.sevId !== activeFilters.sev) return false;
+                if (activeFilters.mod && t.modId !== activeFilters.mod) return false;
+
+                const s = ticketsSearch.toLowerCase();
+                if (!s) return true;
+                return t.id.toLowerCase().includes(s) || 
+                       t.subject.toLowerCase().includes(s) || 
+                       getName('acc', t.accId).toLowerCase().includes(s) ||
+                       getName('status', t.statusId).toLowerCase().includes(s) ||
+                       getName('sev', t.sevId).toLowerCase().includes(s);
+            });
+
+            const totalPages = Math.ceil(filteredTickets.length / ITEMS_PER_PAGE) || 1;
+            if (ticketsPage > totalPages) ticketsPage = totalPages;
+            
+            const start = (ticketsPage - 1) * ITEMS_PER_PAGE;
+            const paginatedTickets = filteredTickets.slice(start, start + ITEMS_PER_PAGE);
+
+            if(paginatedTickets.length === 0) {
+                getEl('tickets-table-body').innerHTML = `<tr><td colspan="4" class="px-5 py-12 text-center text-slate-500 text-xs italic">No matching tickets found.</td></tr>`;
+            } else {
+                getEl('tickets-table-body').innerHTML = paginatedTickets.map(t => `
+                    <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
+                        <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
+                        <td class="px-5 py-3 relative pr-28">
+                            <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800">${t.subject}</span>
+                            <span class="truncate block max-w-[250px] text-[10px] text-slate-500 mt-0.5 uppercase tracking-wide font-bold">${getName('acc', t.accId)}</span>
+                            <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
+                                <button class="btn-ticket-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${t.id}" title="View Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                <button class="btn-ticket-action p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded" data-action="assign" data-id="${t.id}" title="Assign Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></button>
+                                <button class="btn-ticket-action p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded" data-action="status" data-id="${t.id}" title="Update Status"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                <button class="btn-ticket-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${t.id}" title="Delete Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3 text-xs text-slate-500">${t.createdDate}</td>
+                        <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
+                    </tr>
+                `).join('');
+            }
+            
+            const end = Math.min(start + ITEMS_PER_PAGE, filteredTickets.length);
+            getEl('tickets-page-info').textContent = filteredTickets.length > 0 ? `Showing ${start + 1} to ${end} of ${filteredTickets.length} entries` : 'Showing 0 entries';
+            renderPaginationControls('tickets-pagination', ticketsPage, filteredTickets.length, 'tickets');
         }
 
         function renderSettings() {
@@ -793,18 +952,43 @@
             });
 
             const arr = dataStore[currentContext] || [];
-            if(arr.length === 0) {
+            const filteredArr = arr.filter(item => {
+                const s = settingsSearch.toLowerCase();
+                if(currentContext === 'users') {
+                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
+                } else if(currentContext === 'roles') {
+                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
+                } else if(currentContext === 'status') {
+                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
+                }
+                return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s);
+            });
+
+            if(filteredArr.length === 0 && arr.length === 0) {
                 getEl('settings-table-body').innerHTML = '';
                 getEl('settings-empty-state').classList.remove('hidden'); getEl('settings-empty-state').classList.add('flex');
+                getEl('settings-page-info').textContent = 'Showing 0 entries';
+                getEl('settings-pagination').innerHTML = '';
+            } else if (filteredArr.length === 0 && arr.length > 0) {
+                getEl('settings-empty-state').classList.add('hidden'); getEl('settings-empty-state').classList.remove('flex');
+                getEl('settings-table-body').innerHTML = `<tr><td colspan="4" class="px-5 py-12 text-center text-slate-500 text-xs italic">No matching records found.</td></tr>`;
+                getEl('settings-page-info').textContent = 'Showing 0 entries';
+                getEl('settings-pagination').innerHTML = '';
             } else {
                 getEl('settings-empty-state').classList.add('hidden'); getEl('settings-empty-state').classList.remove('flex');
                 
-                getEl('settings-table-body').innerHTML = arr.map(item => {
+                const totalPages = Math.ceil(filteredArr.length / ITEMS_PER_PAGE) || 1;
+                if (settingsPage > totalPages) settingsPage = totalPages;
+                
+                const start = (settingsPage - 1) * ITEMS_PER_PAGE;
+                const paginatedArr = filteredArr.slice(start, start + ITEMS_PER_PAGE);
+
+                getEl('settings-table-body').innerHTML = paginatedArr.map(item => {
                     let idCol = item.id;
-                    if(currentContext === 'users') idCol = `<div class="font-bold text-slate-800">${item.name}</div><div class="text-[10px] text-slate-500 font-normal">${item.id}</div>`;
+                    if(currentContext === 'users') idCol = `<div class="font-bold text-slate-800">${item.id}</div>`;
                     
                     let nameCol = item.name;
-                    if(currentContext === 'users') nameCol = `<span class="px-2 py-1 rounded bg-slate-100 text-[10px] font-bold text-slate-600">${getName('roles', item.roleId)}</span>`;
+                    if(currentContext === 'users') nameCol = `<div class="font-semibold text-slate-800">${item.name}</div><div class="mt-1"><span class="px-2 py-1 rounded bg-slate-100 text-[10px] font-bold text-slate-600">${getName('roles', item.roleId)}</span></div>`;
                     else if(currentContext === 'roles') nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] text-blue-600 font-bold mt-0.5">${item.type}</div>`;
                     else if(currentContext === 'status') {
                         let badgeColor = 'text-slate-500';
@@ -829,6 +1013,10 @@
                         <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.modifiedBy||'-'}</div><div class="text-[10px] text-slate-500">${item.modifiedDate||'-'}</div></td>
                     </tr>
                 `}).join('');
+                
+                const end = Math.min(start + ITEMS_PER_PAGE, filteredArr.length);
+                getEl('settings-page-info').textContent = `Showing ${start + 1} to ${end} of ${filteredArr.length} entries`;
+                renderPaginationControls('settings-pagination', settingsPage, filteredArr.length, 'settings');
             }
         }
 
@@ -967,10 +1155,45 @@
                 if (navBtn) switchView(navBtn.dataset.target, navBtn.querySelector('.nav-text').textContent);
                 
                 const subNavBtn = e.target.closest('.sub-nav-link');
-                if (subNavBtn) { currentContext = subNavBtn.dataset.context; switchView('settings', 'System Settings'); }
+                if (subNavBtn) {
+                    currentContext = subNavBtn.dataset.context;
+                    settingsPage = 1;
+                    settingsSearch = '';
+                    getEl('search-settings').value = '';
+                    switchView('settings', 'System Settings');
+                }
                 
-                if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) switchView('tickets', 'Tickets');
+                if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) {
+                    ticketsPage = 1; ticketsSearch = ''; activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' }; getEl('search-tickets').value = '';
+                    switchView('tickets', 'Tickets');
+                }
                 
+                // Toggle Filter Panel
+                if (e.target.closest('#btn-toggle-filters')) {
+                    const panel = getEl('tickets-filter-panel');
+                    panel.classList.toggle('hidden');
+                    if (!panel.classList.contains('hidden')) {
+                        populateFilters();
+                    }
+                }
+
+                // Clear Filters
+                if (e.target.closest('#btn-clear-filters')) {
+                    activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
+                    populateFilters();
+                    ticketsPage = 1;
+                    renderTickets();
+                }
+                
+                // Pagination Handlers
+                const pageBtn = e.target.closest('button[data-paginate]');
+                if (pageBtn && !pageBtn.disabled) {
+                    const action = pageBtn.dataset.paginate;
+                    const page = parseInt(pageBtn.dataset.page);
+                    if (action === 'tickets') { ticketsPage = page; renderTickets(); }
+                    if (action === 'settings') { settingsPage = page; renderSettings(); }
+                }
+
                 // Details Tabs
                 const tabBtn = e.target.closest('.detail-tab-btn');
                 if(tabBtn) switchDetailsTab(tabBtn.dataset.tab);
@@ -1222,6 +1445,73 @@
                     link.setAttribute("download", `iHelp_${currentContext}_template.csv`);
                     document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 }
+
+                // Table Data Export Handlers
+                if (e.target.closest('#btn-export-tickets')) {
+                    const allowedTickets = getFilteredTickets();
+                    const filteredTickets = allowedTickets.filter(t => {
+                        if (activeFilters.acc && t.accId !== activeFilters.acc) return false;
+                        if (activeFilters.env && t.envId !== activeFilters.env) return false;
+                        if (activeFilters.status && t.statusId !== activeFilters.status) return false;
+                        if (activeFilters.sev && t.sevId !== activeFilters.sev) return false;
+                        if (activeFilters.mod && t.modId !== activeFilters.mod) return false;
+
+                        const s = ticketsSearch.toLowerCase();
+                        if (!s) return true;
+                        return t.id.toLowerCase().includes(s) || 
+                               t.subject.toLowerCase().includes(s) || 
+                               getName('acc', t.accId).toLowerCase().includes(s) ||
+                               getName('status', t.statusId).toLowerCase().includes(s) ||
+                               getName('sev', t.sevId).toLowerCase().includes(s);
+                    });
+
+                    let csv = "Ticket ID,Subject,Account,Environment,Severity,Status,Created Date,Submitted By,Assignee\n";
+                    const escape = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+                    
+                    filteredTickets.forEach(t => {
+                        csv += `${escape(t.id)},${escape(t.subject)},${escape(getName('acc', t.accId))},${escape(getName('env', t.envId))},${escape(getName('sev', t.sevId))},${escape(getName('status', t.statusId))},${escape(t.createdDate)},${escape(t.submittedByEmail)},${escape(t.assigneeEmail)}\n`;
+                    });
+                    
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `iHelp_Tickets_Export_${getTodayStr()}.csv`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                }
+
+                if (e.target.closest('#btn-export-settings')) {
+                    const arr = dataStore[currentContext] || [];
+                    const filteredArr = arr.filter(item => {
+                        const s = settingsSearch.toLowerCase();
+                        if(currentContext === 'users') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
+                        if(currentContext === 'roles') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
+                        if(currentContext === 'status') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
+                        return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s);
+                    });
+
+                    let csv = "";
+                    const escape = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+                    
+                    if (currentContext === 'users') {
+                        csv = "Email Address,Full Name,Role,Created By,Created Date,Modified By,Modified Date\n";
+                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(getName('roles', i.roleId))},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    } else if (currentContext === 'roles') {
+                        csv = "Role ID,Role Name,Role Type,Created By,Created Date,Modified By,Modified Date\n";
+                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.type)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    } else if (currentContext === 'status') {
+                        csv = "Status ID,Status Name,Status Category,Created By,Created Date,Modified By,Modified Date\n";
+                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.type || 'Open-Start')},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    } else {
+                        csv = "ID Code,Display Name,Created By,Created Date,Modified By,Modified Date\n";
+                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    }
+
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `iHelp_${currentContext}_Export_${getTodayStr()}.csv`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                }
             });
 
             // Handle Keydowns
@@ -1229,6 +1519,38 @@
                 if (e.target.id === 'input-reply' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-reply').click(); }
                 if (e.target.id === 'internal-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-internal').click(); }
             });
+
+            // Filter Change Handlers
+            const filterPanel = getEl('tickets-filter-panel');
+            if(filterPanel) {
+                filterPanel.addEventListener('change', (e) => {
+                    if(e.target.id.startsWith('filter-')) {
+                        const key = e.target.id.replace('filter-', '');
+                        activeFilters[key] = e.target.value;
+                        ticketsPage = 1;
+                        renderTickets();
+                    }
+                });
+            }
+
+            // Search Handlers
+            const searchTicketsEl = getEl('search-tickets');
+            if (searchTicketsEl) {
+                searchTicketsEl.addEventListener('input', (e) => {
+                    ticketsSearch = e.target.value.trim();
+                    ticketsPage = 1;
+                    renderTickets();
+                });
+            }
+
+            const searchSettingsEl = getEl('search-settings');
+            if (searchSettingsEl) {
+                searchSettingsEl.addEventListener('input', (e) => {
+                    settingsSearch = e.target.value.trim();
+                    settingsPage = 1;
+                    renderSettings();
+                });
+            }
 
             // CSV Upload Handler setup
             const csvInput = getEl('input-csv-upload');
