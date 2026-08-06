@@ -324,6 +324,7 @@
                                             </select>
                                             <textarea id="internal-note-text" rows="1" placeholder="Add internal narration..." class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none custom-scrollbar"></textarea>
                                         </div>
+                                        <input type="url" id="internal-note-link" placeholder="Optional: Attach file URL (Image, Video, Document)..." class="w-full px-4 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50">
                                         <div class="flex justify-end">
                                             <button id="btn-send-internal" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm flex items-center gap-2">
                                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
@@ -1085,7 +1086,20 @@
                 if(n.tag === 'Finding') tagColor = 'bg-amber-100 text-amber-800';
                 if(n.tag === 'Recommendation') tagColor = 'bg-blue-100 text-blue-800';
                 if(n.tag === 'Resolution') tagColor = 'bg-emerald-100 text-emerald-800';
-                return `<div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm mb-3"><div class="flex justify-between items-center mb-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${tagColor}">${n.tag}</span><span class="text-[10px] font-bold text-slate-400">${n.sender} &bull; ${n.timestamp}</span></div><p class="text-sm text-slate-700">${n.text}</p></div>`;
+                
+                let attachmentHtml = '';
+                if (n.fileUrl) {
+                    const url = n.fileUrl.toLowerCase();
+                    if (url.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i)) {
+                        attachmentHtml = `<div class="mt-3 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center p-2"><img src="${n.fileUrl}" alt="Attachment" class="max-h-48 w-auto object-contain rounded"></div>`;
+                    } else if (url.match(/\.(mp4|webm|ogg)(\?.*)?$/i)) {
+                        attachmentHtml = `<div class="mt-3 rounded-lg overflow-hidden border border-slate-200 bg-black flex items-center justify-center"><video controls class="max-h-48 w-auto"><source src="${n.fileUrl}"></video></div>`;
+                    } else {
+                        attachmentHtml = `<div class="mt-3"><a href="${n.fileUrl}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-blue-600 transition-colors shadow-sm"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>View Attached File</a></div>`;
+                    }
+                }
+                
+                return `<div class="bg-white border border-slate-200 p-3 rounded-lg shadow-sm mb-3"><div class="flex justify-between items-center mb-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${tagColor}">${n.tag}</span><span class="text-[10px] font-bold text-slate-400">${n.sender} &bull; ${n.timestamp}</span></div><p class="text-sm text-slate-700 whitespace-pre-wrap">${n.text}</p>${attachmentHtml}</div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         }
@@ -1322,12 +1336,15 @@
                 }
                 if (e.target.closest('#btn-send-internal')) {
                     const input = getEl('internal-note-text'); const text = input.value.trim();
-                    if(text && currentViewedTicketId) {
+                    const linkInput = getEl('internal-note-link'); const link = linkInput ? linkInput.value.trim() : '';
+                    
+                    if((text || link) && currentViewedTicketId) {
                         const tag = getEl('internal-note-tag').value;
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         const noteId = genId();
-                        await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text });
+                        await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text, fileUrl: link });
                         input.value = '';
+                        if(linkInput) linkInput.value = '';
                     }
                 }
                 
