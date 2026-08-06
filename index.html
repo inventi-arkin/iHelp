@@ -53,6 +53,7 @@
 </head>
 <body class="text-slate-800 h-screen w-screen flex relative overflow-hidden">
 
+    <!-- LOGIN VIEW -->
     <div id="view-login" class="view-section active fixed inset-0 flex items-center justify-center bg-slate-900 overflow-hidden">
         <div class="absolute inset-0 pointer-events-none z-0">
             <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
@@ -83,7 +84,9 @@
         </div>
     </div>
 
+    <!-- MAIN APP VIEW -->
     <div id="view-app" class="view-section fixed inset-0 flex h-full w-full bg-slate-50">
+        <!-- Sidebar -->
         <aside class="sidebar bg-[#0f172a] flex flex-col z-30 text-white shrink-0 shadow-xl overflow-hidden whitespace-nowrap border-r border-slate-800 relative" id="app-sidebar">
             <div class="h-16 flex items-center px-6 border-b border-white/5 shrink-0">
                 <div class="sidebar-brand-icon w-full items-center justify-center font-bold text-xl text-blue-500">
@@ -126,6 +129,7 @@
                             <li><button data-target="settings" data-context="sev" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Severities</button></li>
                             <li><button data-target="settings" data-context="status" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Statuses</button></li>
                             <li><button data-target="settings" data-context="mod" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">Modules</button></li>
+                            <li><button data-target="settings" data-context="sla" class="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/5 rounded-md transition-colors nav-text sub-nav-link">SLA Policies</button></li>
                         </ul>
                     </div>
                 </li>
@@ -139,6 +143,7 @@
             </div>
         </aside>
 
+        <!-- Main Content Area -->
         <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative h-full">
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 w-full shadow-sm">
                 <div class="flex items-center gap-4">
@@ -157,6 +162,7 @@
 
             <div class="flex-1 overflow-auto custom-scrollbar relative">
                 
+                <!-- CONTENT: Dashboard -->
                 <div id="content-dashboard" class="content-section active p-6 max-w-7xl mx-auto w-full">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
@@ -195,6 +201,7 @@
                     </div>
                 </div>
 
+                <!-- CONTENT: Tickets -->
                 <div id="content-tickets" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
@@ -269,6 +276,7 @@
                     </div>
                 </div>
 
+                <!-- CONTENT: Ticket Details -->
                 <div id="content-ticket-details" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex items-center gap-3 mb-6">
                         <button id="btn-back-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
@@ -357,6 +365,10 @@
                                 
                                 <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
                                     <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">SLA Policy</label>
+                                        <div id="detail-sla" class="mt-1"></div>
+                                    </div>
+                                    <div>
                                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Severity</label>
                                         <div id="detail-severity" class="mt-1"></div>
                                     </div>
@@ -381,6 +393,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- CONTENT: Settings -->
                 <div id="content-settings" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
@@ -457,16 +471,18 @@
         </main>
     </div>
 
+    <!-- MODALS -->
+
     <!-- Unified CRUD Modal -->
     <div id="crud-modal" class="fixed inset-0 z-[200] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="crud-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
                     <h3 id="modal-crud-title" class="text-sm font-bold text-slate-900">Manage Record</h3>
                     <button id="btn-close-crud" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
-                <div class="p-5 space-y-4">
+                <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <input type="hidden" id="setting-internal-id">
                     <input type="hidden" id="setting-is-new">
                     <div>
@@ -477,12 +493,12 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-name">Display Name *</label>
                         <input type="text" id="setting-name" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
                     </div>
-                    <!-- Role Dropdown (Only for Users) -->
+                    <!-- Role Dropdown -->
                     <div id="setting-role-container" class="hidden">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Role *</label>
                         <select id="setting-role" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100"></select>
                     </div>
-                    <!-- Role Type Dropdown (Only for Roles) -->
+                    <!-- Role Type Dropdown -->
                     <div id="setting-role-type-container" class="hidden">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Role Type *</label>
                         <select id="setting-role-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
@@ -492,7 +508,7 @@
                             <option value="Root">Root (Super Administrator)</option>
                         </select>
                     </div>
-                    <!-- Status Category Dropdown (Only for Statuses) -->
+                    <!-- Status Category Dropdown -->
                     <div id="setting-status-type-container" class="hidden">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Category *</label>
                         <select id="setting-status-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
@@ -501,8 +517,30 @@
                             <option value="Closed-End">Closed-End (Resolved/Closed)</option>
                         </select>
                     </div>
+                    <!-- SLA Configuration -->
+                    <div id="setting-sla-container" class="hidden pt-2 border-t border-slate-100">
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Resolution Time (Hours) *</label>
+                            <input type="number" id="setting-sla-hours" min="1" value="24" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                        </div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Workflow Lifecycle (Status Path)</label>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                                <select id="sla-step-start" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white"></select>
+                            </div>
+                            <div id="sla-middle-steps" class="space-y-3 pl-3 ml-3 border-l-2 border-slate-200 py-2"></div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                                <select id="sla-step-end" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white"></select>
+                            </div>
+                            <button type="button" id="btn-add-sla-step" class="w-full mt-3 py-2 border border-dashed border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-800 rounded-md text-xs font-bold transition-colors bg-white">
+                                + Add Intermediate Step
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
+                <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50 shrink-0">
                     <button id="btn-cancel-crud" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
                     <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Save Record</button>
                 </div>
@@ -530,9 +568,15 @@
                             <select id="new-ticket-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity *</label>
-                        <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity *</label>
+                            <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">SLA Policy *</label>
+                            <select id="new-ticket-sla" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Subject *</label>
@@ -619,7 +663,7 @@
         </div>
     </div>
 
-    <!-- -->
+    <!-- MAIN SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -660,7 +704,7 @@
         
         const genId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2);
 
-        // Enhanced Data Store with RBAC (Used as defaults/fallback)
+        // Enhanced Data Store with RBAC & SLA
         const dataStore = {
             roles: [
                 { id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
@@ -691,9 +735,13 @@
                 { id: 'STAT-RES', name: 'Resolved', type: 'Closed-End', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             mod: [],
+            sla: [
+                { id: 'SLA-STD', name: 'Standard 24h Resolution', hours: 24, steps: ['STAT-OPN', 'STAT-INP', 'STAT-RES'], createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'SLA-CRIT', name: 'Critical 4h Resolution', hours: 4, steps: ['STAT-OPN', 'STAT-INP', 'STAT-APP', 'STAT-RES'], createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+            ],
             tickets: [
-                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001' },
-                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001' }
+                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-CRIT' },
+                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-STD' }
             ],
             messages: [
                 { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned.' }
@@ -705,7 +753,7 @@
 
         // --- CLOUD SYNC & DB WRAPPERS ---
         async function initCloudSync() {
-            const collections = ['users', 'roles', 'acc', 'env', 'sev', 'status', 'mod', 'tickets', 'messages', 'internalNotes'];
+            const collections = ['users', 'roles', 'acc', 'env', 'sev', 'status', 'mod', 'sla', 'tickets', 'messages', 'internalNotes'];
             
             // Seed Firestore with defaults if empty
             try {
@@ -786,7 +834,6 @@
                 }
             }
         }
-        // --------------------------------
 
         function getName(type, id) { const item = (dataStore[type] || []).find(x => x.id === id); return item ? item.name : id; }
         function getUserName(email) { const u = dataStore.users.find(x => x.id === email); return u ? u.name : email; }
@@ -894,7 +941,6 @@
         function renderTickets() {
             const allowedTickets = getFilteredTickets();
             const filteredTickets = allowedTickets.filter(t => {
-                // Apply advanced dropdown filters
                 if (activeFilters.acc && t.accId !== activeFilters.acc) return false;
                 if (activeFilters.env && t.envId !== activeFilters.env) return false;
                 if (activeFilters.status && t.statusId !== activeFilters.status) return false;
@@ -944,7 +990,7 @@
         }
 
         function renderSettings() {
-            const titles = { users: 'Manage Users', roles: 'Manage Roles', acc: 'Manage Accounts', env: 'Manage Environments', sev: 'Manage Severities', status: 'Manage Statuses', mod: 'Manage Modules' };
+            const titles = { users: 'Manage Users', roles: 'Manage Roles', acc: 'Manage Accounts', env: 'Manage Environments', sev: 'Manage Severities', status: 'Manage Statuses', mod: 'Manage Modules', sla: 'Manage SLA Policies' };
             getEl('settings-page-title').textContent = titles[currentContext] || 'Manage Settings';
             
             // Dynamic Table Headers
@@ -954,6 +1000,8 @@
                 getEl('settings-th-1').textContent = 'Role ID'; getEl('settings-th-2').textContent = 'Role Details';
             } else if (currentContext === 'status') {
                 getEl('settings-th-1').textContent = 'Status ID'; getEl('settings-th-2').textContent = 'Status Details';
+            } else if (currentContext === 'sla') {
+                getEl('settings-th-1').textContent = 'SLA ID'; getEl('settings-th-2').textContent = 'Workflow Details';
             } else {
                 getEl('settings-th-1').textContent = 'ID Code'; getEl('settings-th-2').textContent = 'Display Name';
             }
@@ -968,9 +1016,7 @@
                 const s = settingsSearch.toLowerCase();
                 if(currentContext === 'users') {
                     return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
-                } else if(currentContext === 'roles') {
-                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
-                } else if(currentContext === 'status') {
+                } else if(currentContext === 'roles' || currentContext === 'status') {
                     return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
                 }
                 return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s);
@@ -1009,6 +1055,10 @@
                         if(item.type === 'Closed-End') badgeColor = 'text-emerald-500';
                         nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] ${badgeColor} font-bold mt-0.5">${item.type || 'Open-Start'}</div>`;
                     }
+                    else if(currentContext === 'sla') {
+                        const stepsHtml = (item.steps||[]).map(s => getName('status', s)).join(' <span class="mx-1 text-slate-300">&rarr;</span> ');
+                        nameCol = `<div class="font-semibold text-slate-800">${item.name} <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">${item.hours}H Target</span></div><div class="text-[10px] text-slate-500 font-medium mt-1.5 flex items-center flex-wrap">${stepsHtml}</div>`;
+                    }
 
                     return `
                     <tr class="hover:bg-slate-50 transition-colors group relative">
@@ -1045,8 +1095,16 @@
             getEl('detail-account').textContent = getName('acc', ticket.accId);
             getEl('detail-env').textContent = getName('env', ticket.envId);
             getEl('detail-severity').innerHTML = getSevBadge(ticket.sevId);
+            getEl('detail-sla').innerHTML = ticket.slaId ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold">${getName('sla', ticket.slaId)}</span>` : '-';
             
-            getEl('detail-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join('');
+            // Restrict status dropdown to ONLY the statuses in the SLA workflow
+            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
+            let allowedStatuses = dataStore.status;
+            if (ticketSla && ticketSla.steps && ticketSla.steps.length > 0) {
+                allowedStatuses = dataStore.status.filter(s => ticketSla.steps.includes(s.id));
+            }
+            getEl('detail-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join('');
+            
             getEl('detail-assignee-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join('');
             
             if(currentUserRoleType === 'Admin' || currentUserRoleType === 'Root') {
@@ -1251,7 +1309,18 @@
                     if (action === 'view') { openTicketDetails(ticketId); } 
                     else if (action === 'status') {
                         const ticket = dataStore.tickets.find(t => t.id === ticketId);
-                        if (ticket) { currentViewedTicketId = ticket.id; getEl('quick-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); getEl('quick-status-modal').classList.remove('hidden'); }
+                        if (ticket) { 
+                            currentViewedTicketId = ticket.id; 
+                            
+                            // Restrict quick-status to the SLA workflow steps
+                            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
+                            let allowedStatuses = dataStore.status;
+                            if (ticketSla && ticketSla.steps && ticketSla.steps.length > 0) {
+                                allowedStatuses = dataStore.status.filter(s => ticketSla.steps.includes(s.id));
+                            }
+                            getEl('quick-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); 
+                            getEl('quick-status-modal').classList.remove('hidden'); 
+                        }
                     } 
                     else if (action === 'assign') {
                         const ticket = dataStore.tickets.find(t => t.id === ticketId);
@@ -1348,110 +1417,129 @@
                     }
                 }
                 
-                // Settings CRUD
-                if (e.target.closest('#btn-add-setting')) {
-                    getEl('modal-crud-title').textContent = "Add Record";
-                    getEl('setting-id').value = ''; getEl('setting-id').disabled = false;
-                    getEl('setting-name').value = '';
-                    getEl('setting-is-new').value = 'true';
-                    getEl('btn-save-crud').style.display = 'block';
+                // Settings CRUD Open/Edit Action
+                if (e.target.closest('#btn-add-setting') || e.target.closest('.btn-crud-action[data-action="edit"]') || e.target.closest('.btn-crud-action[data-action="view"]')) {
+                    const btn = e.target.closest('#btn-add-setting') ? e.target.closest('#btn-add-setting') : e.target.closest('.btn-crud-action');
+                    const isAdd = btn.id === 'btn-add-setting';
+                    const action = isAdd ? 'add' : btn.dataset.action;
+                    const id = isAdd ? null : btn.dataset.id;
+                    const item = isAdd ? null : (dataStore[currentContext]||[]).find(x => x.id === id);
+
+                    // Setup Base Form
+                    getEl('setting-id').value = item ? item.id : ''; getEl('setting-id').disabled = !isAdd;
+                    getEl('setting-name').value = item ? item.name : ''; getEl('setting-name').disabled = action === 'view';
+                    getEl('setting-is-new').value = isAdd ? 'true' : 'false';
                     
-                    getEl('setting-role').disabled = false;
-                    getEl('setting-role-type').disabled = false;
-                    getEl('setting-role-type').value = 'System User';
-                    getEl('setting-status-type').disabled = false;
-                    getEl('setting-status-type').value = 'Open-Start';
-                    
+                    // Setup specific fields visibility & disabled state
+                    getEl('setting-role-container').classList.add('hidden');
+                    getEl('setting-role-type-container').classList.add('hidden');
+                    getEl('setting-status-type-container').classList.add('hidden');
+                    getEl('setting-sla-container').classList.add('hidden');
+
+                    const formDisabled = action === 'view';
+                    getEl('btn-save-crud').style.display = formDisabled ? 'none' : 'block';
+
                     if (currentContext === 'users') {
+                        getEl('modal-crud-title').textContent = isAdd ? "Add User" : (action === 'edit' ? "Edit User" : "View User");
                         getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
-                        getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
-                        getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                        getEl('setting-role-container').classList.remove('hidden');
+                        getEl('setting-role').innerHTML = (dataStore.roles||[]).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                        getEl('setting-role').disabled = formDisabled;
+                        if(item) getEl('setting-role').value = item.roleId;
+
                     } else if (currentContext === 'roles') {
+                        getEl('modal-crud-title').textContent = isAdd ? "Add Role" : (action === 'edit' ? "Edit Role" : "View Role");
                         getEl('label-setting-id').textContent = 'Role ID (e.g. ROLE-01) *'; getEl('label-setting-name').textContent = 'Role Name *';
-                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden'); getEl('setting-status-type-container').classList.add('hidden');
+                        getEl('setting-role-type-container').classList.remove('hidden');
+                        getEl('setting-role-type').disabled = formDisabled;
+                        getEl('setting-role-type').value = item ? item.type : 'System User';
+
                     } else if (currentContext === 'status') {
+                        getEl('modal-crud-title').textContent = isAdd ? "Add Status" : (action === 'edit' ? "Edit Status" : "View Status");
                         getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
-                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.remove('hidden');
+                        getEl('setting-status-type-container').classList.remove('hidden');
+                        getEl('setting-status-type').disabled = formDisabled;
+                        getEl('setting-status-type').value = item ? (item.type || 'Open-Start') : 'Open-Start';
+
+                    } else if (currentContext === 'sla') {
+                        getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : "View SLA Policy");
+                        getEl('label-setting-id').textContent = 'SLA ID Code *'; getEl('label-setting-name').textContent = 'Policy Name *';
+                        getEl('setting-sla-container').classList.remove('hidden');
+                        getEl('setting-sla-hours').disabled = formDisabled;
+                        getEl('setting-sla-hours').value = item ? (item.hours || 24) : 24;
+
+                        // Setup SLA Workflow Selects
+                        const optsStart = dataStore.status.filter(s => s.type === 'Open-Start').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                        const optsEnd = dataStore.status.filter(s => s.type === 'Closed-End').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                        const optsMid = dataStore.status.filter(s => s.type === 'Open-Ongoing').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                        
+                        getEl('sla-step-start').innerHTML = optsStart; getEl('sla-step-start').disabled = formDisabled;
+                        getEl('sla-step-end').innerHTML = optsEnd; getEl('sla-step-end').disabled = formDisabled;
+                        const midContainer = getEl('sla-middle-steps'); midContainer.innerHTML = ''; // reset
+                        getEl('btn-add-sla-step').style.display = formDisabled ? 'none' : 'block';
+
+                        if (item && item.steps && item.steps.length > 0) {
+                            getEl('sla-step-start').value = item.steps[0];
+                            if(item.steps.length > 1) getEl('sla-step-end').value = item.steps[item.steps.length - 1];
+                            for(let i = 1; i < item.steps.length - 1; i++) {
+                                const div = document.createElement('div'); div.className = 'flex items-center gap-3 sla-mid-row';
+                                div.innerHTML = `<div class="w-12 h-[2px] bg-slate-300"></div><select class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white sla-mid-sel" ${formDisabled ? 'disabled' : ''}>${optsMid}</select><button type="button" onclick="this.closest('.sla-mid-row').remove()" class="text-slate-400 hover:text-red-600 p-1 rounded transition-colors ${formDisabled ? 'hidden' : ''}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>`;
+                                div.querySelector('.sla-mid-sel').value = item.steps[i];
+                                midContainer.appendChild(div);
+                            }
+                        }
+
                     } else {
+                        getEl('modal-crud-title').textContent = isAdd ? "Add Record" : (action === 'edit' ? "Edit Record" : "View Record");
                         getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
-                        getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
                     }
                     getEl('crud-modal').classList.remove('hidden');
                 }
-                
-                const crudBtn = e.target.closest('.btn-crud-action');
-                if (crudBtn) {
-                    const action = crudBtn.dataset.action; const id = crudBtn.dataset.id;
-                    const item = dataStore[currentContext].find(x => x.id === id);
-                    if (action === 'del') { pendingDeleteId = id; getEl('delete-confirm-modal').classList.remove('hidden'); } 
-                    else if (item) {
-                        getEl('setting-id').value = item.id; getEl('setting-name').value = item.name;
-                        getEl('setting-is-new').value = 'false';
-                        
-                        if (currentContext === 'users') {
-                            getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
-                            getEl('setting-role-container').classList.remove('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
-                            getEl('setting-role').innerHTML = dataStore.roles.map(r => `<option value="${r.id}" ${r.id === item.roleId ? 'selected' : ''}>${r.name}</option>`).join('');
-                        } else if (currentContext === 'roles') {
-                            getEl('label-setting-id').textContent = 'Role ID *'; getEl('label-setting-name').textContent = 'Role Name *';
-                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.remove('hidden'); getEl('setting-status-type-container').classList.add('hidden');
-                            getEl('setting-role-type').value = item.type;
-                        } else if (currentContext === 'status') {
-                            getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
-                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.remove('hidden');
-                            getEl('setting-status-type').value = item.type || 'Open-Start';
-                        } else {
-                            getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
-                            getEl('setting-role-container').classList.add('hidden'); getEl('setting-role-type-container').classList.add('hidden'); getEl('setting-status-type-container').classList.add('hidden');
-                        }
 
-                        if (action === 'view') {
-                            getEl('modal-crud-title').textContent = "View Record";
-                            getEl('setting-id').disabled = true; getEl('setting-name').disabled = true;
-                            if(currentContext === 'users') getEl('setting-role').disabled = true;
-                            if(currentContext === 'roles') getEl('setting-role-type').disabled = true;
-                            if(currentContext === 'status') getEl('setting-status-type').disabled = true;
-                            getEl('btn-save-crud').style.display = 'none';
-                        } else if (action === 'edit') {
-                            getEl('modal-crud-title').textContent = "Edit Record";
-                            getEl('setting-id').disabled = true; // Block changing ID to prevent DB drift
-                            getEl('setting-name').disabled = false;
-                            if(currentContext === 'users') getEl('setting-role').disabled = false;
-                            if(currentContext === 'roles') getEl('setting-role-type').disabled = false;
-                            if(currentContext === 'status') getEl('setting-status-type').disabled = false;
-                            getEl('btn-save-crud').style.display = 'block';
-                        }
-                        getEl('crud-modal').classList.remove('hidden');
-                    }
+                // Add SLA Middle Step
+                if (e.target.closest('#btn-add-sla-step')) {
+                    const optsMid = dataStore.status.filter(s => s.type === 'Open-Ongoing').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                    const div = document.createElement('div'); div.className = 'flex items-center gap-3 sla-mid-row';
+                    div.innerHTML = `<div class="w-12 h-[2px] bg-slate-300"></div><select class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white sla-mid-sel">${optsMid}</select><button type="button" onclick="this.closest('.sla-mid-row').remove()" class="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>`;
+                    getEl('sla-middle-steps').appendChild(div);
                 }
 
                 if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) getEl('crud-modal').classList.add('hidden');
                 
+                // Save Settings CRUD
                 if (e.target.closest('#btn-save-crud')) {
                     const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim();
                     const isNew = getEl('setting-is-new').value === 'true';
                     if(!idVal || !nameVal) return;
                     
-                    const existing = dataStore[currentContext].find(x => x.id === idVal);
+                    const existing = (dataStore[currentContext]||[]).find(x => x.id === idVal);
                     
                     const newItem = {
-                        id: idVal,
-                        name: nameVal,
+                        id: idVal, name: nameVal,
                         createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
                         createdDate: isNew ? getTodayStr() : (existing ? existing.createdDate : getTodayStr()),
-                        modifiedBy: currentUser,
-                        modifiedDate: getTodayStr()
+                        modifiedBy: currentUser, modifiedDate: getTodayStr()
                     };
 
                     if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
                     if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
                     if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
+                    if (currentContext === 'sla') {
+                        newItem.hours = parseInt(getEl('setting-sla-hours').value) || 24;
+                        let sPath = [getEl('sla-step-start').value];
+                        document.querySelectorAll('.sla-mid-sel').forEach(sel => sPath.push(sel.value));
+                        sPath.push(getEl('sla-step-end').value);
+                        newItem.steps = sPath.filter(Boolean); // Clean any empty values
+                    }
 
                     await dbSave(currentContext, idVal, newItem);
                     getEl('crud-modal').classList.add('hidden');
                 }
                 
                 // Delete Confirmation Flow
+                const delBtn = e.target.closest('.btn-crud-action[data-action="del"]');
+                if (delBtn) { pendingDeleteId = delBtn.dataset.id; getEl('delete-confirm-modal').classList.remove('hidden'); }
+                
                 if (e.target.closest('#btn-cancel-delete') || e.target.closest('#delete-modal-bg')) {
                     getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
                 }
@@ -1463,7 +1551,7 @@
                 // Create Ticket Flow
                 if (e.target.closest('#btn-new-ticket')) {
                     const popSel = (id, type) => getEl(id).innerHTML = (dataStore[type]||[]).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
-                    popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev');
+                    popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev'); popSel('new-ticket-sla', 'sla');
                     getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = '';
                     getEl('ticket-modal').classList.remove('hidden');
                 }
@@ -1472,9 +1560,12 @@
                     const subj = getEl('new-ticket-subject').value.trim(); const desc = getEl('new-ticket-desc').value.trim();
                     if(!subj || !desc) return;
                     const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
+                    const slaId = getEl('new-ticket-sla').value;
+                    const defaultStatus = (dataStore.sla.find(s => s.id === slaId)?.steps || ['STAT-OPN'])[0]; // Default to first step of the assigned SLA
+                    
                     await dbSave('tickets', newId, {
                         id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
-                        statusId: 'STAT-OPN', accId: getEl('new-ticket-acc').value, envId: getEl('new-ticket-env').value, sevId: getEl('new-ticket-sev').value
+                        statusId: defaultStatus, accId: getEl('new-ticket-acc').value, envId: getEl('new-ticket-env').value, sevId: getEl('new-ticket-sev').value, slaId: slaId
                     });
                     getEl('ticket-modal').classList.add('hidden');
                 }
@@ -1484,6 +1575,7 @@
                     let csvContent = "ID Code,Display Name\n";
                     if(currentContext === 'users') csvContent = "Email Address,Full Name\n";
                     else if(currentContext === 'roles') csvContent = "Role ID,Role Name\n";
+                    else if(currentContext === 'sla') csvContent = "SLA ID,SLA Name\n";
                     csvContent += "TEST-001,Example Data 1\nTEST-002,Example Data 2";
                     
                     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1549,6 +1641,12 @@
                     } else if (currentContext === 'status') {
                         csv = "Status ID,Status Name,Status Category,Created By,Created Date,Modified By,Modified Date\n";
                         filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.type || 'Open-Start')},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    } else if (currentContext === 'sla') {
+                        csv = "SLA ID,SLA Name,Target Hours,Workflow Steps,Created By,Created Date,Modified By,Modified Date\n";
+                        filteredArr.forEach(i => {
+                            const stepsStr = (i.steps||[]).map(s => getName('status', s)).join(' -> ');
+                            csv += `${escape(i.id)},${escape(i.name)},${escape(i.hours)},${escape(stepsStr)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`;
+                        });
                     } else {
                         csv = "ID Code,Display Name,Created By,Created Date,Modified By,Modified Date\n";
                         filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
@@ -1617,10 +1715,11 @@
                                 const cols = rows[i].split(',').map(c => c.trim());
                                 if (cols.length >= 2) {
                                     const idVal = cols[0]; const nameVal = cols[1];
-                                    if (idVal && nameVal && !dataStore[currentContext].find(x => x.id === idVal)) {
+                                    if (idVal && nameVal && !(dataStore[currentContext]||[]).find(x => x.id === idVal)) {
                                         const newItem = { id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
                                         if (currentContext === 'users') newItem.roleId = 'ROLE-USER';
                                         if (currentContext === 'roles') newItem.type = 'System User';
+                                        if (currentContext === 'sla') { newItem.hours = 24; newItem.steps = ['STAT-OPN', 'STAT-RES']; }
                                         await dbSave(currentContext, idVal, newItem);
                                     }
                                 }
