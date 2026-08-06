@@ -49,6 +49,13 @@
         
         .action-tooltip { opacity: 0; visibility: hidden; transform: translateX(10px); transition: all 0.2s ease; }
         tr.group:hover .action-tooltip { opacity: 1; visibility: visible; transform: translateX(0); }
+
+        /* Workflow Graph Canvas Styles */
+        .wf-node { position: absolute; user-select: none; cursor: grab; transition: box-shadow 0.2s; z-index: 20; pointer-events: auto; }
+        .wf-node:active { cursor: grabbing; z-index: 30; }
+        .wf-link-bg { fill: none; stroke: rgba(0,0,0,0.01); stroke-width: 20; cursor: pointer; pointer-events: stroke; }
+        .wf-link-line { fill: none; stroke-width: 2.5; transition: stroke-width 0.2s, stroke 0.2s; pointer-events: none; }
+        .wf-link-bg:hover + .wf-link-line { stroke-width: 4 !important; stroke: #ef4444 !important; }
     </style>
 </head>
 <body class="text-slate-800 h-screen w-screen flex relative overflow-hidden">
@@ -344,7 +351,7 @@
                             </div>
                         </div>
 
-                        <!-- Properties Sidebar -->
+                        <!-- Properties Sidebar (Admin Override Enabled) -->
                         <div class="space-y-6">
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
                                 <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Ticket Properties</h3>
@@ -352,13 +359,30 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
-                                        <select id="detail-status-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white transition-colors"></select>
+                                        <select id="detail-status-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
                                     </div>
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Assignee</label>
-                                        <select id="detail-assignee-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white transition-colors"></select>
+                                        <select id="detail-assignee-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
                                     </div>
-                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Severity</label>
+                                        <select id="detail-severity-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Module</label>
+                                        <select id="detail-module-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Account</label>
+                                        <select id="detail-account-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Environment</label>
+                                        <select id="detail-env-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
+                                    </div>
+                                    
+                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
                                         Save Properties
                                     </button>
                                 </div>
@@ -366,19 +390,7 @@
                                 <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">SLA Policy</label>
-                                        <div id="detail-sla" class="mt-1"></div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Severity</label>
-                                        <div id="detail-severity" class="mt-1"></div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account</label>
-                                        <div id="detail-account" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Environment</label>
-                                        <div id="detail-env" class="text-sm font-semibold text-slate-700 mt-0.5"></div>
+                                        <div id="detail-sla" class="mt-1 flex items-center justify-between"></div>
                                     </div>
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Submitted By</label>
@@ -473,43 +485,48 @@
 
     <!-- MODALS -->
 
-    <!-- Unified CRUD Modal -->
+    <!-- Unified CRUD Modal with SLA Graph Builder -->
     <div id="crud-modal" class="fixed inset-0 z-[200] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="crud-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
-                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl shrink-0">
                     <h3 id="modal-crud-title" class="text-sm font-bold text-slate-900">Manage Record</h3>
                     <button id="btn-close-crud" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
-                <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div class="p-5 flex-1 min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                     <input type="hidden" id="setting-internal-id">
                     <input type="hidden" id="setting-is-new">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-id">ID Code *</label>
-                        <input type="text" id="setting-id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 shrink-0">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-id">ID Code *</label>
+                            <input type="text" id="setting-id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-name">Display Name *</label>
+                            <input type="text" id="setting-name" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5" id="label-setting-name">Display Name *</label>
-                        <input type="text" id="setting-name" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
-                    </div>
+
                     <!-- Role Dropdown -->
-                    <div id="setting-role-container" class="hidden">
+                    <div id="setting-role-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Role *</label>
                         <select id="setting-role" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100"></select>
                     </div>
                     <!-- Role Type Dropdown -->
-                    <div id="setting-role-type-container" class="hidden">
+                    <div id="setting-role-type-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Role Type *</label>
                         <select id="setting-role-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
                             <option value="System User">System User (Own Tickets Only)</option>
                             <option value="Approver">Approver (For Approval Only)</option>
-                            <option value="Admin">Admin (All Access)</option>
+                            <option value="Admin">Admin (Status & Comms Only)</option>
+                            <option value="Admin Override">Admin Override (Full Ticket Edit)</option>
                             <option value="Root">Root (Super Administrator)</option>
                         </select>
                     </div>
                     <!-- Status Category Dropdown -->
-                    <div id="setting-status-type-container" class="hidden">
+                    <div id="setting-status-type-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Category *</label>
                         <select id="setting-status-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
                             <option value="Open-Start">Open-Start (Initial state)</option>
@@ -517,26 +534,48 @@
                             <option value="Closed-End">Closed-End (Resolved/Closed)</option>
                         </select>
                     </div>
-                    <!-- SLA Configuration -->
-                    <div id="setting-sla-container" class="hidden pt-2 border-t border-slate-100">
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Resolution Time (Hours) *</label>
-                            <input type="number" id="setting-sla-hours" min="1" value="24" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                    
+                    <!-- Advanced SLA Configuration -->
+                    <div id="setting-sla-container" class="hidden flex-col gap-4 flex-1 min-h-0">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 shrink-0 pt-2 border-t border-slate-100">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Time (Hours) *</label>
+                                <input type="number" id="setting-sla-hours" min="1" value="24" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Environment Match *</label>
+                                <select id="setting-sla-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity Match *</label>
+                                <select id="setting-sla-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500"></select>
+                            </div>
                         </div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Workflow Lifecycle (Status Path)</label>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">1</span>
-                                <select id="sla-step-start" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white"></select>
+                        
+                        <div class="flex-1 flex flex-col min-h-[350px]">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Workflow Graph Builder</label>
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-start gap-2 relative flex-1">
+                                <p class="text-xs text-slate-500 mb-2 shrink-0">Drag boxes to map flow. Click <b>Link</b> to map transitions. Click a line to delete.</p>
+                                
+                                <div class="w-full flex items-center justify-between mb-2 shrink-0 relative z-50">
+                                    <button type="button" id="btn-wf-fullscreen" class="flex flex-col items-center justify-center bg-white border border-slate-300 p-1.5 rounded shadow-sm hover:bg-slate-50 text-slate-700 focus:outline-none transition-colors">
+                                        <svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg>
+                                        <span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>
+                                    </button>
+                                    <div id="wf-add-controls" class="flex items-center gap-2">
+                                        <select id="wf-add-status-select" class="px-2 py-1.5 text-xs font-medium border border-slate-300 rounded shadow-sm outline-none focus:border-blue-500 bg-white"></select>
+                                        <button type="button" id="btn-wf-add" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors">+ Add Box</button>
+                                    </div>
+                                </div>
+
+                                <div id="workflow-canvas-container" class="relative w-full flex-1 bg-[#0f172a] rounded-lg overflow-hidden border border-slate-700 transition-all min-h-[300px]" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0); background-size: 20px 20px;">
+                                    <svg id="workflow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-10">
+                                        <defs id="workflow-defs"></defs>
+                                        <g id="workflow-lines-layer"></g>
+                                    </svg>
+                                    <div id="workflow-nodes-layer" class="absolute inset-0 w-full h-full z-20 pointer-events-none"></div>
+                                </div>
                             </div>
-                            <div id="sla-middle-steps" class="space-y-3 pl-3 ml-3 border-l-2 border-slate-200 py-2"></div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                                <select id="sla-step-end" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white"></select>
-                            </div>
-                            <button type="button" id="btn-add-sla-step" class="w-full mt-3 py-2 border border-dashed border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-800 rounded-md text-xs font-bold transition-colors bg-white">
-                                + Add Intermediate Step
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -548,7 +587,7 @@
         </div>
     </div>
 
-    <!-- Create Ticket Modal -->
+    <!-- Create Ticket Modal (Auto-Assigns SLA) -->
     <div id="ticket-modal" class="fixed inset-0 z-[200] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="ticket-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -564,18 +603,18 @@
                             <select id="new-ticket-acc" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Environment *</label>
-                            <select id="new-ticket-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Module *</label>
+                            <select id="new-ticket-mod" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity *</label>
-                            <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Environment *</label>
+                            <select id="new-ticket-env" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">SLA Policy *</label>
-                            <select id="new-ticket-sla" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Severity *</label>
+                            <select id="new-ticket-sev" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 focus:bg-white"></select>
                         </div>
                     </div>
                     <div>
@@ -704,16 +743,18 @@
         
         const genId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2);
 
-        // Enhanced Data Store with RBAC & SLA
+        // Core Data Store
         const dataStore = {
             roles: [
                 { id: 'ROLE-ROOT', name: 'Super Administrator', type: 'Root', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'ROLE-ADMIN', name: 'System Administrator', type: 'Admin', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'ROLE-OVERRIDE', name: 'Service Desk Manager', type: 'Admin Override', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'ROLE-APPROVER', name: 'Department Head', type: 'Approver', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'ROLE-USER', name: 'Standard Staff', type: 'System User', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             users: [
                 { id: 'arkin.paroan@inventi.ph', name: 'Arkin Paroan', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'manager@inventi.ph', name: 'Desk Manager', roleId: 'ROLE-OVERRIDE', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'devops@inventi.ph', name: 'DevOps Lead', roleId: 'ROLE-ADMIN', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
@@ -734,28 +775,166 @@
                 { id: 'STAT-APP', name: 'For Approval', type: 'Open-Ongoing', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'STAT-RES', name: 'Resolved', type: 'Closed-End', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
-            mod: [],
+            mod: [
+                { id: 'MOD-AUTH', name: 'Authentication', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'MOD-DB', name: 'Database / Storage', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+            ],
             sla: [
-                { id: 'SLA-STD', name: 'Standard 24h Resolution', hours: 24, steps: ['STAT-OPN', 'STAT-INP', 'STAT-RES'], createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { id: 'SLA-CRIT', name: 'Critical 4h Resolution', hours: 4, steps: ['STAT-OPN', 'STAT-INP', 'STAT-APP', 'STAT-RES'], createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { 
+                    id: 'SLA-STD', name: 'Standard 24h Resolution', hours: 24, envId: 'ENV-PRD', sevId: 'SEV-3', 
+                    nodes: [{id:'STAT-OPN',x:50,y:50}, {id:'STAT-INP',x:220,y:50}, {id:'STAT-RES',x:400,y:50}], 
+                    links: [{source:'STAT-OPN',target:'STAT-INP'}, {source:'STAT-INP',target:'STAT-RES'}],
+                    createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' 
+                },
+                { 
+                    id: 'SLA-CRIT', name: 'Critical 4h Resolution', hours: 4, envId: 'ENV-PRD', sevId: 'SEV-1',
+                    nodes: [{id:'STAT-OPN',x:50,y:50}, {id:'STAT-INP',x:220,y:50}, {id:'STAT-APP',x:220,y:150}, {id:'STAT-RES',x:400,y:50}], 
+                    links: [{source:'STAT-OPN',target:'STAT-INP'}, {source:'STAT-INP',target:'STAT-APP'}, {source:'STAT-APP',target:'STAT-INP'}, {source:'STAT-APP',target:'STAT-RES'}],
+                    createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' 
+                }
             ],
             tickets: [
-                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-CRIT' },
-                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-STD' }
+                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', modId: 'MOD-DB', slaId: 'SLA-CRIT' }
             ],
             messages: [
-                { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned.' }
+                { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned based on Env/Sev criteria.' }
             ],
             internalNotes: [
                 { id: 'NOTE-1', ticketId: 'ARK-1042', sender: 'Arkin Paroan', timestamp: '2026-08-03 10:15', tag: 'Finding', text: 'Confirmed memory leak on node 4.' }
             ]
         };
 
+        // --- WORKFLOW GRAPH BUILDER ENGINE ---
+        let wfNodes = [];
+        let wfLinks = [];
+        let isLinkingFrom = null;
+        let isWfFullscreen = false;
+        let draggedNode = null;
+        let dragOffset = { x: 0, y: 0 };
+
+        const palette = ['#3b82f6', '#10b981', '#a855f7', '#f59e0b', '#ec4899', '#06b6d4', '#84cc16', '#f43f5e'];
+
+        function drawWf() {
+            const nodeLayer = getEl('workflow-nodes-layer');
+            const lineLayer = getEl('workflow-lines-layer');
+            const defsLayer = getEl('workflow-defs');
+            if(!nodeLayer || !lineLayer || !defsLayer) return;
+
+            nodeLayer.innerHTML = '';
+            Array.from(lineLayer.querySelectorAll('path')).forEach(p => p.remove());
+
+            defsLayer.innerHTML = palette.map((color, i) => `
+                <marker id="arrowhead-${i}" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6, 2 3" fill="${color}" />
+                </marker>
+            `).join("");
+
+            wfLinks.forEach((l, idx) => {
+                const s = wfNodes.find(n => n.id === l.source);
+                const t = wfNodes.find(n => n.id === l.target);
+                if (s && t) {
+                    const outLinks = wfLinks.filter(lnk => lnk.source === s.id);
+                    const inLinks = wfLinks.filter(lnk => lnk.target === t.id);
+                    const sOutIdx = outLinks.indexOf(l);
+                    const tInIdx = inLinks.indexOf(l);
+
+                    const BW = 120, BH = 60;
+                    const cx1 = s.x + BW/2, cy1 = s.y + BH/2;
+                    const cx2 = t.x + BW/2, cy2 = t.y + BH/2;
+
+                    const dxC = cx2 - cx1; const dyC = cy2 - cy1;
+                    const lenC = Math.sqrt(dxC*dxC + dyC*dyC) || 1;
+                    const nxC = dxC/lenC; const nyC = dyC/lenC;
+                    const px = nyC; const py = -nxC;
+
+                    const spreadS = (sOutIdx - (outLinks.length-1)/2) * 15;
+                    const spreadT = (tInIdx - (inLinks.length-1)/2) * 15;
+
+                    const sx = cx1 + px * spreadS; const sy = cy1 + py * spreadS;
+                    const tx = cx2 + px * spreadT; const ty = cy2 + py * spreadT;
+
+                    const dx = tx - sx; const dy = ty - sy;
+                    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+                    const nx = dx/len; const ny = dy/len;
+
+                    const absCos = Math.abs(nx) || 0.001; const absSin = Math.abs(ny) || 0.001;
+                    const distS = Math.min((BW/2)/absCos, (BH/2)/absSin) + 2;
+                    const distT = Math.min((BW/2)/absCos, (BH/2)/absSin) + 12;
+
+                    const startX = sx + nx * distS; const startY = sy + ny * distS;
+                    const endX = tx - nx * distT; const endY = ty - ny * distT;
+
+                    const colorIdx = idx % palette.length;
+                    const color = palette[colorIdx];
+
+                    const ctrl1x = startX + nx * (len * 0.3); const ctrl1y = startY + ny * (len * 0.3);
+                    const ctrl2x = endX - nx * (len * 0.3); const ctrl2y = endY - ny * (len * 0.3);
+                    const d = `M ${startX} ${startY} C ${ctrl1x} ${ctrl1y}, ${ctrl2x} ${ctrl2y}, ${endX} ${endY}`;
+
+                    const hitPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    hitPath.setAttribute('d', d);
+                    hitPath.setAttribute('class', 'wf-link-bg pointer-events-auto');
+                    hitPath.setAttribute('data-index', idx);
+                    lineLayer.appendChild(hitPath);
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', d);
+                    path.setAttribute('class', 'wf-link-line pointer-events-none');
+                    path.style.stroke = color;
+                    path.setAttribute('marker-end', `url(#arrowhead-${colorIdx})`);
+                    lineLayer.appendChild(path);
+                }
+            });
+
+            wfNodes.forEach(n => {
+                const stat = dataStore.status.find(s => s.id === n.id);
+                const name = stat ? stat.name : n.id;
+                const div = document.createElement('div');
+                div.className = 'wf-node flex flex-col items-center justify-between p-2 rounded-lg border border-slate-600 bg-slate-800 text-white shadow-lg pointer-events-auto';
+                div.style.width = '120px'; div.style.height = '60px';
+                div.style.left = n.x + 'px'; div.style.top = n.y + 'px';
+                div.innerHTML = `
+                    <div class="text-[10px] font-bold truncate w-full text-center">${name}</div>
+                    <div class="flex w-full gap-1 mt-1">
+                        <button type="button" class="btn-wf-link flex-1 bg-blue-600 hover:bg-blue-500 rounded text-[9px] font-bold py-1 transition-colors">${isLinkingFrom === n.id ? 'Cancel' : 'Link'}</button>
+                        <button type="button" class="btn-wf-del bg-red-600 hover:bg-red-500 rounded px-1.5 text-[9px] font-bold transition-colors">&times;</button>
+                    </div>
+                `;
+                div.dataset.id = n.id;
+                
+                div.addEventListener('mousedown', (e) => {
+                    if(e.target.closest('.btn-wf-link') || e.target.closest('.btn-wf-del')) return;
+                    draggedNode = n;
+                    const containerRect = getEl('workflow-canvas-container').getBoundingClientRect();
+                    dragOffset.x = e.clientX - containerRect.left - n.x;
+                    dragOffset.y = e.clientY - containerRect.top - n.y;
+                    div.style.cursor = 'grabbing';
+                    e.preventDefault();
+                });
+                nodeLayer.appendChild(div);
+            });
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if(draggedNode) {
+                const containerRect = getEl('workflow-canvas-container').getBoundingClientRect();
+                let nx = e.clientX - containerRect.left - dragOffset.x;
+                let ny = e.clientY - containerRect.top - dragOffset.y;
+                
+                nx = Math.max(0, Math.min(nx, containerRect.width - 120));
+                ny = Math.max(0, Math.min(ny, containerRect.height - 60));
+                
+                draggedNode.x = nx; draggedNode.y = ny;
+                drawWf();
+            }
+        });
+        document.addEventListener('mouseup', () => {
+            if(draggedNode) { draggedNode = null; drawWf(); }
+        });
+
         // --- CLOUD SYNC & DB WRAPPERS ---
         async function initCloudSync() {
             const collections = ['users', 'roles', 'acc', 'env', 'sev', 'status', 'mod', 'sla', 'tickets', 'messages', 'internalNotes'];
-            
-            // Seed Firestore with defaults if empty
             try {
                 const rolesSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'roles'));
                 if (rolesSnap.empty) {
@@ -771,7 +950,6 @@
                 }
             } catch(e) { console.error("Seeding error:", e); }
 
-            // Setup Real-time Listeners
             collections.forEach(col => {
                 const unsub = onSnapshot(
                     collection(db, 'artifacts', appId, 'public', 'data', col),
@@ -805,6 +983,28 @@
             }
         }
 
+        // --- CORE LOGIC & HELPERS ---
+        function applyRBAC() {
+            const isStandardUser = currentUserRoleType === 'System User';
+            const adminHeader = getEl('nav-header-admin');
+            const accessNav = getEl('nav-item-access');
+            const settingsNav = getEl('nav-item-settings');
+            
+            if (adminHeader) adminHeader.style.display = isStandardUser ? 'none' : 'block';
+            if (accessNav) accessNav.style.display = isStandardUser ? 'none' : 'block';
+            if (settingsNav) settingsNav.style.display = isStandardUser ? 'none' : 'block';
+        }
+
+        function getFilteredTickets() {
+            if (['Root', 'Admin Override', 'Admin'].includes(currentUserRoleType)) {
+                return dataStore.tickets;
+            } else if (currentUserRoleType === 'Approver') {
+                return dataStore.tickets.filter(t => t.statusId === 'STAT-APP' || t.submittedByEmail === currentUserEmail);
+            } else {
+                return dataStore.tickets.filter(t => t.submittedByEmail === currentUserEmail);
+            }
+        }
+
         function populateFilters() {
             const pop = (id, type, allText) => {
                 const el = getEl(id);
@@ -826,7 +1026,6 @@
             if(getEl('content-settings').classList.contains('active')) renderSettings();
             if(getEl('content-ticket-details').classList.contains('active')) {
                 renderMessages(); renderInternalNotes();
-                // Refresh details dropdowns to keep in sync
                 const ticket = dataStore.tickets.find(t => t.id === currentViewedTicketId);
                 if(ticket) {
                     getEl('detail-status-select').value = ticket.statusId;
@@ -856,32 +1055,9 @@
             return `<span class="text-slate-500 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>${name}</span>`;
         }
 
-        // RBAC Filtering Core Logic
-        function applyRBAC() {
-            const isStandardUser = currentUserRoleType === 'System User';
-            const adminHeader = getEl('nav-header-admin');
-            const accessNav = getEl('nav-item-access');
-            const settingsNav = getEl('nav-item-settings');
-            
-            if (adminHeader) adminHeader.style.display = isStandardUser ? 'none' : 'block';
-            if (accessNav) accessNav.style.display = isStandardUser ? 'none' : 'block';
-            if (settingsNav) settingsNav.style.display = isStandardUser ? 'none' : 'block';
-        }
-
-        function getFilteredTickets() {
-            if (currentUserRoleType === 'Root' || currentUserRoleType === 'Admin') {
-                return dataStore.tickets;
-            } else if (currentUserRoleType === 'Approver') {
-                return dataStore.tickets.filter(t => t.statusId === 'STAT-APP' || t.submittedByEmail === currentUserEmail);
-            } else {
-                return dataStore.tickets.filter(t => t.submittedByEmail === currentUserEmail);
-            }
-        }
-
         function renderPaginationControls(containerId, currentPage, totalItems, actionName) {
             const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
             let html = '';
-            
             const prevDisabled = currentPage === 1;
             html += `<button class="p-1 rounded-md ${prevDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-200 transition-colors'}" ${prevDisabled ? 'disabled' : ''} data-paginate="${actionName}" data-page="${currentPage - 1}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>`;
             
@@ -895,7 +1071,6 @@
             
             const nextDisabled = currentPage === totalPages;
             html += `<button class="p-1 rounded-md ${nextDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-200 transition-colors'}" ${nextDisabled ? 'disabled' : ''} data-paginate="${actionName}" data-page="${currentPage + 1}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button>`;
-            
             getEl(containerId).innerHTML = html;
         }
 
@@ -923,6 +1098,7 @@
             });
         }
 
+        // --- RENDER FUNCTIONS ---
         function renderDashboard() {
             const allowedTickets = getFilteredTickets();
             getEl('dash-total').textContent = allowedTickets.length;
@@ -949,11 +1125,7 @@
 
                 const s = ticketsSearch.toLowerCase();
                 if (!s) return true;
-                return t.id.toLowerCase().includes(s) || 
-                       t.subject.toLowerCase().includes(s) || 
-                       getName('acc', t.accId).toLowerCase().includes(s) ||
-                       getName('status', t.statusId).toLowerCase().includes(s) ||
-                       getName('sev', t.sevId).toLowerCase().includes(s);
+                return t.id.toLowerCase().includes(s) || t.subject.toLowerCase().includes(s) || getName('acc', t.accId).toLowerCase().includes(s) || getName('status', t.statusId).toLowerCase().includes(s) || getName('sev', t.sevId).toLowerCase().includes(s);
             });
 
             const totalPages = Math.ceil(filteredTickets.length / ITEMS_PER_PAGE) || 1;
@@ -993,18 +1165,11 @@
             const titles = { users: 'Manage Users', roles: 'Manage Roles', acc: 'Manage Accounts', env: 'Manage Environments', sev: 'Manage Severities', status: 'Manage Statuses', mod: 'Manage Modules', sla: 'Manage SLA Policies' };
             getEl('settings-page-title').textContent = titles[currentContext] || 'Manage Settings';
             
-            // Dynamic Table Headers
-            if (currentContext === 'users') {
-                getEl('settings-th-1').textContent = 'User Details'; getEl('settings-th-2').textContent = 'Assigned Role';
-            } else if (currentContext === 'roles') {
-                getEl('settings-th-1').textContent = 'Role ID'; getEl('settings-th-2').textContent = 'Role Details';
-            } else if (currentContext === 'status') {
-                getEl('settings-th-1').textContent = 'Status ID'; getEl('settings-th-2').textContent = 'Status Details';
-            } else if (currentContext === 'sla') {
-                getEl('settings-th-1').textContent = 'SLA ID'; getEl('settings-th-2').textContent = 'Workflow Details';
-            } else {
-                getEl('settings-th-1').textContent = 'ID Code'; getEl('settings-th-2').textContent = 'Display Name';
-            }
+            if (currentContext === 'users') { getEl('settings-th-1').textContent = 'User Details'; getEl('settings-th-2').textContent = 'Assigned Role'; } 
+            else if (currentContext === 'roles') { getEl('settings-th-1').textContent = 'Role ID'; getEl('settings-th-2').textContent = 'Role Details'; } 
+            else if (currentContext === 'status') { getEl('settings-th-1').textContent = 'Status ID'; getEl('settings-th-2').textContent = 'Status Details'; } 
+            else if (currentContext === 'sla') { getEl('settings-th-1').textContent = 'SLA ID'; getEl('settings-th-2').textContent = 'Workflow Details'; } 
+            else { getEl('settings-th-1').textContent = 'ID Code'; getEl('settings-th-2').textContent = 'Display Name'; }
             
             document.querySelectorAll('.sub-nav-link').forEach(link => {
                 if(link.dataset.context === currentContext) { link.classList.add('text-white', 'bg-white/5'); link.classList.remove('text-slate-400'); }
@@ -1014,11 +1179,8 @@
             const arr = dataStore[currentContext] || [];
             const filteredArr = arr.filter(item => {
                 const s = settingsSearch.toLowerCase();
-                if(currentContext === 'users') {
-                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
-                } else if(currentContext === 'roles' || currentContext === 'status') {
-                    return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
-                }
+                if(currentContext === 'users') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
+                if(currentContext === 'roles' || currentContext === 'status') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
                 return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s);
             });
 
@@ -1056,14 +1218,16 @@
                         nameCol = `<div class="font-semibold">${item.name}</div><div class="text-[10px] ${badgeColor} font-bold mt-0.5">${item.type || 'Open-Start'}</div>`;
                     }
                     else if(currentContext === 'sla') {
-                        const stepsHtml = (item.steps||[]).map(s => getName('status', s)).join(' <span class="mx-1 text-slate-300">&rarr;</span> ');
-                        nameCol = `<div class="font-semibold text-slate-800">${item.name} <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">${item.hours}H Target</span></div><div class="text-[10px] text-slate-500 font-medium mt-1.5 flex items-center flex-wrap">${stepsHtml}</div>`;
+                        const envName = getName('env', item.envId);
+                        const sevName = getName('sev', item.sevId);
+                        const stepsHtml = (item.nodes||[]).map(n => getName('status', n.id)).join(' <span class="mx-1 text-slate-300">&rarr;</span> ');
+                        nameCol = `<div class="font-semibold text-slate-800 mb-1">${item.name} <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">${item.hours}H</span></div><div class="text-[10px] font-bold text-slate-500 mb-1">Matches: <span class="text-blue-600">${envName}</span> + <span class="text-red-500">${sevName}</span></div><div class="text-[10px] text-slate-400 font-medium flex items-center flex-wrap">${stepsHtml}</div>`;
                     }
 
                     return `
                     <tr class="hover:bg-slate-50 transition-colors group relative">
-                        <td class="px-5 py-3 font-mono text-xs text-slate-800">${idCol}</td>
-                        <td class="px-5 py-3 text-sm font-medium text-slate-800 relative pr-24">
+                        <td class="px-5 py-3 font-mono text-xs text-slate-800 align-top">${idCol}</td>
+                        <td class="px-5 py-3 text-sm font-medium text-slate-800 relative pr-24 align-top">
                             ${nameCol}
                             <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
                                 <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
@@ -1071,8 +1235,8 @@
                                 <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                             </div>
                         </td>
-                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.createdBy||'-'}</div><div class="text-[10px] text-slate-500">${item.createdDate||'-'}</div></td>
-                        <td class="px-5 py-2"><div class="text-xs font-bold text-slate-700">${item.modifiedBy||'-'}</div><div class="text-[10px] text-slate-500">${item.modifiedDate||'-'}</div></td>
+                        <td class="px-5 py-2 align-top"><div class="text-xs font-bold text-slate-700">${item.createdBy||'-'}</div><div class="text-[10px] text-slate-500">${item.createdDate||'-'}</div></td>
+                        <td class="px-5 py-2 align-top"><div class="text-xs font-bold text-slate-700">${item.modifiedBy||'-'}</div><div class="text-[10px] text-slate-500">${item.modifiedDate||'-'}</div></td>
                     </tr>
                 `}).join('');
                 
@@ -1092,22 +1256,45 @@
             
             getEl('detail-submitted-by').textContent = getUserName(ticket.submittedByEmail);
             getEl('detail-created-date').textContent = ticket.createdDate || '-';
-            getEl('detail-account').textContent = getName('acc', ticket.accId);
-            getEl('detail-env').textContent = getName('env', ticket.envId);
-            getEl('detail-severity').innerHTML = getSevBadge(ticket.sevId);
-            getEl('detail-sla').innerHTML = ticket.slaId ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold">${getName('sla', ticket.slaId)}</span>` : '-';
             
-            // Restrict status dropdown to ONLY the statuses in the SLA workflow
-            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
-            let allowedStatuses = dataStore.status;
-            if (ticketSla && ticketSla.steps && ticketSla.steps.length > 0) {
-                allowedStatuses = dataStore.status.filter(s => ticketSla.steps.includes(s.id));
-            }
-            getEl('detail-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join('');
-            
+            // Populate Dropdowns
+            getEl('detail-severity-select').innerHTML = dataStore.sev.map(s => `<option value="${s.id}" ${s.id === ticket.sevId ? 'selected' : ''}>${s.name}</option>`).join('');
+            getEl('detail-module-select').innerHTML = `<option value="">None</option>` + dataStore.mod.map(m => `<option value="${m.id}" ${m.id === ticket.modId ? 'selected' : ''}>${m.name}</option>`).join('');
+            getEl('detail-account-select').innerHTML = dataStore.acc.map(a => `<option value="${a.id}" ${a.id === ticket.accId ? 'selected' : ''}>${a.name}</option>`).join('');
+            getEl('detail-env-select').innerHTML = dataStore.env.map(e => `<option value="${e.id}" ${e.id === ticket.envId ? 'selected' : ''}>${e.name}</option>`).join('');
             getEl('detail-assignee-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join('');
+
+            // Apply Admin Override Logic
+            const isOverride = ['Root', 'Admin Override'].includes(currentUserRoleType);
+            getEl('detail-severity-select').disabled = !isOverride;
+            getEl('detail-module-select').disabled = !isOverride;
+            getEl('detail-account-select').disabled = !isOverride;
+            getEl('detail-env-select').disabled = !isOverride;
+            getEl('detail-assignee-select').disabled = !isOverride;
+            getEl('btn-update-details').disabled = false;
+
+            // Strict SLA Status Logic
+            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
+            let validNextStatuses = new Set([ticket.statusId]); 
+            if (ticketSla && ticketSla.links) {
+                ticketSla.links.forEach(l => { if (l.source === ticket.statusId) validNextStatuses.add(l.target); });
+            } else {
+                dataStore.status.forEach(s => validNextStatuses.add(s.id)); 
+            }
+
+            getEl('detail-status-select').innerHTML = dataStore.status
+                .filter(s => validNextStatuses.has(s.id))
+                .map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`)
+                .join('');
             
-            if(currentUserRoleType === 'Admin' || currentUserRoleType === 'Root') {
+            // Resync SLA logic for Admins
+            let slaContent = ticket.slaId ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold">${getName('sla', ticket.slaId)}</span>` : `<span class="text-slate-400 italic text-[10px]">None</span>`;
+            if (isOverride) {
+                slaContent += ` <button id="btn-resync-sla" class="ml-2 px-2 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded text-[9px] font-bold transition-colors shadow-sm" title="Find matching SLA based on Environment and Severity">Resync</button>`;
+            }
+            getEl('detail-sla').innerHTML = slaContent;
+
+            if(['Admin', 'Root', 'Admin Override'].includes(currentUserRoleType)) {
                 getEl('tab-internal-btn').classList.remove('hidden');
             } else {
                 getEl('tab-internal-btn').classList.add('hidden');
@@ -1178,9 +1365,8 @@
                             currentUserEmail = email;
                             
                             isCloudMode = true;
-                            await initCloudSync(); // This seeds defaults and hooks up onSnapshot
+                            await initCloudSync();
                             
-                            // Safely fetch user directly from Firestore to avoid race condition with onSnapshot
                             let localUser;
                             const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
                             const userSnap = await getDoc(userRef);
@@ -1192,23 +1378,18 @@
                                 await dbSave('users', email, localUser);
                             }
                             
-                            // Safely fetch role type
                             let roleType = 'System User';
                             if (localUser.roleId) {
                                 const roleRef = doc(db, 'artifacts', appId, 'public', 'data', 'roles', localUser.roleId);
                                 const roleSnap = await getDoc(roleRef);
-                                if (roleSnap.exists()) {
-                                    roleType = roleSnap.data().type;
-                                }
+                                if (roleSnap.exists()) { roleType = roleSnap.data().type; }
                             }
                             
                             currentUserRoleType = roleType;
-
                             getEl('user-display-name').textContent = currentUser;
                             getEl('user-display-role').textContent = currentUserRoleType;
                             
                             applyRBAC();
-                            
                             getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
                             switchView('dashboard', 'Client Dashboard');
                         } else {
@@ -1225,21 +1406,20 @@
                     }
                 }
                 
-                // Bypass
+                // Bypass Logic
                 if (e.target.closest('#btn-bypass-login')) {
                     isCloudMode = false;
                     currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
                     getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
                     
                     applyRBAC();
-                    
                     getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
                     switchView('dashboard', 'Client Dashboard');
                 }
 
                 if (e.target.closest('#btn-logout')) {
                     try { await signOut(auth); } catch(e){}
-                    cloudUnsubs.forEach(unsub => unsub()); cloudUnsubs = []; // Detach listeners
+                    cloudUnsubs.forEach(unsub => unsub()); cloudUnsubs = [];
                     getEl('view-app').classList.remove('active'); getEl('view-login').classList.add('active');
                     getEl('login-error').classList.add('hidden');
                 }
@@ -1260,9 +1440,7 @@
                 const subNavBtn = e.target.closest('.sub-nav-link');
                 if (subNavBtn) {
                     currentContext = subNavBtn.dataset.context;
-                    settingsPage = 1;
-                    settingsSearch = '';
-                    getEl('search-settings').value = '';
+                    settingsPage = 1; settingsSearch = ''; getEl('search-settings').value = '';
                     switchView('settings', 'System Settings');
                 }
                 
@@ -1271,28 +1449,21 @@
                     switchView('tickets', 'Tickets');
                 }
                 
-                // Toggle Filter Panel
+                // Filters
                 if (e.target.closest('#btn-toggle-filters')) {
                     const panel = getEl('tickets-filter-panel');
                     panel.classList.toggle('hidden');
-                    if (!panel.classList.contains('hidden')) {
-                        populateFilters();
-                    }
+                    if (!panel.classList.contains('hidden')) populateFilters();
                 }
-
-                // Clear Filters
                 if (e.target.closest('#btn-clear-filters')) {
                     activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
-                    populateFilters();
-                    ticketsPage = 1;
-                    renderTickets();
+                    populateFilters(); ticketsPage = 1; renderTickets();
                 }
                 
-                // Pagination Handlers
+                // Pagination
                 const pageBtn = e.target.closest('button[data-paginate]');
                 if (pageBtn && !pageBtn.disabled) {
-                    const action = pageBtn.dataset.paginate;
-                    const page = parseInt(pageBtn.dataset.page);
+                    const action = pageBtn.dataset.paginate; const page = parseInt(pageBtn.dataset.page);
                     if (action === 'tickets') { ticketsPage = page; renderTickets(); }
                     if (action === 'settings') { settingsPage = page; renderSettings(); }
                 }
@@ -1311,12 +1482,11 @@
                         const ticket = dataStore.tickets.find(t => t.id === ticketId);
                         if (ticket) { 
                             currentViewedTicketId = ticket.id; 
-                            
-                            // Restrict quick-status to the SLA workflow steps
                             const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
                             let allowedStatuses = dataStore.status;
-                            if (ticketSla && ticketSla.steps && ticketSla.steps.length > 0) {
-                                allowedStatuses = dataStore.status.filter(s => ticketSla.steps.includes(s.id));
+                            if (ticketSla && ticketSla.nodes && ticketSla.nodes.length > 0) {
+                                const allowedIds = ticketSla.nodes.map(n=>n.id);
+                                allowedStatuses = dataStore.status.filter(s => allowedIds.includes(s.id));
                             }
                             getEl('quick-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); 
                             getEl('quick-status-modal').classList.remove('hidden'); 
@@ -1331,65 +1501,74 @@
                 
                 if (e.target.closest('#btn-back-tickets')) switchView('tickets', 'Tickets');
 
-                // Quick Assign Modal
-                if (e.target.closest('#btn-close-quick-assign') || e.target.closest('#btn-cancel-quick-assign') || e.target.closest('#quick-assign-modal-bg')) getEl('quick-assign-modal').classList.add('hidden');
-                if (e.target.closest('#btn-save-quick-assign')) {
-                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                    if (ticket) {
-                        const oldEmail = ticket.assigneeEmail; const newEmail = getEl('quick-assign-select').value;
-                        if (oldEmail !== newEmail) {
-                            ticket.assigneeEmail = newEmail;
-                            await dbSave('tickets', ticket.id, ticket);
-                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            const msgId = genId();
-                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
-                        }
-                        getEl('quick-assign-modal').classList.add('hidden');
-                    }
-                }
-
-                // Quick Status Modal
-                if (e.target.closest('#btn-close-quick-status') || e.target.closest('#btn-cancel-quick-status') || e.target.closest('#quick-status-modal-bg')) getEl('quick-status-modal').classList.add('hidden');
-                if (e.target.closest('#btn-save-quick-status')) {
-                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                    if (ticket) {
-                        const oldStatusId = ticket.statusId; const newStatusId = getEl('quick-status-select').value;
-                        if (oldStatusId !== newStatusId) {
-                            ticket.statusId = newStatusId;
-                            await dbSave('tickets', ticket.id, ticket);
-                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            const msgId = genId();
-                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', oldStatusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
-                        }
-                        getEl('quick-status-modal').classList.add('hidden');
-                    }
-                }
-                
-                // Detailed View Updates
+                // Update Ticket Properties
                 if (e.target.closest('#btn-update-details')) {
                     const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
                     if (ticket) {
                         let changed = false;
-                        const newStatusId = getEl('detail-status-select').value;
-                        const newEmail = getEl('detail-assignee-select').value;
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         
+                        const newStatusId = getEl('detail-status-select').value;
                         if (ticket.statusId !== newStatusId) {
-                            const msgId = genId();
-                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
                             ticket.statusId = newStatusId; changed = true;
                         }
-                        if (ticket.assigneeEmail !== newEmail) {
-                            const msgId = genId();
-                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${getUserName(newEmail)}] by ${currentUser}.` });
-                            ticket.assigneeEmail = newEmail; changed = true;
+
+                        const isOverride = ['Root', 'Admin Override'].includes(currentUserRoleType);
+                        if (isOverride) {
+                            const newEmail = getEl('detail-assignee-select').value;
+                            const newSev = getEl('detail-severity-select').value;
+                            const newMod = getEl('detail-module-select').value;
+                            const newAcc = getEl('detail-account-select').value;
+                            const newEnv = getEl('detail-env-select').value;
+
+                            if (ticket.assigneeEmail !== newEmail) {
+                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${newEmail ? getUserName(newEmail) : 'Unassigned'}] by ${currentUser}.` });
+                                ticket.assigneeEmail = newEmail; changed = true;
+                            }
+                            if (ticket.sevId !== newSev) {
+                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Severity updated to [${getName('sev', newSev)}] by ${currentUser}.` });
+                                ticket.sevId = newSev; changed = true;
+                            }
+                            if (ticket.modId !== newMod) {
+                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Module updated to [${newMod ? getName('mod', newMod) : 'None'}] by ${currentUser}.` });
+                                ticket.modId = newMod; changed = true;
+                            }
+                            if (ticket.accId !== newAcc) { ticket.accId = newAcc; changed = true; }
+                            if (ticket.envId !== newEnv) {
+                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Environment updated to [${getName('env', newEnv)}] by ${currentUser}.` });
+                                ticket.envId = newEnv; changed = true;
+                            }
                         }
 
                         if(changed) await dbSave('tickets', ticket.id, ticket);
 
                         const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
-                        btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+                        btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
                         setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
+                    }
+                }
+
+                // Resync SLA logic
+                if (e.target.closest('#btn-resync-sla')) {
+                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                    if(ticket) {
+                        const matchingSla = dataStore.sla.find(s => s.envId === ticket.envId && s.sevId === ticket.sevId);
+                        const newSlaId = matchingSla ? matchingSla.id : null;
+                        
+                        if (ticket.slaId !== newSlaId) {
+                            ticket.slaId = newSlaId;
+                            await dbSave('tickets', ticket.id, ticket);
+                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const msgId = genId();
+                            const msgText = newSlaId ? `SLA Policy automatically matched to [${matchingSla.name}].` : `SLA Policy unassigned (No match found for current Env/Sev).`;
+                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: msgText });
+                            openTicketDetails(ticket.id);
+                        } else {
+                            const btn = e.target.closest('#btn-resync-sla');
+                            btn.textContent = "Synced"; btn.classList.add('bg-emerald-100', 'text-emerald-700');
+                            setTimeout(() => { btn.textContent = "Resync"; btn.classList.remove('bg-emerald-100', 'text-emerald-700'); }, 1500);
+                        }
                     }
                 }
                 
@@ -1412,8 +1591,7 @@
                         const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         const noteId = genId();
                         await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text, fileUrl: link });
-                        input.value = '';
-                        if(linkInput) linkInput.value = '';
+                        input.value = ''; if(linkInput) linkInput.value = '';
                     }
                 }
                 
@@ -1425,12 +1603,10 @@
                     const id = isAdd ? null : btn.dataset.id;
                     const item = isAdd ? null : (dataStore[currentContext]||[]).find(x => x.id === id);
 
-                    // Setup Base Form
                     getEl('setting-id').value = item ? item.id : ''; getEl('setting-id').disabled = !isAdd;
                     getEl('setting-name').value = item ? item.name : ''; getEl('setting-name').disabled = action === 'view';
                     getEl('setting-is-new').value = isAdd ? 'true' : 'false';
                     
-                    // Setup specific fields visibility & disabled state
                     getEl('setting-role-container').classList.add('hidden');
                     getEl('setting-role-type-container').classList.add('hidden');
                     getEl('setting-status-type-container').classList.add('hidden');
@@ -1465,30 +1641,29 @@
                         getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : "View SLA Policy");
                         getEl('label-setting-id').textContent = 'SLA ID Code *'; getEl('label-setting-name').textContent = 'Policy Name *';
                         getEl('setting-sla-container').classList.remove('hidden');
+                        getEl('setting-sla-container').classList.add('flex');
+                        
                         getEl('setting-sla-hours').disabled = formDisabled;
                         getEl('setting-sla-hours').value = item ? (item.hours || 24) : 24;
-
-                        // Setup SLA Workflow Selects
-                        const optsStart = dataStore.status.filter(s => s.type === 'Open-Start').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                        const optsEnd = dataStore.status.filter(s => s.type === 'Closed-End').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                        const optsMid = dataStore.status.filter(s => s.type === 'Open-Ongoing').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
                         
-                        getEl('sla-step-start').innerHTML = optsStart; getEl('sla-step-start').disabled = formDisabled;
-                        getEl('sla-step-end').innerHTML = optsEnd; getEl('sla-step-end').disabled = formDisabled;
-                        const midContainer = getEl('sla-middle-steps'); midContainer.innerHTML = ''; // reset
-                        getEl('btn-add-sla-step').style.display = formDisabled ? 'none' : 'block';
+                        getEl('setting-sla-env').innerHTML = dataStore.env.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+                        getEl('setting-sla-sev').innerHTML = dataStore.sev.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                        getEl('setting-sla-env').disabled = formDisabled; getEl('setting-sla-sev').disabled = formDisabled;
+                        if (item) { getEl('setting-sla-env').value = item.envId; getEl('setting-sla-sev').value = item.sevId; }
 
-                        if (item && item.steps && item.steps.length > 0) {
-                            getEl('sla-step-start').value = item.steps[0];
-                            if(item.steps.length > 1) getEl('sla-step-end').value = item.steps[item.steps.length - 1];
-                            for(let i = 1; i < item.steps.length - 1; i++) {
-                                const div = document.createElement('div'); div.className = 'flex items-center gap-3 sla-mid-row';
-                                div.innerHTML = `<div class="w-12 h-[2px] bg-slate-300"></div><select class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white sla-mid-sel" ${formDisabled ? 'disabled' : ''}>${optsMid}</select><button type="button" onclick="this.closest('.sla-mid-row').remove()" class="text-slate-400 hover:text-red-600 p-1 rounded transition-colors ${formDisabled ? 'hidden' : ''}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>`;
-                                div.querySelector('.sla-mid-sel').value = item.steps[i];
-                                midContainer.appendChild(div);
-                            }
+                        // Reset & Load Graph Builder
+                        wfNodes = item && item.nodes ? JSON.parse(JSON.stringify(item.nodes)) : [];
+                        wfLinks = item && item.links ? JSON.parse(JSON.stringify(item.links)) : [];
+                        isLinkingFrom = null;
+                        
+                        getEl('wf-add-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                        const addControls = getEl('wf-add-controls');
+                        if (addControls) {
+                            addControls.style.display = formDisabled ? 'none' : 'flex';
                         }
-
+                        
+                        setTimeout(() => drawWf(), 50); // allow container to render before drawing
+                        
                     } else {
                         getEl('modal-crud-title').textContent = isAdd ? "Add Record" : (action === 'edit' ? "Edit Record" : "View Record");
                         getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
@@ -1496,15 +1671,10 @@
                     getEl('crud-modal').classList.remove('hidden');
                 }
 
-                // Add SLA Middle Step
-                if (e.target.closest('#btn-add-sla-step')) {
-                    const optsMid = dataStore.status.filter(s => s.type === 'Open-Ongoing').map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                    const div = document.createElement('div'); div.className = 'flex items-center gap-3 sla-mid-row';
-                    div.innerHTML = `<div class="w-12 h-[2px] bg-slate-300"></div><select class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 bg-white sla-mid-sel">${optsMid}</select><button type="button" onclick="this.closest('.sla-mid-row').remove()" class="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>`;
-                    getEl('sla-middle-steps').appendChild(div);
+                if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) {
+                    getEl('crud-modal').classList.add('hidden');
+                    if (isWfFullscreen) { getEl('btn-wf-fullscreen').click(); }
                 }
-
-                if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) getEl('crud-modal').classList.add('hidden');
                 
                 // Save Settings CRUD
                 if (e.target.closest('#btn-save-crud')) {
@@ -1513,7 +1683,6 @@
                     if(!idVal || !nameVal) return;
                     
                     const existing = (dataStore[currentContext]||[]).find(x => x.id === idVal);
-                    
                     const newItem = {
                         id: idVal, name: nameVal,
                         createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
@@ -1526,10 +1695,10 @@
                     if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
                     if (currentContext === 'sla') {
                         newItem.hours = parseInt(getEl('setting-sla-hours').value) || 24;
-                        let sPath = [getEl('sla-step-start').value];
-                        document.querySelectorAll('.sla-mid-sel').forEach(sel => sPath.push(sel.value));
-                        sPath.push(getEl('sla-step-end').value);
-                        newItem.steps = sPath.filter(Boolean); // Clean any empty values
+                        newItem.envId = getEl('setting-sla-env').value;
+                        newItem.sevId = getEl('setting-sla-sev').value;
+                        newItem.nodes = wfNodes;
+                        newItem.links = wfLinks;
                     }
 
                     await dbSave(currentContext, idVal, newItem);
@@ -1539,7 +1708,6 @@
                 // Delete Confirmation Flow
                 const delBtn = e.target.closest('.btn-crud-action[data-action="del"]');
                 if (delBtn) { pendingDeleteId = delBtn.dataset.id; getEl('delete-confirm-modal').classList.remove('hidden'); }
-                
                 if (e.target.closest('#btn-cancel-delete') || e.target.closest('#delete-modal-bg')) {
                     getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
                 }
@@ -1548,115 +1716,114 @@
                     else if (pendingDeleteTicketId !== null) { await dbDeleteRecord('tickets', pendingDeleteTicketId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
                 }
                 
-                // Create Ticket Flow
+                // Create Ticket Flow with AUTO SLA ASSIGN
                 if (e.target.closest('#btn-new-ticket')) {
                     const popSel = (id, type) => getEl(id).innerHTML = (dataStore[type]||[]).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
-                    popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev'); popSel('new-ticket-sla', 'sla');
+                    popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev'); popSel('new-ticket-mod', 'mod');
                     getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = '';
                     getEl('ticket-modal').classList.remove('hidden');
                 }
                 if (e.target.closest('#btn-close-ticket') || e.target.closest('#btn-cancel-ticket') || e.target.closest('#ticket-modal-bg')) getEl('ticket-modal').classList.add('hidden');
+                
                 if (e.target.closest('#btn-save-ticket')) {
                     const subj = getEl('new-ticket-subject').value.trim(); const desc = getEl('new-ticket-desc').value.trim();
                     if(!subj || !desc) return;
                     const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
-                    const slaId = getEl('new-ticket-sla').value;
-                    const defaultStatus = (dataStore.sla.find(s => s.id === slaId)?.steps || ['STAT-OPN'])[0]; // Default to first step of the assigned SLA
+                    
+                    const envId = getEl('new-ticket-env').value;
+                    const sevId = getEl('new-ticket-sev').value;
+                    
+                    // Core SLA Matching Logic
+                    const matchingSla = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId);
+                    const slaId = matchingSla ? matchingSla.id : null;
+                    
+                    // Determine initial status
+                    let defaultStatus = 'STAT-OPN';
+                    if(matchingSla && matchingSla.nodes && matchingSla.nodes.length > 0) {
+                        defaultStatus = matchingSla.nodes[0].id; // Assign to first step of workflow
+                    }
                     
                     await dbSave('tickets', newId, {
                         id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
-                        statusId: defaultStatus, accId: getEl('new-ticket-acc').value, envId: getEl('new-ticket-env').value, sevId: getEl('new-ticket-sev').value, slaId: slaId
-                    });
-                    getEl('ticket-modal').classList.add('hidden');
-                }
-
-                // CSV Template Download
-                if (e.target.closest('#btn-download-template')) {
-                    let csvContent = "ID Code,Display Name\n";
-                    if(currentContext === 'users') csvContent = "Email Address,Full Name\n";
-                    else if(currentContext === 'roles') csvContent = "Role ID,Role Name\n";
-                    else if(currentContext === 'sla') csvContent = "SLA ID,SLA Name\n";
-                    csvContent += "TEST-001,Example Data 1\nTEST-002,Example Data 2";
-                    
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.setAttribute("href", url);
-                    link.setAttribute("download", `iHelp_${currentContext}_template.csv`);
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                }
-
-                // Table Data Export Handlers
-                if (e.target.closest('#btn-export-tickets')) {
-                    const allowedTickets = getFilteredTickets();
-                    const filteredTickets = allowedTickets.filter(t => {
-                        if (activeFilters.acc && t.accId !== activeFilters.acc) return false;
-                        if (activeFilters.env && t.envId !== activeFilters.env) return false;
-                        if (activeFilters.status && t.statusId !== activeFilters.status) return false;
-                        if (activeFilters.sev && t.sevId !== activeFilters.sev) return false;
-                        if (activeFilters.mod && t.modId !== activeFilters.mod) return false;
-
-                        const s = ticketsSearch.toLowerCase();
-                        if (!s) return true;
-                        return t.id.toLowerCase().includes(s) || 
-                               t.subject.toLowerCase().includes(s) || 
-                               getName('acc', t.accId).toLowerCase().includes(s) ||
-                               getName('status', t.statusId).toLowerCase().includes(s) ||
-                               getName('sev', t.sevId).toLowerCase().includes(s);
+                        statusId: defaultStatus, accId: getEl('new-ticket-acc').value, modId: getEl('new-ticket-mod').value, envId: envId, sevId: sevId, slaId: slaId
                     });
 
-                    let csv = "Ticket ID,Subject,Account,Environment,Severity,Status,Created Date,Submitted By,Assignee\n";
-                    const escape = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-                    
-                    filteredTickets.forEach(t => {
-                        csv += `${escape(t.id)},${escape(t.subject)},${escape(getName('acc', t.accId))},${escape(getName('env', t.envId))},${escape(getName('sev', t.sevId))},${escape(getName('status', t.statusId))},${escape(t.createdDate)},${escape(t.submittedByEmail)},${escape(t.assigneeEmail)}\n`;
-                    });
-                    
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a");
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `iHelp_Tickets_Export_${getTodayStr()}.csv`;
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                }
-
-                if (e.target.closest('#btn-export-settings')) {
-                    const arr = dataStore[currentContext] || [];
-                    const filteredArr = arr.filter(item => {
-                        const s = settingsSearch.toLowerCase();
-                        if(currentContext === 'users') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || getName('roles', item.roleId).toLowerCase().includes(s);
-                        if(currentContext === 'roles') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
-                        if(currentContext === 'status') return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s) || (item.type || '').toLowerCase().includes(s);
-                        return item.id.toLowerCase().includes(s) || item.name.toLowerCase().includes(s);
-                    });
-
-                    let csv = "";
-                    const escape = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-                    
-                    if (currentContext === 'users') {
-                        csv = "Email Address,Full Name,Role,Created By,Created Date,Modified By,Modified Date\n";
-                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(getName('roles', i.roleId))},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
-                    } else if (currentContext === 'roles') {
-                        csv = "Role ID,Role Name,Role Type,Created By,Created Date,Modified By,Modified Date\n";
-                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.type)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
-                    } else if (currentContext === 'status') {
-                        csv = "Status ID,Status Name,Status Category,Created By,Created Date,Modified By,Modified Date\n";
-                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.type || 'Open-Start')},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
-                    } else if (currentContext === 'sla') {
-                        csv = "SLA ID,SLA Name,Target Hours,Workflow Steps,Created By,Created Date,Modified By,Modified Date\n";
-                        filteredArr.forEach(i => {
-                            const stepsStr = (i.steps||[]).map(s => getName('status', s)).join(' -> ');
-                            csv += `${escape(i.id)},${escape(i.name)},${escape(i.hours)},${escape(stepsStr)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`;
-                        });
-                    } else {
-                        csv = "ID Code,Display Name,Created By,Created Date,Modified By,Modified Date\n";
-                        filteredArr.forEach(i => csv += `${escape(i.id)},${escape(i.name)},${escape(i.createdBy)},${escape(i.createdDate)},${escape(i.modifiedBy)},${escape(i.modifiedDate)}\n`);
+                    if(slaId) {
+                        const msgId = genId();
+                        await dbSave('messages', msgId, { id: msgId, ticketId: newId, sender: 'System', timestamp: getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), text: `SLA Policy [${matchingSla.name}] applied based on Env/Sev match.` });
                     }
 
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a");
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `iHelp_${currentContext}_Export_${getTodayStr()}.csv`;
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    getEl('ticket-modal').classList.add('hidden');
+                    switchView('tickets', 'Tickets');
+                }
+
+                // Workflow Graph Interactivity
+                const clickedLine = e.target.closest && e.target.closest('.wf-link-bg');
+                if (clickedLine || (e.target.classList && e.target.classList.contains('wf-link-bg'))) {
+                    const targetEl = clickedLine || e.target;
+                    const idx = parseInt(targetEl.getAttribute('data-index'), 10);
+                    if (!isNaN(idx)) {
+                        wfLinks.splice(idx, 1);
+                        drawWf();
+                    }
+                }
+
+                const btnLink = e.target.closest('.btn-wf-link');
+                if(btnLink) {
+                    const nodeId = btnLink.closest('.wf-node').dataset.id;
+                    if (isLinkingFrom === nodeId) {
+                        isLinkingFrom = null; 
+                    } else if (isLinkingFrom) {
+                        if (!wfLinks.find(l => l.source === isLinkingFrom && l.target === nodeId) && isLinkingFrom !== nodeId) {
+                            wfLinks.push({source: isLinkingFrom, target: nodeId});
+                        }
+                        isLinkingFrom = null;
+                    } else {
+                        isLinkingFrom = nodeId;
+                    }
+                    drawWf();
+                }
+                const btnDel = e.target.closest('.btn-wf-del');
+                if(btnDel) {
+                    const nodeId = btnDel.closest('.wf-node').dataset.id;
+                    wfNodes = wfNodes.filter(n => n.id !== nodeId);
+                    wfLinks = wfLinks.filter(l => l.source !== nodeId && l.target !== nodeId);
+                    if(isLinkingFrom === nodeId) isLinkingFrom = null;
+                    drawWf();
+                }
+
+                if (e.target.closest('#btn-wf-add')) {
+                    const statId = getEl('wf-add-status-select').value;
+                    if(!statId || wfNodes.find(n => n.id === statId)) return;
+                    wfNodes.push({id: statId, x: 50, y: 50});
+                    drawWf();
+                }
+
+                if (e.target.closest('#btn-wf-fullscreen')) {
+                    const container = getEl('workflow-canvas-container').parentElement;
+                    isWfFullscreen = !isWfFullscreen;
+                    if(isWfFullscreen) {
+                        const placeholder = document.createElement('div');
+                        placeholder.id = 'wf-container-placeholder';
+                        placeholder.className = 'flex-1 min-h-[350px]';
+                        container.parentNode.insertBefore(placeholder, container);
+                        document.body.appendChild(container);
+                        
+                        container.classList.add('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                        container.classList.remove('rounded-xl', 'relative', 'p-4');
+                        getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 16 21 16"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
+                    } else {
+                        const placeholder = getEl('wf-container-placeholder');
+                        if (placeholder) {
+                            placeholder.parentNode.insertBefore(container, placeholder);
+                            placeholder.remove();
+                        }
+                        
+                        container.classList.remove('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                        container.classList.add('rounded-xl', 'relative', 'p-4');
+                        getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>`;
+                    }
+                    setTimeout(() => drawWf(), 50);
                 }
             });
 
@@ -1681,55 +1848,9 @@
 
             // Search Handlers
             const searchTicketsEl = getEl('search-tickets');
-            if (searchTicketsEl) {
-                searchTicketsEl.addEventListener('input', (e) => {
-                    ticketsSearch = e.target.value.trim();
-                    ticketsPage = 1;
-                    renderTickets();
-                });
-            }
-
+            if (searchTicketsEl) { searchTicketsEl.addEventListener('input', (e) => { ticketsSearch = e.target.value.trim(); ticketsPage = 1; renderTickets(); }); }
             const searchSettingsEl = getEl('search-settings');
-            if (searchSettingsEl) {
-                searchSettingsEl.addEventListener('input', (e) => {
-                    settingsSearch = e.target.value.trim();
-                    settingsPage = 1;
-                    renderSettings();
-                });
-            }
-
-            // CSV Upload Handler setup
-            const csvInput = getEl('input-csv-upload');
-            if (csvInput) {
-                csvInput.addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    
-                    const reader = new FileReader();
-                    reader.onload = async function(evt) {
-                        const text = evt.target.result;
-                        const rows = text.split(/\r?\n/).map(row => row.trim()).filter(row => row);
-                        
-                        if(rows.length > 1) {
-                            for(let i = 1; i < rows.length; i++) { // Skip header
-                                const cols = rows[i].split(',').map(c => c.trim());
-                                if (cols.length >= 2) {
-                                    const idVal = cols[0]; const nameVal = cols[1];
-                                    if (idVal && nameVal && !(dataStore[currentContext]||[]).find(x => x.id === idVal)) {
-                                        const newItem = { id: idVal, name: nameVal, createdBy: currentUser, createdDate: getTodayStr(), modifiedBy: currentUser, modifiedDate: getTodayStr() };
-                                        if (currentContext === 'users') newItem.roleId = 'ROLE-USER';
-                                        if (currentContext === 'roles') newItem.type = 'System User';
-                                        if (currentContext === 'sla') { newItem.hours = 24; newItem.steps = ['STAT-OPN', 'STAT-RES']; }
-                                        await dbSave(currentContext, idVal, newItem);
-                                    }
-                                }
-                            }
-                        }
-                        e.target.value = ''; // Reset input to allow re-upload
-                    };
-                    reader.readAsText(file);
-                });
-            }
+            if (searchSettingsEl) { searchSettingsEl.addEventListener('input', (e) => { settingsSearch = e.target.value.trim(); settingsPage = 1; renderSettings(); }); }
         });
     </script>
 </body>
