@@ -622,7 +622,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAWXjT6O0vZZGjDzj-W3byBvR4ndhr52vU",
@@ -1108,14 +1108,29 @@
                             isCloudMode = true;
                             await initCloudSync(); // This seeds defaults and hooks up onSnapshot
                             
-                            // Map local user role securely using Firebase response
-                            let localUser = dataStore.users.find(u => u.id === email);
-                            if(!localUser) {
+                            // Safely fetch user directly from Firestore to avoid race condition with onSnapshot
+                            let localUser;
+                            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
+                            const userSnap = await getDoc(userRef);
+                            
+                            if (userSnap.exists()) {
+                                localUser = userSnap.data();
+                            } else {
                                 localUser = { id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
                                 await dbSave('users', email, localUser);
                             }
-                            const role = dataStore.roles.find(r => r.id === localUser.roleId);
-                            currentUserRoleType = role ? role.type : 'System User';
+                            
+                            // Safely fetch role type
+                            let roleType = 'System User';
+                            if (localUser.roleId) {
+                                const roleRef = doc(db, 'artifacts', appId, 'public', 'data', 'roles', localUser.roleId);
+                                const roleSnap = await getDoc(roleRef);
+                                if (roleSnap.exists()) {
+                                    roleType = roleSnap.data().type;
+                                }
+                            }
+                            
+                            currentUserRoleType = roleType;
 
                             getEl('user-display-name').textContent = currentUser;
                             getEl('user-display-role').textContent = currentUserRoleType;
