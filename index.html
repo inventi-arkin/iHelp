@@ -495,6 +495,7 @@
                     <button id="btn-close-crud" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
                 <div class="p-5 flex-1 min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+                    <div id="crud-error" class="hidden w-full px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-xs font-bold text-center shrink-0"></div>
                     <input type="hidden" id="setting-internal-id">
                     <input type="hidden" id="setting-is-new">
                     
@@ -1224,6 +1225,11 @@
                         nameCol = `<div class="font-semibold text-slate-800 mb-1">${item.name} <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">${item.hours}H</span></div><div class="text-[10px] font-bold text-slate-500 mb-1">Matches: <span class="text-blue-600">${envName}</span> + <span class="text-red-500">${sevName}</span></div><div class="text-[10px] text-slate-400 font-medium flex items-center flex-wrap">${stepsHtml}</div>`;
                     }
 
+                    let duplicateBtn = '';
+                    if (currentContext === 'sla') {
+                        duplicateBtn = `<button class="btn-crud-action p-1.5 text-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 rounded" data-action="dup" data-id="${item.id}" title="Duplicate SLA"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>`;
+                    }
+
                     return `
                     <tr class="hover:bg-slate-50 transition-colors group relative">
                         <td class="px-5 py-3 font-mono text-xs text-slate-800 align-top">${idCol}</td>
@@ -1232,6 +1238,7 @@
                             <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
                                 <button class="btn-crud-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                                 <button class="btn-crud-action p-1.5 text-blue-400 hover:text-blue-700 hover:bg-blue-50 rounded" data-action="edit" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                ${duplicateBtn}
                                 <button class="btn-crud-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${item.id}"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                             </div>
                         </td>
@@ -1596,16 +1603,20 @@
                 }
                 
                 // Settings CRUD Open/Edit Action
-                if (e.target.closest('#btn-add-setting') || e.target.closest('.btn-crud-action[data-action="edit"]') || e.target.closest('.btn-crud-action[data-action="view"]')) {
+                if (e.target.closest('#btn-add-setting') || e.target.closest('.btn-crud-action[data-action="edit"]') || e.target.closest('.btn-crud-action[data-action="view"]') || e.target.closest('.btn-crud-action[data-action="dup"]')) {
+                    getEl('crud-error').classList.add('hidden');
                     const btn = e.target.closest('#btn-add-setting') ? e.target.closest('#btn-add-setting') : e.target.closest('.btn-crud-action');
                     const isAdd = btn.id === 'btn-add-setting';
                     const action = isAdd ? 'add' : btn.dataset.action;
+                    const isDup = action === 'dup';
                     const id = isAdd ? null : btn.dataset.id;
                     const item = isAdd ? null : (dataStore[currentContext]||[]).find(x => x.id === id);
 
-                    getEl('setting-id').value = item ? item.id : ''; getEl('setting-id').disabled = !isAdd;
-                    getEl('setting-name').value = item ? item.name : ''; getEl('setting-name').disabled = action === 'view';
-                    getEl('setting-is-new').value = isAdd ? 'true' : 'false';
+                    getEl('setting-id').value = isDup ? '' : (item ? item.id : ''); 
+                    getEl('setting-id').disabled = !(isAdd || isDup);
+                    getEl('setting-name').value = isDup ? `Copy of ${item.name}` : (item ? item.name : ''); 
+                    getEl('setting-name').disabled = action === 'view';
+                    getEl('setting-is-new').value = (isAdd || isDup) ? 'true' : 'false';
                     
                     getEl('setting-role-container').classList.add('hidden');
                     getEl('setting-role-type-container').classList.add('hidden');
@@ -1638,7 +1649,7 @@
                         getEl('setting-status-type').value = item ? (item.type || 'Open-Start') : 'Open-Start';
 
                     } else if (currentContext === 'sla') {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : "View SLA Policy");
+                        getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : (isDup ? "Duplicate SLA Policy" : "View SLA Policy"));
                         getEl('label-setting-id').textContent = 'SLA ID Code *'; getEl('label-setting-name').textContent = 'Policy Name *';
                         getEl('setting-sla-container').classList.remove('hidden');
                         getEl('setting-sla-container').classList.add('flex');
@@ -1678,11 +1689,34 @@
                 
                 // Save Settings CRUD
                 if (e.target.closest('#btn-save-crud')) {
+                    const errEl = getEl('crud-error'); errEl.classList.add('hidden');
                     const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim();
                     const isNew = getEl('setting-is-new').value === 'true';
-                    if(!idVal || !nameVal) return;
+                    
+                    if(!idVal || !nameVal) {
+                        errEl.textContent = "ID Code and Display Name are required."; errEl.classList.remove('hidden'); return;
+                    }
+
+                    if (currentContext === 'sla') {
+                        const envId = getEl('setting-sla-env').value;
+                        const sevId = getEl('setting-sla-sev').value;
+                        
+                        const nameExists = dataStore.sla.find(s => s.name.toLowerCase() === nameVal.toLowerCase() && s.id !== (isNew ? null : idVal));
+                        if (nameExists) {
+                            errEl.textContent = "An SLA Policy with this name already exists."; errEl.classList.remove('hidden'); return;
+                        }
+                        
+                        const conditionExists = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId && s.id !== (isNew ? null : idVal));
+                        if (conditionExists) {
+                            errEl.textContent = "An SLA Policy for this Environment and Severity combination already exists."; errEl.classList.remove('hidden'); return;
+                        }
+                    }
                     
                     const existing = (dataStore[currentContext]||[]).find(x => x.id === idVal);
+                    if (isNew && existing) {
+                        errEl.textContent = "This ID Code is already in use."; errEl.classList.remove('hidden'); return;
+                    }
+
                     const newItem = {
                         id: idVal, name: nameVal,
                         createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
