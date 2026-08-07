@@ -29,6 +29,7 @@
             position: relative; z-index: 10;
         }
 
+        /* Sidebar Styling */
         .sidebar { width: 80px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 40; }
         .sidebar:hover { width: 260px; }
         .sidebar:not(:hover) .sidebar-brand-text, .sidebar:not(:hover) .nav-text, .sidebar:not(:hover) .logout-text, 
@@ -37,6 +38,7 @@
         .sidebar:not(:hover) .sidebar-brand-icon { display: flex; }
         .sidebar:not(:hover) .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
 
+        /* View Management */
         .view-section { display: none !important; opacity: 0; transition: opacity 0.3s ease; }
         .view-section.active { display: flex !important; opacity: 1; z-index: 50; }
         
@@ -56,11 +58,14 @@
         .wf-link-bg { fill: none; stroke: rgba(0,0,0,0.01); stroke-width: 20; cursor: pointer; pointer-events: stroke; }
         .wf-link-line { fill: none; stroke-width: 2.5; transition: stroke-width 0.2s, stroke 0.2s; pointer-events: none; }
         .wf-link-bg:hover + .wf-link-line { stroke-width: 4 !important; stroke: #ef4444 !important; }
+
+        /* Chart tooltip positioning */
+        #chart-tooltip { pointer-events: none; transition: left 0.1s ease-out, opacity 0.2s; }
+        .chart-hover-col:hover { fill: rgba(59, 130, 246, 0.05); }
     </style>
 </head>
 <body class="text-slate-800 h-screen w-screen flex relative overflow-hidden">
 
-    <!-- LOGIN VIEW -->
     <div id="view-login" class="view-section active fixed inset-0 flex items-center justify-center bg-slate-900 overflow-hidden">
         <div class="absolute inset-0 pointer-events-none z-0">
             <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
@@ -76,11 +81,11 @@
             
             <div id="login-error" class="hidden w-full mb-4 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center font-medium"></div>
 
-            <button id="btn-google-login" class="flex items-center justify-center gap-3 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-white transition-all shadow-sm mb-4">
+            <button type="button" id="btn-google-login" class="flex items-center justify-center gap-3 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-white transition-all shadow-sm mb-4 z-20 cursor-pointer">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                 Sign in with Google
             </button>
-            <button id="btn-bypass-login" class="flex items-center justify-center w-full py-3 bg-blue-600/80 hover:bg-blue-600 border border-blue-500/50 rounded-xl text-sm font-semibold text-white transition-all shadow-sm">
+            <button type="button" id="btn-bypass-login" class="flex items-center justify-center w-full py-3 bg-blue-600/80 hover:bg-blue-600 border border-blue-500/50 rounded-xl text-sm font-semibold text-white transition-all shadow-sm z-20 cursor-pointer">
                 Preview Dashboard (Bypass)
             </button>
 
@@ -91,7 +96,6 @@
         </div>
     </div>
 
-    <!-- MAIN APP VIEW -->
     <div id="view-app" class="view-section fixed inset-0 flex h-full w-full bg-slate-50">
         <!-- Sidebar -->
         <aside class="sidebar bg-[#0f172a] flex flex-col z-30 text-white shrink-0 shadow-xl overflow-hidden whitespace-nowrap border-r border-slate-800 relative" id="app-sidebar">
@@ -143,18 +147,17 @@
             </ul>
             
             <div class="p-4 border-t border-white/5 shrink-0">
-                <button id="btn-logout" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium text-slate-300 hover:text-white">
+                <button id="btn-logout" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium text-slate-300 hover:text-white cursor-pointer">
                     <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                     <span class="logout-text">Sign Out</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative h-full">
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 w-full shadow-sm">
                 <div class="flex items-center gap-4">
-                    <h2 class="text-lg font-bold text-slate-800" id="topbar-title">Client Dashboard</h2>
+                    <h2 class="text-lg font-bold text-slate-800" id="topbar-title">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="text-sm text-right hidden sm:block">
@@ -171,6 +174,8 @@
                 
                 <!-- CONTENT: Dashboard -->
                 <div id="content-dashboard" class="content-section active p-6 max-w-7xl mx-auto w-full">
+                    
+                    <!-- KPI Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tickets</h3>
@@ -186,17 +191,69 @@
                         </div>
                     </div>
 
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                    <!-- Fluid Line Chart Widget (Overflow Visible Fixed) -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm mb-6 flex flex-col relative">
+                        <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl z-20">
+                            <h3 class="text-sm font-bold text-slate-800">Ticket Volume (Last 7 Days)</h3>
+                            <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-500"></span> Open / Active</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> Resolved</span>
+                            </div>
+                        </div>
+                        <div class="p-5 h-[300px] w-full relative overflow-visible" id="dash-chart-container">
+                            <svg id="dash-chart-svg" class="w-full h-full overflow-visible"></svg>
+                            <!-- Floating Dark Tooltip -->
+                            <div id="chart-tooltip" class="absolute bg-slate-900 text-white rounded-lg p-3 text-xs shadow-xl opacity-0 z-50 transform -translate-y-[110%] -translate-x-1/2 pointer-events-none transition-all duration-75">
+                                <div id="ct-date" class="font-bold mb-2 border-b border-slate-700 pb-1">Date</div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex justify-between gap-4"><span class="text-slate-400">Open / Active:</span> <span id="ct-open" class="font-bold text-blue-400">0</span></div>
+                                    <div class="flex justify-between gap-4"><span class="text-slate-400">Resolved:</span> <span id="ct-resolved" class="font-bold text-emerald-400">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top 10 Active Analysis Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Accounts (Active)</h3>
+                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-acc"></div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Modules (Active)</h3>
+                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-mod"></div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Environments (Active)</h3>
+                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-env"></div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Severities (Active)</h3>
+                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-sev"></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Table (Restored) -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col overflow-hidden">
                         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <h3 class="text-sm font-bold text-slate-800">Recent Activity</h3>
-                            <button class="text-xs font-semibold text-blue-600 hover:text-blue-800 btn-view-tickets">View All &rarr;</button>
+                            <h3 class="text-sm font-bold text-slate-800">Recent Ticket Activity</h3>
+                            <button class="text-xs font-bold text-blue-600 hover:text-blue-800 btn-view-tickets cursor-pointer">View All &rarr;</button>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm whitespace-nowrap">
                                 <thead class="bg-white border-b border-slate-100 text-slate-400">
                                     <tr>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Ticket ID</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Subject</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Subject & Details</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Creator & Date</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px]">Status & Priority</th>
                                     </tr>
                                 </thead>
@@ -222,19 +279,13 @@
                             </div>
                             <div class="flex gap-2">
                                 <div class="relative group">
-                                    <button id="btn-toggle-filters" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                                    <button id="btn-toggle-filters" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none cursor-pointer">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
                                     </button>
                                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Filter</div>
                                 </div>
                                 <div class="relative group">
-                                    <button id="btn-export-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                    </button>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Export Tickets</div>
-                                </div>
-                                <div class="relative group">
-                                    <button id="btn-new-ticket" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none">
+                                    <button id="btn-new-ticket" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none cursor-pointer">
                                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                     </button>
                                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">New Ticket</div>
@@ -247,7 +298,7 @@
                     <div id="tickets-filter-panel" class="hidden mb-6 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Advanced Filters</h3>
-                            <button id="btn-clear-filters" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 focus:outline-none">Clear All</button>
+                            <button id="btn-clear-filters" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 focus:outline-none cursor-pointer">Clear All</button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                             <select id="filter-acc" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100"></select>
@@ -258,15 +309,15 @@
                         </div>
                     </div>
 
-                    <!-- Tickets Table -->
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative">
+                    <!-- Tickets Table with Merged Columns -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative overflow-hidden">
                         <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 relative">
                             <table class="w-full text-left text-sm whitespace-nowrap min-w-full">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-400 sticky top-0 z-10 shadow-sm">
                                     <tr>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Ticket ID</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Subject & Details</th>
-                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Created Date</th>
+                                        <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Creator & Date</th>
                                         <th class="px-5 py-3 font-bold uppercase tracking-wider text-[10px] bg-slate-50">Status & Priority</th>
                                     </tr>
                                 </thead>
@@ -276,17 +327,16 @@
                             </table>
                         </div>
                         
-                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between rounded-b-xl shrink-0 mt-auto z-20">
+                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0 mt-auto z-20 relative">
                             <span class="text-xs font-medium text-slate-500" id="tickets-page-info">Showing 0 entries</span>
                             <div class="flex items-center gap-1" id="tickets-pagination"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CONTENT: Ticket Details -->
                 <div id="content-ticket-details" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex items-center gap-3 mb-6">
-                        <button id="btn-back-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+                        <button id="btn-back-tickets" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
                         <h1 id="detail-header-id" class="text-xl font-bold text-slate-900">Ticket Details</h1>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -306,11 +356,11 @@
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px]">
                                 <!-- Tabs Header -->
                                 <div class="flex border-b border-slate-200 bg-slate-50 rounded-t-xl px-2 pt-2">
-                                    <button class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2 transition-colors" data-tab="comms">
+                                    <button class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2 transition-colors cursor-pointer" data-tab="comms">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                                         Communications
                                     </button>
-                                    <button id="tab-internal-btn" class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors hidden" data-tab="internal">
+                                    <button id="tab-internal-btn" class="detail-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors hidden cursor-pointer" data-tab="internal">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                         Internal Diagnostics
                                     </button>
@@ -321,7 +371,7 @@
                                     <div id="ticket-messages-container" class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4"></div>
                                     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-xl flex gap-3 shrink-0">
                                         <textarea id="input-reply" rows="1" placeholder="Type a message (Press Enter to send)..." class="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 resize-none custom-scrollbar"></textarea>
-                                        <button id="btn-send-reply" class="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm shrink-0">
+                                        <button id="btn-send-reply" class="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm shrink-0 cursor-pointer">
                                             <svg class="w-4 h-4 translate-x-px -translate-y-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                                         </button>
                                     </div>
@@ -341,7 +391,7 @@
                                         </div>
                                         <input type="url" id="internal-note-link" placeholder="Optional: Attach file URL (Image, Video, Document)..." class="w-full px-4 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50">
                                         <div class="flex justify-end">
-                                            <button id="btn-send-internal" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm flex items-center gap-2">
+                                            <button id="btn-send-internal" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
                                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                                 Log Narration
                                             </button>
@@ -351,7 +401,7 @@
                             </div>
                         </div>
 
-                        <!-- Properties Sidebar (Admin Override Enabled) -->
+                        <!-- Properties Sidebar -->
                         <div class="space-y-6">
                             <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
                                 <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Ticket Properties</h3>
@@ -382,7 +432,7 @@
                                         <select id="detail-env-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
                                     </div>
                                     
-                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
                                         Save Properties
                                     </button>
                                 </div>
@@ -406,7 +456,6 @@
                     </div>
                 </div>
 
-                <!-- CONTENT: Settings -->
                 <div id="content-settings" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
@@ -420,26 +469,7 @@
                             </div>
                             <div class="flex gap-2">
                                 <div class="relative group">
-                                    <button id="btn-export-settings" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                    </button>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Export</div>
-                                </div>
-                                <div class="relative group">
-                                    <button id="btn-download-template" class="flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-slate-200 focus:outline-none">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="18"></line><line x1="15" y1="15" x2="12" y2="18"></line></svg>
-                                    </button>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Template</div>
-                                </div>
-                                <div class="relative group">
-                                    <label class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus-within:ring-2 focus-within:ring-emerald-200 cursor-pointer">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                        <input type="file" id="input-csv-upload" accept=".csv" class="hidden">
-                                    </label>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Upload</div>
-                                </div>
-                                <div class="relative group">
-                                    <button id="btn-add-setting" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none">
+                                    <button id="btn-add-setting" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none cursor-pointer">
                                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                     </button>
                                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-bold rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">Add New</div>
@@ -447,7 +477,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative">
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative overflow-hidden">
                         <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 relative">
                             <table class="w-full text-left text-sm whitespace-nowrap min-w-full">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-400 sticky top-0 z-10 shadow-sm">
@@ -459,7 +489,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="settings-table-body" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic with tooltips -->
+                                    <!-- Dynamic -->
                                 </tbody>
                             </table>
                         </div>
@@ -472,7 +502,7 @@
                             <p class="text-slate-500 text-xs mt-1">Create your first entry to populate this list.</p>
                         </div>
                         
-                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between rounded-b-xl shrink-0 mt-auto z-20">
+                        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0 mt-auto z-20 relative">
                             <span class="text-xs font-medium text-slate-500" id="settings-page-info">Showing 0 entries</span>
                             <div class="flex items-center gap-1" id="settings-pagination"></div>
                         </div>
@@ -484,7 +514,7 @@
     </div>
 
     <!-- MODALS -->
-
+    
     <!-- Unified CRUD Modal with SLA Graph Builder -->
     <div id="crud-modal" class="fixed inset-0 z-[200] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="crud-modal-bg"></div>
@@ -492,7 +522,7 @@
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl shrink-0">
                     <h3 id="modal-crud-title" class="text-sm font-bold text-slate-900">Manage Record</h3>
-                    <button id="btn-close-crud" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    <button id="btn-close-crud" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
                 <div class="p-5 flex-1 min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                     <div id="crud-error" class="hidden w-full px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-xs font-bold text-center shrink-0"></div>
@@ -510,12 +540,10 @@
                         </div>
                     </div>
 
-                    <!-- Role Dropdown -->
                     <div id="setting-role-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Role *</label>
                         <select id="setting-role" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100"></select>
                     </div>
-                    <!-- Role Type Dropdown -->
                     <div id="setting-role-type-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Role Type *</label>
                         <select id="setting-role-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
@@ -526,7 +554,6 @@
                             <option value="Root">Root (Super Administrator)</option>
                         </select>
                     </div>
-                    <!-- Status Category Dropdown -->
                     <div id="setting-status-type-container" class="hidden shrink-0">
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Category *</label>
                         <select id="setting-status-type" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100">
@@ -536,7 +563,6 @@
                         </select>
                     </div>
                     
-                    <!-- Advanced SLA Configuration -->
                     <div id="setting-sla-container" class="hidden flex-col gap-4 flex-1 min-h-0">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 shrink-0 pt-2 border-t border-slate-100">
                             <div>
@@ -559,13 +585,13 @@
                                 <p class="text-xs text-slate-500 mb-2 shrink-0">Drag boxes to map flow. Click <b>Link</b> to map transitions. Click a line to delete.</p>
                                 
                                 <div class="w-full flex items-center justify-between mb-2 shrink-0 relative z-50">
-                                    <button type="button" id="btn-wf-fullscreen" class="flex flex-col items-center justify-center bg-white border border-slate-300 p-1.5 rounded shadow-sm hover:bg-slate-50 text-slate-700 focus:outline-none transition-colors">
+                                    <button type="button" id="btn-wf-fullscreen" class="flex flex-col items-center justify-center bg-white border border-slate-300 p-1.5 rounded shadow-sm hover:bg-slate-50 text-slate-700 focus:outline-none transition-colors cursor-pointer">
                                         <svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg>
                                         <span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>
                                     </button>
                                     <div id="wf-add-controls" class="flex items-center gap-2">
                                         <select id="wf-add-status-select" class="px-2 py-1.5 text-xs font-medium border border-slate-300 rounded shadow-sm outline-none focus:border-blue-500 bg-white"></select>
-                                        <button type="button" id="btn-wf-add" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors">+ Add Box</button>
+                                        <button type="button" id="btn-wf-add" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors cursor-pointer">+ Add Box</button>
                                     </div>
                                 </div>
 
@@ -581,21 +607,21 @@
                     </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50 shrink-0">
-                    <button id="btn-cancel-crud" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Save Record</button>
+                    <button id="btn-cancel-crud" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Save Record</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Create Ticket Modal (Auto-Assigns SLA) -->
+    <!-- Create Ticket Modal -->
     <div id="ticket-modal" class="fixed inset-0 z-[200] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" id="ticket-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
                     <h3 class="text-sm font-bold text-slate-900">Create New Ticket</h3>
-                    <button id="btn-close-ticket" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    <button id="btn-close-ticket" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
                 <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <div class="grid grid-cols-2 gap-4">
@@ -628,8 +654,8 @@
                     </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-ticket" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-ticket" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Create Ticket</button>
+                    <button id="btn-cancel-ticket" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-save-ticket" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Create Ticket</button>
                 </div>
             </div>
         </div>
@@ -642,7 +668,7 @@
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
                     <h3 class="text-sm font-bold text-slate-900">Assign Ticket</h3>
-                    <button id="btn-close-quick-assign" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    <button id="btn-close-quick-assign" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
@@ -651,8 +677,8 @@
                     </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-quick-assign" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-quick-assign" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Assign</button>
+                    <button id="btn-cancel-quick-assign" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-save-quick-assign" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Assign</button>
                 </div>
             </div>
         </div>
@@ -665,7 +691,7 @@
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
                     <h3 class="text-sm font-bold text-slate-900">Quick Update Status</h3>
-                    <button id="btn-close-quick-status" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    <button id="btn-close-quick-status" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
@@ -674,8 +700,8 @@
                     </div>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-quick-status" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-save-quick-status" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Save Update</button>
+                    <button id="btn-cancel-quick-status" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-save-quick-status" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Save Update</button>
                 </div>
             </div>
         </div>
@@ -696,8 +722,8 @@
                     <p class="text-sm text-slate-600">Are you sure you want to delete this record? This action cannot be undone.</p>
                 </div>
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
-                    <button id="btn-cancel-delete" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
-                    <button id="btn-confirm-delete" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">Yes, Delete</button>
+                    <button id="btn-cancel-delete" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-confirm-delete" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm cursor-pointer">Yes, Delete</button>
                 </div>
             </div>
         </div>
@@ -795,7 +821,8 @@
                 }
             ],
             tickets: [
-                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', modId: 'MOD-DB', slaId: 'SLA-CRIT' }
+                { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', modId: 'MOD-DB', slaId: 'SLA-CRIT' },
+                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-STD' }
             ],
             messages: [
                 { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned based on Env/Sev criteria.' }
@@ -1084,7 +1111,10 @@
                 if (section.id === `content-${targetId}`) { section.classList.add('active'); } else { section.classList.remove('active'); }
             });
             if(title) getEl('topbar-title').textContent = title;
-            if (targetId === 'dashboard') renderDashboard();
+            if (targetId === 'dashboard') {
+                renderDashboard();
+                setTimeout(() => drawChart(), 50);
+            }
             if (targetId === 'tickets') renderTickets();
             if (targetId === 'settings') renderSettings();
         }
@@ -1102,17 +1132,191 @@
         // --- RENDER FUNCTIONS ---
         function renderDashboard() {
             const allowedTickets = getFilteredTickets();
-            getEl('dash-total').textContent = allowedTickets.length;
-            getEl('dash-open').textContent = allowedTickets.filter(t => t.statusId === 'STAT-OPN' || t.statusId === 'STAT-INP').length;
-            getEl('dash-resolved').textContent = allowedTickets.filter(t => t.statusId === 'STAT-RES').length;
+            const resolvedStatuses = dataStore.status.filter(s => s.type === 'Closed-End').map(s => s.id);
+            const openStatuses = dataStore.status.filter(s => s.type === 'Open-Start' || s.type === 'Open-Ongoing').map(s => s.id);
             
-            getEl('dashboard-recent-table').innerHTML = allowedTickets.slice(0, 5).map(t => `
-                <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
-                    <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
-                    <td class="px-5 py-3 text-sm font-medium relative pr-10 text-slate-800"><span class="truncate block max-w-[200px]">${t.subject}</span></td>
-                    <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
-                </tr>
-            `).join('');
+            getEl('dash-total').textContent = allowedTickets.length;
+            getEl('dash-open').textContent = allowedTickets.filter(t => openStatuses.includes(t.statusId)).length;
+            getEl('dash-resolved').textContent = allowedTickets.filter(t => resolvedStatuses.includes(t.statusId)).length;
+            
+            // Top 10 Widgets logic
+            const openT = allowedTickets.filter(t => openStatuses.includes(t.statusId));
+            
+            const getTop = (key, type) => {
+                const counts = {};
+                openT.forEach(t => { if(t[key]) counts[t[key]] = (counts[t[key]]||0)+1; });
+                return Object.entries(counts).map(([k, v]) => ({id: k, count: v, name: getName(type, k)})).sort((a,b)=>b.count-a.count).slice(0, 10);
+            };
+            
+            const renderWidgetList = (containerId, data) => {
+                const el = getEl(containerId);
+                if (!el) return;
+                if (data.length === 0) {
+                    el.innerHTML = `<div class="text-center text-[10px] text-slate-400 italic py-4">No active records</div>`;
+                    return;
+                }
+                const maxCount = Math.max(...data.map(d => d.count), 1);
+                el.innerHTML = data.map(d => `
+                    <div class="mb-3 last:mb-0">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-700 mb-1">
+                            <span class="truncate pr-2">${d.name}</span>
+                            <span>${d.count}</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${(d.count / maxCount) * 100}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            renderWidgetList('dash-top-acc', getTop('accId', 'acc'));
+            renderWidgetList('dash-top-mod', getTop('modId', 'mod'));
+            renderWidgetList('dash-top-env', getTop('envId', 'env'));
+            renderWidgetList('dash-top-sev', getTop('sevId', 'sev'));
+
+            // Recent Activity Logic
+            const recentTickets = allowedTickets.slice().sort((a,b) => new Date(b.createdDate) - new Date(a.createdDate)).slice(0, 5);
+            const recentTable = getEl('dashboard-recent-table');
+            if(recentTable) {
+                if(recentTickets.length === 0) {
+                    recentTable.innerHTML = `<tr><td colspan="4" class="px-5 py-8 text-center text-slate-400 text-xs italic">No recent activity.</td></tr>`;
+                } else {
+                    recentTable.innerHTML = recentTickets.map(t => `
+                        <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
+                            <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700 align-top">${t.id}</td>
+                            <td class="px-5 py-3 relative pr-10 align-top">
+                                <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800 leading-tight">${t.subject}</span>
+                                <div class="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wide">
+                                    ${getName('acc', t.accId)} <span class="text-slate-300 mx-1">&bull;</span> ${getName('env', t.envId)}
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 align-top">
+                                <div class="text-xs font-bold text-slate-700 leading-tight">${getUserName(t.submittedByEmail)}</div>
+                                <div class="text-[10px] text-slate-500 mt-1">${t.createdDate}</div>
+                            </td>
+                            <td class="px-5 py-3 align-top"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            drawChart();
+        }
+
+        let chartObserver = null;
+        function drawChart() {
+            const container = getEl('dash-chart-container');
+            const svg = getEl('dash-chart-svg');
+            if (!container || !svg || container.offsetWidth === 0) return;
+            
+            if (!chartObserver) {
+                chartObserver = new ResizeObserver(() => drawChart());
+                chartObserver.observe(container);
+            }
+
+            const allowedTickets = getFilteredTickets();
+            const resolvedStatuses = dataStore.status.filter(s => s.type === 'Closed-End').map(s => s.id);
+
+            const last7Days = [];
+            const dayLabels = [];
+            for(let i=6; i>=0; i--) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                last7Days.push(d.toISOString().split('T')[0]);
+                dayLabels.push(d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'}));
+            }
+
+            const openData = last7Days.map(date => {
+                return allowedTickets.filter(t => {
+                    const isCreatedOnOrBefore = t.createdDate <= date;
+                    const isNotYetResolved = !resolvedStatuses.includes(t.statusId) || (t.modifiedDate && t.modifiedDate > date);
+                    return isCreatedOnOrBefore && isNotYetResolved;
+                }).length;
+            });
+
+            const closedData = last7Days.map(date => {
+                return allowedTickets.filter(t => 
+                    resolvedStatuses.includes(t.statusId) && 
+                    (t.modifiedDate === date || (!t.modifiedDate && t.createdDate === date))
+                ).length;
+            });
+
+            const maxVal = Math.max(...openData, ...closedData, 4);
+            const w = container.offsetWidth;
+            const h = container.offsetHeight;
+            const padX = 20;
+            const stepX = (w - padX * 2) / 6;
+            
+            const getX = (idx) => padX + (idx * stepX);
+            const getY = (val) => h - 30 - ((val / maxVal) * (h - 60));
+
+            const buildSmoothPath = (data, isArea = false) => {
+                if(data.length === 0) return "";
+                let path = `M ${getX(0)} ${getY(data[0])}`;
+                for(let i=0; i<data.length-1; i++) {
+                    const cx = (getX(i) + getX(i+1)) / 2;
+                    path += ` C ${cx} ${getY(data[i])}, ${cx} ${getY(data[i+1])}, ${getX(i+1)} ${getY(data[i+1])}`;
+                }
+                if (isArea) path += ` L ${getX(data.length-1)} ${h-30} L ${getX(0)} ${h-30} Z`;
+                return path;
+            };
+
+            const openAreaPath = buildSmoothPath(openData, true);
+            const openLinePath = buildSmoothPath(openData, false);
+            const closedLinePath = buildSmoothPath(closedData, false);
+
+            let gridHtml = '';
+            for(let i=0; i<=4; i++) {
+                const gy = getY((maxVal/4) * i);
+                gridHtml += `<line x1="${padX}" y1="${gy}" x2="${w-padX}" y2="${gy}" stroke="#f1f5f9" stroke-width="1" />`;
+                if(i > 0) gridHtml += `<text x="${padX - 5}" y="${gy + 4}" fill="#94a3b8" font-size="10" font-weight="600" text-anchor="end">${Math.round((maxVal/4) * i)}</text>`;
+            }
+
+            let labelsHtml = '';
+            let pointsHtml = '';
+            let hoverOverlayHtml = '';
+            const halfStep = stepX / 2;
+
+            last7Days.forEach((date, i) => {
+                const cx = getX(i);
+                labelsHtml += `<text x="${cx}" y="${h - 10}" fill="#94a3b8" font-size="10" font-weight="600" text-anchor="middle">${dayLabels[i]}</text>`;
+                
+                pointsHtml += `<circle cx="${cx}" cy="${getY(openData[i])}" r="4" fill="white" stroke="#3b82f6" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"/>`;
+                pointsHtml += `<circle cx="${cx}" cy="${getY(closedData[i])}" r="4" fill="white" stroke="#10b981" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"/>`;
+                
+                const rx = i === 0 ? padX : cx - halfStep;
+                const rw = i === 0 ? halfStep : (i === 6 ? halfStep : stepX);
+                hoverOverlayHtml += `<rect x="${rx}" y="0" width="${rw}" height="${h-30}" class="chart-hover-col group outline-none" fill="transparent" data-date="${dayLabels[i]}" data-open="${openData[i]}" data-closed="${closedData[i]}" data-cx="${cx}" cursor="crosshair"/>`;
+            });
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stop-color="#3b82f6" stop-opacity="0.3"/>
+                        <stop offset="95%" stop-color="#3b82f6" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                ${gridHtml}
+                <path d="${openAreaPath}" fill="url(#blueGrad)" pointer-events="none" />
+                <path d="${closedLinePath}" fill="none" stroke="#10b981" stroke-width="2" pointer-events="none" />
+                <path d="${openLinePath}" fill="none" stroke="#3b82f6" stroke-width="2" pointer-events="none" />
+                ${labelsHtml}
+                ${hoverOverlayHtml}
+                ${pointsHtml}
+            `;
+            
+            // Tooltip logic
+            const tooltip = getEl('chart-tooltip');
+            svg.querySelectorAll('.chart-hover-col').forEach(col => {
+                col.addEventListener('mouseenter', (e) => {
+                    const cx = parseFloat(e.target.getAttribute('data-cx'));
+                    getEl('ct-date').textContent = e.target.getAttribute('data-date');
+                    getEl('ct-open').textContent = e.target.getAttribute('data-open');
+                    getEl('ct-resolved').textContent = e.target.getAttribute('data-closed');
+                    tooltip.style.opacity = '1';
+                    tooltip.style.left = `${cx}px`;
+                });
+                col.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+            });
         }
 
         function renderTickets() {
@@ -1140,10 +1344,12 @@
             } else {
                 getEl('tickets-table-body').innerHTML = paginatedTickets.map(t => `
                     <tr class="hover:bg-slate-50 cursor-pointer ticket-row transition-colors group" data-id="${t.id}">
-                        <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700">${t.id}</td>
-                        <td class="px-5 py-3 relative pr-28">
-                            <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800">${t.subject}</span>
-                            <span class="truncate block max-w-[250px] text-[10px] text-slate-500 mt-0.5 uppercase tracking-wide font-bold">${getName('acc', t.accId)}</span>
+                        <td class="px-5 py-3 font-mono text-xs font-bold text-blue-700 align-top">${t.id}</td>
+                        <td class="px-5 py-3 relative pr-28 align-top">
+                            <span class="truncate block max-w-[250px] text-sm font-medium text-slate-800 leading-tight">${t.subject}</span>
+                            <div class="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wide">
+                                ${getName('acc', t.accId)} <span class="text-slate-300 mx-1">&bull;</span> ${getName('env', t.envId)}
+                            </div>
                             <div class="action-tooltip absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white border border-slate-200 shadow-md rounded-md p-1 z-20">
                                 <button class="btn-ticket-action p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded" data-action="view" data-id="${t.id}" title="View Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                                 <button class="btn-ticket-action p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded" data-action="assign" data-id="${t.id}" title="Assign Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></button>
@@ -1151,8 +1357,11 @@
                                 <button class="btn-ticket-action p-1.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded" data-action="del" data-id="${t.id}" title="Delete Ticket"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                             </div>
                         </td>
-                        <td class="px-5 py-3 text-xs text-slate-500">${t.createdDate}</td>
-                        <td class="px-5 py-3"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
+                        <td class="px-5 py-3 align-top">
+                            <div class="text-xs font-bold text-slate-700 leading-tight">${getUserName(t.submittedByEmail)}</div>
+                            <div class="text-[10px] text-slate-500 mt-1">${t.createdDate}</div>
+                        </td>
+                        <td class="px-5 py-3 align-top"><div class="flex flex-col items-start gap-1.5">${getStatusBadge(t.statusId)}${getSevBadge(t.sevId)}</div></td>
                     </tr>
                 `).join('');
             }
@@ -1227,7 +1436,7 @@
 
                     let duplicateBtn = '';
                     if (currentContext === 'sla') {
-                        duplicateBtn = `<button class="btn-crud-action p-1.5 text-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 rounded" data-action="dup" data-id="${item.id}" title="Duplicate SLA"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>`;
+                        duplicateBtn = `<button class="btn-crud-action p-1.5 text-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 rounded" data-action="dup" data-id="${item.id}" title="Duplicate SLA"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"></path></svg></button>`;
                     }
 
                     return `
@@ -1356,536 +1565,534 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Handle entire app interactions
+        document.body.addEventListener('click', async (e) => {
             
-            document.body.addEventListener('click', async (e) => {
-                
-                // Login Auth Flow
-                if (e.target.closest('#btn-google-login')) {
-                    const errEl = getEl('login-error'); errEl.classList.add('hidden');
-                    try {
-                        const result = await signInWithPopup(auth, provider);
-                        const email = result.user.email;
+            // Login Auth Flow
+            if (e.target.closest('#btn-google-login')) {
+                const errEl = getEl('login-error'); errEl.classList.add('hidden');
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const email = result.user.email;
+                    
+                    if (email.endsWith('@inventi.ph') || email.endsWith('@inventi.asia')) {
+                        currentUser = result.user.displayName || email.split('@')[0];
+                        currentUserEmail = email;
                         
-                        if (email.endsWith('@inventi.ph') || email.endsWith('@inventi.asia')) {
-                            currentUser = result.user.displayName || email.split('@')[0];
-                            currentUserEmail = email;
-                            
-                            isCloudMode = true;
-                            await initCloudSync();
-                            
-                            let localUser;
-                            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-                            const userSnap = await getDoc(userRef);
-                            
-                            if (userSnap.exists()) {
-                                localUser = userSnap.data();
-                            } else {
-                                localUser = { id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
-                                await dbSave('users', email, localUser);
-                            }
-                            
-                            let roleType = 'System User';
-                            if (localUser.roleId) {
-                                const roleRef = doc(db, 'artifacts', appId, 'public', 'data', 'roles', localUser.roleId);
-                                const roleSnap = await getDoc(roleRef);
-                                if (roleSnap.exists()) { roleType = roleSnap.data().type; }
-                            }
-                            
-                            currentUserRoleType = roleType;
-                            getEl('user-display-name').textContent = currentUser;
-                            getEl('user-display-role').textContent = currentUserRoleType;
-                            
-                            applyRBAC();
-                            getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
-                            switchView('dashboard', 'Client Dashboard');
+                        isCloudMode = true;
+                        await initCloudSync();
+                        
+                        let localUser;
+                        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
+                        const userSnap = await getDoc(userRef);
+                        
+                        if (userSnap.exists()) {
+                            localUser = userSnap.data();
                         } else {
-                            await signOut(auth);
-                            errEl.textContent = "Access Denied: Please use a valid @inventi.ph or @inventi.asia email.";
-                            errEl.classList.remove('hidden');
-                        }
-                    } catch (error) {
-                        let msg = "Authentication Failed.";
-                        if(error.code === 'auth/popup-closed-by-user') msg = "Login popup was closed before finishing.";
-                        else if(error.code === 'auth/unauthorized-domain') msg = "Domain not authorized in Firebase config.";
-                        else if(error.code === 'auth/network-request-failed') msg = "Network error. Please check your connection.";
-                        errEl.textContent = msg; errEl.classList.remove('hidden');
-                    }
-                }
-                
-                // Bypass Logic
-                if (e.target.closest('#btn-bypass-login')) {
-                    isCloudMode = false;
-                    currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
-                    getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
-                    
-                    applyRBAC();
-                    getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
-                    switchView('dashboard', 'Client Dashboard');
-                }
-
-                if (e.target.closest('#btn-logout')) {
-                    try { await signOut(auth); } catch(e){}
-                    cloudUnsubs.forEach(unsub => unsub()); cloudUnsubs = [];
-                    getEl('view-app').classList.remove('active'); getEl('view-login').classList.add('active');
-                    getEl('login-error').classList.add('hidden');
-                }
-                
-                // Sidebar Setup
-                const menuBtn = e.target.closest('.btn-menu-toggle');
-                if (menuBtn) {
-                    const menuTarget = menuBtn.dataset.menu;
-                    const submenu = getEl(`submenu-${menuTarget}`);
-                    const chevron = menuBtn.querySelector('.chevron-icon');
-                    if(submenu.classList.contains('hidden')) { submenu.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; } 
-                    else { submenu.classList.add('hidden'); chevron.style.transform = 'rotate(0deg)'; }
-                }
-
-                const navBtn = e.target.closest('.nav-link[data-target]');
-                if (navBtn) switchView(navBtn.dataset.target, navBtn.querySelector('.nav-text').textContent);
-                
-                const subNavBtn = e.target.closest('.sub-nav-link');
-                if (subNavBtn) {
-                    currentContext = subNavBtn.dataset.context;
-                    settingsPage = 1; settingsSearch = ''; getEl('search-settings').value = '';
-                    switchView('settings', 'System Settings');
-                }
-                
-                if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) {
-                    ticketsPage = 1; ticketsSearch = ''; activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' }; getEl('search-tickets').value = '';
-                    switchView('tickets', 'Tickets');
-                }
-                
-                // Filters
-                if (e.target.closest('#btn-toggle-filters')) {
-                    const panel = getEl('tickets-filter-panel');
-                    panel.classList.toggle('hidden');
-                    if (!panel.classList.contains('hidden')) populateFilters();
-                }
-                if (e.target.closest('#btn-clear-filters')) {
-                    activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
-                    populateFilters(); ticketsPage = 1; renderTickets();
-                }
-                
-                // Pagination
-                const pageBtn = e.target.closest('button[data-paginate]');
-                if (pageBtn && !pageBtn.disabled) {
-                    const action = pageBtn.dataset.paginate; const page = parseInt(pageBtn.dataset.page);
-                    if (action === 'tickets') { ticketsPage = page; renderTickets(); }
-                    if (action === 'settings') { settingsPage = page; renderSettings(); }
-                }
-
-                // Details Tabs
-                const tabBtn = e.target.closest('.detail-tab-btn');
-                if(tabBtn) switchDetailsTab(tabBtn.dataset.tab);
-
-                // Ticket Row Actions
-                const ticketBtn = e.target.closest('.btn-ticket-action');
-                if (ticketBtn) {
-                    e.stopPropagation();
-                    const action = ticketBtn.dataset.action; const ticketId = ticketBtn.dataset.id;
-                    if (action === 'view') { openTicketDetails(ticketId); } 
-                    else if (action === 'status') {
-                        const ticket = dataStore.tickets.find(t => t.id === ticketId);
-                        if (ticket) { 
-                            currentViewedTicketId = ticket.id; 
-                            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
-                            let allowedStatuses = dataStore.status;
-                            if (ticketSla && ticketSla.nodes && ticketSla.nodes.length > 0) {
-                                const allowedIds = ticketSla.nodes.map(n=>n.id);
-                                allowedStatuses = dataStore.status.filter(s => allowedIds.includes(s.id));
-                            }
-                            getEl('quick-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); 
-                            getEl('quick-status-modal').classList.remove('hidden'); 
-                        }
-                    } 
-                    else if (action === 'assign') {
-                        const ticket = dataStore.tickets.find(t => t.id === ticketId);
-                        if (ticket) { currentViewedTicketId = ticket.id; getEl('quick-assign-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join(''); getEl('quick-assign-modal').classList.remove('hidden'); }
-                    }
-                    else if (action === 'del') { pendingDeleteTicketId = ticketId; getEl('delete-confirm-modal').classList.remove('hidden'); }
-                } else if (e.target.closest('.ticket-row')) { openTicketDetails(e.target.closest('.ticket-row').dataset.id); }
-                
-                if (e.target.closest('#btn-back-tickets')) switchView('tickets', 'Tickets');
-
-                // Update Ticket Properties
-                if (e.target.closest('#btn-update-details')) {
-                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                    if (ticket) {
-                        let changed = false;
-                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        
-                        const newStatusId = getEl('detail-status-select').value;
-                        if (ticket.statusId !== newStatusId) {
-                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
-                            ticket.statusId = newStatusId; changed = true;
-                        }
-
-                        const isOverride = ['Root', 'Admin Override'].includes(currentUserRoleType);
-                        if (isOverride) {
-                            const newEmail = getEl('detail-assignee-select').value;
-                            const newSev = getEl('detail-severity-select').value;
-                            const newMod = getEl('detail-module-select').value;
-                            const newAcc = getEl('detail-account-select').value;
-                            const newEnv = getEl('detail-env-select').value;
-
-                            if (ticket.assigneeEmail !== newEmail) {
-                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${newEmail ? getUserName(newEmail) : 'Unassigned'}] by ${currentUser}.` });
-                                ticket.assigneeEmail = newEmail; changed = true;
-                            }
-                            if (ticket.sevId !== newSev) {
-                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Severity updated to [${getName('sev', newSev)}] by ${currentUser}.` });
-                                ticket.sevId = newSev; changed = true;
-                            }
-                            if (ticket.modId !== newMod) {
-                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Module updated to [${newMod ? getName('mod', newMod) : 'None'}] by ${currentUser}.` });
-                                ticket.modId = newMod; changed = true;
-                            }
-                            if (ticket.accId !== newAcc) { ticket.accId = newAcc; changed = true; }
-                            if (ticket.envId !== newEnv) {
-                                const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Environment updated to [${getName('env', newEnv)}] by ${currentUser}.` });
-                                ticket.envId = newEnv; changed = true;
-                            }
-                        }
-
-                        if(changed) await dbSave('tickets', ticket.id, ticket);
-
-                        const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
-                        btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
-                        setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
-                    }
-                }
-
-                // Resync SLA logic
-                if (e.target.closest('#btn-resync-sla')) {
-                    const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                    if(ticket) {
-                        const matchingSla = dataStore.sla.find(s => s.envId === ticket.envId && s.sevId === ticket.sevId);
-                        const newSlaId = matchingSla ? matchingSla.id : null;
-                        
-                        if (ticket.slaId !== newSlaId) {
-                            ticket.slaId = newSlaId;
-                            await dbSave('tickets', ticket.id, ticket);
-                            const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            const msgId = genId();
-                            const msgText = newSlaId ? `SLA Policy automatically matched to [${matchingSla.name}].` : `SLA Policy unassigned (No match found for current Env/Sev).`;
-                            await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: msgText });
-                            openTicketDetails(ticket.id);
-                        } else {
-                            const btn = e.target.closest('#btn-resync-sla');
-                            btn.textContent = "Synced"; btn.classList.add('bg-emerald-100', 'text-emerald-700');
-                            setTimeout(() => { btn.textContent = "Resync"; btn.classList.remove('bg-emerald-100', 'text-emerald-700'); }, 1500);
-                        }
-                    }
-                }
-                
-                // Chat and Notes
-                if (e.target.closest('#btn-send-reply')) {
-                    const input = getEl('input-reply'); const text = input.value.trim();
-                    if(text && currentViewedTicketId) {
-                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        const msgId = genId();
-                        await dbSave('messages', msgId, { id: msgId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, text: text });
-                        input.value = '';
-                    }
-                }
-                if (e.target.closest('#btn-send-internal')) {
-                    const input = getEl('internal-note-text'); const text = input.value.trim();
-                    const linkInput = getEl('internal-note-link'); const link = linkInput ? linkInput.value.trim() : '';
-                    
-                    if((text || link) && currentViewedTicketId) {
-                        const tag = getEl('internal-note-tag').value;
-                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        const noteId = genId();
-                        await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text, fileUrl: link });
-                        input.value = ''; if(linkInput) linkInput.value = '';
-                    }
-                }
-                
-                // Settings CRUD Open/Edit Action
-                if (e.target.closest('#btn-add-setting') || e.target.closest('.btn-crud-action[data-action="edit"]') || e.target.closest('.btn-crud-action[data-action="view"]') || e.target.closest('.btn-crud-action[data-action="dup"]')) {
-                    getEl('crud-error').classList.add('hidden');
-                    const btn = e.target.closest('#btn-add-setting') ? e.target.closest('#btn-add-setting') : e.target.closest('.btn-crud-action');
-                    const isAdd = btn.id === 'btn-add-setting';
-                    const action = isAdd ? 'add' : btn.dataset.action;
-                    const isDup = action === 'dup';
-                    const id = isAdd ? null : btn.dataset.id;
-                    const item = isAdd ? null : (dataStore[currentContext]||[]).find(x => x.id === id);
-
-                    getEl('setting-id').value = isDup ? '' : (item ? item.id : ''); 
-                    getEl('setting-id').disabled = !(isAdd || isDup);
-                    getEl('setting-name').value = isDup ? `Copy of ${item.name}` : (item ? item.name : ''); 
-                    getEl('setting-name').disabled = action === 'view';
-                    getEl('setting-is-new').value = (isAdd || isDup) ? 'true' : 'false';
-                    
-                    getEl('setting-role-container').classList.add('hidden');
-                    getEl('setting-role-type-container').classList.add('hidden');
-                    getEl('setting-status-type-container').classList.add('hidden');
-                    getEl('setting-sla-container').classList.add('hidden');
-
-                    const formDisabled = action === 'view';
-                    getEl('btn-save-crud').style.display = formDisabled ? 'none' : 'block';
-
-                    if (currentContext === 'users') {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add User" : (action === 'edit' ? "Edit User" : "View User");
-                        getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
-                        getEl('setting-role-container').classList.remove('hidden');
-                        getEl('setting-role').innerHTML = (dataStore.roles||[]).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-                        getEl('setting-role').disabled = formDisabled;
-                        if(item) getEl('setting-role').value = item.roleId;
-
-                    } else if (currentContext === 'roles') {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add Role" : (action === 'edit' ? "Edit Role" : "View Role");
-                        getEl('label-setting-id').textContent = 'Role ID (e.g. ROLE-01) *'; getEl('label-setting-name').textContent = 'Role Name *';
-                        getEl('setting-role-type-container').classList.remove('hidden');
-                        getEl('setting-role-type').disabled = formDisabled;
-                        getEl('setting-role-type').value = item ? item.type : 'System User';
-
-                    } else if (currentContext === 'status') {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add Status" : (action === 'edit' ? "Edit Status" : "View Status");
-                        getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
-                        getEl('setting-status-type-container').classList.remove('hidden');
-                        getEl('setting-status-type').disabled = formDisabled;
-                        getEl('setting-status-type').value = item ? (item.type || 'Open-Start') : 'Open-Start';
-
-                    } else if (currentContext === 'sla') {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : (isDup ? "Duplicate SLA Policy" : "View SLA Policy"));
-                        getEl('label-setting-id').textContent = 'SLA ID Code *'; getEl('label-setting-name').textContent = 'Policy Name *';
-                        getEl('setting-sla-container').classList.remove('hidden');
-                        getEl('setting-sla-container').classList.add('flex');
-                        
-                        getEl('setting-sla-hours').disabled = formDisabled;
-                        getEl('setting-sla-hours').value = item ? (item.hours || 24) : 24;
-                        
-                        getEl('setting-sla-env').innerHTML = dataStore.env.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-                        getEl('setting-sla-sev').innerHTML = dataStore.sev.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                        getEl('setting-sla-env').disabled = formDisabled; getEl('setting-sla-sev').disabled = formDisabled;
-                        if (item) { getEl('setting-sla-env').value = item.envId; getEl('setting-sla-sev').value = item.sevId; }
-
-                        // Reset & Load Graph Builder
-                        wfNodes = item && item.nodes ? JSON.parse(JSON.stringify(item.nodes)) : [];
-                        wfLinks = item && item.links ? JSON.parse(JSON.stringify(item.links)) : [];
-                        isLinkingFrom = null;
-                        
-                        getEl('wf-add-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                        const addControls = getEl('wf-add-controls');
-                        if (addControls) {
-                            addControls.style.display = formDisabled ? 'none' : 'flex';
+                            localUser = { id: email, name: currentUser, roleId: 'ROLE-USER', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() };
+                            await dbSave('users', email, localUser);
                         }
                         
-                        setTimeout(() => drawWf(), 50); // allow container to render before drawing
+                        let roleType = 'System User';
+                        if (localUser.roleId) {
+                            const roleRef = doc(db, 'artifacts', appId, 'public', 'data', 'roles', localUser.roleId);
+                            const roleSnap = await getDoc(roleRef);
+                            if (roleSnap.exists()) { roleType = roleSnap.data().type; }
+                        }
                         
+                        currentUserRoleType = roleType;
+                        getEl('user-display-name').textContent = currentUser;
+                        getEl('user-display-role').textContent = currentUserRoleType;
+                        
+                        applyRBAC();
+                        getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
+                        switchView('dashboard', 'Dashboard');
                     } else {
-                        getEl('modal-crud-title').textContent = isAdd ? "Add Record" : (action === 'edit' ? "Edit Record" : "View Record");
-                        getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
+                        await signOut(auth);
+                        errEl.textContent = "Access Denied: Please use a valid @inventi.ph or @inventi.asia email.";
+                        errEl.classList.remove('hidden');
                     }
-                    getEl('crud-modal').classList.remove('hidden');
+                } catch (error) {
+                    let msg = "Authentication Failed.";
+                    if(error.code === 'auth/popup-closed-by-user') msg = "Login popup was closed before finishing.";
+                    else if(error.code === 'auth/unauthorized-domain') msg = "Domain not authorized in Firebase config.";
+                    else if(error.code === 'auth/network-request-failed') msg = "Network error. Please check your connection.";
+                    errEl.textContent = msg; errEl.classList.remove('hidden');
                 }
-
-                if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) {
-                    getEl('crud-modal').classList.add('hidden');
-                    if (isWfFullscreen) { getEl('btn-wf-fullscreen').click(); }
-                }
+            }
+            
+            // Bypass Logic
+            if (e.target.closest('#btn-bypass-login')) {
+                isCloudMode = false;
+                currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
+                getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
                 
-                // Save Settings CRUD
-                if (e.target.closest('#btn-save-crud')) {
-                    const errEl = getEl('crud-error'); errEl.classList.add('hidden');
-                    const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim();
-                    const isNew = getEl('setting-is-new').value === 'true';
-                    
-                    if(!idVal || !nameVal) {
-                        errEl.textContent = "ID Code and Display Name are required."; errEl.classList.remove('hidden'); return;
-                    }
-
-                    if (currentContext === 'sla') {
-                        const envId = getEl('setting-sla-env').value;
-                        const sevId = getEl('setting-sla-sev').value;
-                        
-                        const nameExists = dataStore.sla.find(s => s.name.toLowerCase() === nameVal.toLowerCase() && s.id !== (isNew ? null : idVal));
-                        if (nameExists) {
-                            errEl.textContent = "An SLA Policy with this name already exists."; errEl.classList.remove('hidden'); return;
-                        }
-                        
-                        const conditionExists = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId && s.id !== (isNew ? null : idVal));
-                        if (conditionExists) {
-                            errEl.textContent = "An SLA Policy for this Environment and Severity combination already exists."; errEl.classList.remove('hidden'); return;
-                        }
-                    }
-                    
-                    const existing = (dataStore[currentContext]||[]).find(x => x.id === idVal);
-                    if (isNew && existing) {
-                        errEl.textContent = "This ID Code is already in use."; errEl.classList.remove('hidden'); return;
-                    }
-
-                    const newItem = {
-                        id: idVal, name: nameVal,
-                        createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
-                        createdDate: isNew ? getTodayStr() : (existing ? existing.createdDate : getTodayStr()),
-                        modifiedBy: currentUser, modifiedDate: getTodayStr()
-                    };
-
-                    if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
-                    if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
-                    if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
-                    if (currentContext === 'sla') {
-                        newItem.hours = parseInt(getEl('setting-sla-hours').value) || 24;
-                        newItem.envId = getEl('setting-sla-env').value;
-                        newItem.sevId = getEl('setting-sla-sev').value;
-                        newItem.nodes = wfNodes;
-                        newItem.links = wfLinks;
-                    }
-
-                    await dbSave(currentContext, idVal, newItem);
-                    getEl('crud-modal').classList.add('hidden');
-                }
-                
-                // Delete Confirmation Flow
-                const delBtn = e.target.closest('.btn-crud-action[data-action="del"]');
-                if (delBtn) { pendingDeleteId = delBtn.dataset.id; getEl('delete-confirm-modal').classList.remove('hidden'); }
-                if (e.target.closest('#btn-cancel-delete') || e.target.closest('#delete-modal-bg')) {
-                    getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
-                }
-                if (e.target.closest('#btn-confirm-delete')) {
-                    if (pendingDeleteId !== null) { await dbDeleteRecord(currentContext, pendingDeleteId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; } 
-                    else if (pendingDeleteTicketId !== null) { await dbDeleteRecord('tickets', pendingDeleteTicketId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
-                }
-                
-                // Create Ticket Flow with AUTO SLA ASSIGN
-                if (e.target.closest('#btn-new-ticket')) {
-                    const popSel = (id, type) => getEl(id).innerHTML = (dataStore[type]||[]).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
-                    popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev'); popSel('new-ticket-mod', 'mod');
-                    getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = '';
-                    getEl('ticket-modal').classList.remove('hidden');
-                }
-                if (e.target.closest('#btn-close-ticket') || e.target.closest('#btn-cancel-ticket') || e.target.closest('#ticket-modal-bg')) getEl('ticket-modal').classList.add('hidden');
-                
-                if (e.target.closest('#btn-save-ticket')) {
-                    const subj = getEl('new-ticket-subject').value.trim(); const desc = getEl('new-ticket-desc').value.trim();
-                    if(!subj || !desc) return;
-                    const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
-                    
-                    const envId = getEl('new-ticket-env').value;
-                    const sevId = getEl('new-ticket-sev').value;
-                    
-                    // Core SLA Matching Logic
-                    const matchingSla = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId);
-                    const slaId = matchingSla ? matchingSla.id : null;
-                    
-                    // Determine initial status
-                    let defaultStatus = 'STAT-OPN';
-                    if(matchingSla && matchingSla.nodes && matchingSla.nodes.length > 0) {
-                        defaultStatus = matchingSla.nodes[0].id; // Assign to first step of workflow
-                    }
-                    
-                    await dbSave('tickets', newId, {
-                        id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
-                        statusId: defaultStatus, accId: getEl('new-ticket-acc').value, modId: getEl('new-ticket-mod').value, envId: envId, sevId: sevId, slaId: slaId
-                    });
-
-                    if(slaId) {
-                        const msgId = genId();
-                        await dbSave('messages', msgId, { id: msgId, ticketId: newId, sender: 'System', timestamp: getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), text: `SLA Policy [${matchingSla.name}] applied based on Env/Sev match.` });
-                    }
-
-                    getEl('ticket-modal').classList.add('hidden');
-                    switchView('tickets', 'Tickets');
-                }
-
-                // Workflow Graph Interactivity
-                const clickedLine = e.target.closest && e.target.closest('.wf-link-bg');
-                if (clickedLine || (e.target.classList && e.target.classList.contains('wf-link-bg'))) {
-                    const targetEl = clickedLine || e.target;
-                    const idx = parseInt(targetEl.getAttribute('data-index'), 10);
-                    if (!isNaN(idx)) {
-                        wfLinks.splice(idx, 1);
-                        drawWf();
-                    }
-                }
-
-                const btnLink = e.target.closest('.btn-wf-link');
-                if(btnLink) {
-                    const nodeId = btnLink.closest('.wf-node').dataset.id;
-                    if (isLinkingFrom === nodeId) {
-                        isLinkingFrom = null; 
-                    } else if (isLinkingFrom) {
-                        if (!wfLinks.find(l => l.source === isLinkingFrom && l.target === nodeId) && isLinkingFrom !== nodeId) {
-                            wfLinks.push({source: isLinkingFrom, target: nodeId});
-                        }
-                        isLinkingFrom = null;
-                    } else {
-                        isLinkingFrom = nodeId;
-                    }
-                    drawWf();
-                }
-                const btnDel = e.target.closest('.btn-wf-del');
-                if(btnDel) {
-                    const nodeId = btnDel.closest('.wf-node').dataset.id;
-                    wfNodes = wfNodes.filter(n => n.id !== nodeId);
-                    wfLinks = wfLinks.filter(l => l.source !== nodeId && l.target !== nodeId);
-                    if(isLinkingFrom === nodeId) isLinkingFrom = null;
-                    drawWf();
-                }
-
-                if (e.target.closest('#btn-wf-add')) {
-                    const statId = getEl('wf-add-status-select').value;
-                    if(!statId || wfNodes.find(n => n.id === statId)) return;
-                    wfNodes.push({id: statId, x: 50, y: 50});
-                    drawWf();
-                }
-
-                if (e.target.closest('#btn-wf-fullscreen')) {
-                    const container = getEl('workflow-canvas-container').parentElement;
-                    isWfFullscreen = !isWfFullscreen;
-                    if(isWfFullscreen) {
-                        const placeholder = document.createElement('div');
-                        placeholder.id = 'wf-container-placeholder';
-                        placeholder.className = 'flex-1 min-h-[350px]';
-                        container.parentNode.insertBefore(placeholder, container);
-                        document.body.appendChild(container);
-                        
-                        container.classList.add('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
-                        container.classList.remove('rounded-xl', 'relative', 'p-4');
-                        getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 16 21 16"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
-                    } else {
-                        const placeholder = getEl('wf-container-placeholder');
-                        if (placeholder) {
-                            placeholder.parentNode.insertBefore(container, placeholder);
-                            placeholder.remove();
-                        }
-                        
-                        container.classList.remove('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
-                        container.classList.add('rounded-xl', 'relative', 'p-4');
-                        getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>`;
-                    }
-                    setTimeout(() => drawWf(), 50);
-                }
-            });
-
-            // Handle Keydowns
-            document.body.addEventListener('keydown', (e) => {
-                if (e.target.id === 'input-reply' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-reply').click(); }
-                if (e.target.id === 'internal-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-internal').click(); }
-            });
-
-            // Filter Change Handlers
-            const filterPanel = getEl('tickets-filter-panel');
-            if(filterPanel) {
-                filterPanel.addEventListener('change', (e) => {
-                    if(e.target.id.startsWith('filter-')) {
-                        const key = e.target.id.replace('filter-', '');
-                        activeFilters[key] = e.target.value;
-                        ticketsPage = 1;
-                        renderTickets();
-                    }
-                });
+                applyRBAC();
+                getEl('view-login').classList.remove('active'); getEl('view-app').classList.add('active');
+                switchView('dashboard', 'Dashboard');
             }
 
-            // Search Handlers
-            const searchTicketsEl = getEl('search-tickets');
-            if (searchTicketsEl) { searchTicketsEl.addEventListener('input', (e) => { ticketsSearch = e.target.value.trim(); ticketsPage = 1; renderTickets(); }); }
-            const searchSettingsEl = getEl('search-settings');
-            if (searchSettingsEl) { searchSettingsEl.addEventListener('input', (e) => { settingsSearch = e.target.value.trim(); settingsPage = 1; renderSettings(); }); }
+            if (e.target.closest('#btn-logout')) {
+                try { await signOut(auth); } catch(e){}
+                cloudUnsubs.forEach(unsub => unsub()); cloudUnsubs = [];
+                getEl('view-app').classList.remove('active'); getEl('view-login').classList.add('active');
+                getEl('login-error').classList.add('hidden');
+            }
+            
+            // Sidebar Setup
+            const menuBtn = e.target.closest('.btn-menu-toggle');
+            if (menuBtn) {
+                const menuTarget = menuBtn.dataset.menu;
+                const submenu = getEl(`submenu-${menuTarget}`);
+                const chevron = menuBtn.querySelector('.chevron-icon');
+                if(submenu.classList.contains('hidden')) { submenu.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; } 
+                else { submenu.classList.add('hidden'); chevron.style.transform = 'rotate(0deg)'; }
+            }
+
+            const navBtn = e.target.closest('.nav-link[data-target]');
+            if (navBtn) switchView(navBtn.dataset.target, navBtn.querySelector('.nav-text').textContent);
+            
+            const subNavBtn = e.target.closest('.sub-nav-link');
+            if (subNavBtn) {
+                currentContext = subNavBtn.dataset.context;
+                settingsPage = 1; settingsSearch = ''; getEl('search-settings').value = '';
+                switchView('settings', 'System Settings');
+            }
+            
+            if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) {
+                ticketsPage = 1; ticketsSearch = ''; activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' }; getEl('search-tickets').value = '';
+                switchView('tickets', 'Tickets');
+            }
+            
+            // Filters
+            if (e.target.closest('#btn-toggle-filters')) {
+                const panel = getEl('tickets-filter-panel');
+                panel.classList.toggle('hidden');
+                if (!panel.classList.contains('hidden')) populateFilters();
+            }
+            if (e.target.closest('#btn-clear-filters')) {
+                activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
+                populateFilters(); ticketsPage = 1; renderTickets();
+            }
+            
+            // Pagination
+            const pageBtn = e.target.closest('button[data-paginate]');
+            if (pageBtn && !pageBtn.disabled) {
+                const action = pageBtn.dataset.paginate; const page = parseInt(pageBtn.dataset.page);
+                if (action === 'tickets') { ticketsPage = page; renderTickets(); }
+                if (action === 'settings') { settingsPage = page; renderSettings(); }
+            }
+
+            // Details Tabs
+            const tabBtn = e.target.closest('.detail-tab-btn');
+            if(tabBtn) switchDetailsTab(tabBtn.dataset.tab);
+
+            // Ticket Row Actions
+            const ticketBtn = e.target.closest('.btn-ticket-action');
+            if (ticketBtn) {
+                e.stopPropagation();
+                const action = ticketBtn.dataset.action; const ticketId = ticketBtn.dataset.id;
+                if (action === 'view') { openTicketDetails(ticketId); } 
+                else if (action === 'status') {
+                    const ticket = dataStore.tickets.find(t => t.id === ticketId);
+                    if (ticket) { 
+                        currentViewedTicketId = ticket.id; 
+                        const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
+                        let allowedStatuses = dataStore.status;
+                        if (ticketSla && ticketSla.nodes && ticketSla.nodes.length > 0) {
+                            const allowedIds = ticketSla.nodes.map(n=>n.id);
+                            allowedStatuses = dataStore.status.filter(s => allowedIds.includes(s.id));
+                        }
+                        getEl('quick-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); 
+                        getEl('quick-status-modal').classList.remove('hidden'); 
+                    }
+                } 
+                else if (action === 'assign') {
+                    const ticket = dataStore.tickets.find(t => t.id === ticketId);
+                    if (ticket) { currentViewedTicketId = ticket.id; getEl('quick-assign-select').innerHTML = `<option value="">Unassigned</option>` + dataStore.users.map(u => `<option value="${u.id}" ${u.id === ticket.assigneeEmail ? 'selected' : ''}>${u.name}</option>`).join(''); getEl('quick-assign-modal').classList.remove('hidden'); }
+                }
+                else if (action === 'del') { pendingDeleteTicketId = ticketId; getEl('delete-confirm-modal').classList.remove('hidden'); }
+            } else if (e.target.closest('.ticket-row')) { openTicketDetails(e.target.closest('.ticket-row').dataset.id); }
+            
+            if (e.target.closest('#btn-back-tickets')) switchView('tickets', 'Tickets');
+
+            // Update Ticket Properties
+            if (e.target.closest('#btn-update-details')) {
+                const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                if (ticket) {
+                    let changed = false;
+                    const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    const newStatusId = getEl('detail-status-select').value;
+                    if (ticket.statusId !== newStatusId) {
+                        const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated from [${getName('status', ticket.statusId)}] to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                        ticket.statusId = newStatusId; changed = true;
+                    }
+
+                    const isOverride = ['Root', 'Admin Override'].includes(currentUserRoleType);
+                    if (isOverride) {
+                        const newEmail = getEl('detail-assignee-select').value;
+                        const newSev = getEl('detail-severity-select').value;
+                        const newMod = getEl('detail-module-select').value;
+                        const newAcc = getEl('detail-account-select').value;
+                        const newEnv = getEl('detail-env-select').value;
+
+                        if (ticket.assigneeEmail !== newEmail) {
+                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${newEmail ? getUserName(newEmail) : 'Unassigned'}] by ${currentUser}.` });
+                            ticket.assigneeEmail = newEmail; changed = true;
+                        }
+                        if (ticket.sevId !== newSev) {
+                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Severity updated to [${getName('sev', newSev)}] by ${currentUser}.` });
+                            ticket.sevId = newSev; changed = true;
+                        }
+                        if (ticket.modId !== newMod) {
+                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Module updated to [${newMod ? getName('mod', newMod) : 'None'}] by ${currentUser}.` });
+                            ticket.modId = newMod; changed = true;
+                        }
+                        if (ticket.accId !== newAcc) { ticket.accId = newAcc; changed = true; }
+                        if (ticket.envId !== newEnv) {
+                            const msgId = genId(); await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Environment updated to [${getName('env', newEnv)}] by ${currentUser}.` });
+                            ticket.envId = newEnv; changed = true;
+                        }
+                    }
+
+                    if(changed) await dbSave('tickets', ticket.id, ticket);
+
+                    const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
+                    btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+                    setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
+                }
+            }
+
+            // Resync SLA logic
+            if (e.target.closest('#btn-resync-sla')) {
+                const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                if(ticket) {
+                    const matchingSla = dataStore.sla.find(s => s.envId === ticket.envId && s.sevId === ticket.sevId);
+                    const newSlaId = matchingSla ? matchingSla.id : null;
+                    
+                    if (ticket.slaId !== newSlaId) {
+                        ticket.slaId = newSlaId;
+                        await dbSave('tickets', ticket.id, ticket);
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const msgId = genId();
+                        const msgText = newSlaId ? `SLA Policy automatically matched to [${matchingSla.name}].` : `SLA Policy unassigned (No match found for current Env/Sev).`;
+                        await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: msgText });
+                        openTicketDetails(ticket.id);
+                    } else {
+                        const btn = e.target.closest('#btn-resync-sla');
+                        btn.textContent = "Synced"; btn.classList.add('bg-emerald-100', 'text-emerald-700');
+                        setTimeout(() => { btn.textContent = "Resync"; btn.classList.remove('bg-emerald-100', 'text-emerald-700'); }, 1500);
+                    }
+                }
+            }
+            
+            // Chat and Notes
+            if (e.target.closest('#btn-send-reply')) {
+                const input = getEl('input-reply'); const text = input.value.trim();
+                if(text && currentViewedTicketId) {
+                    const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const msgId = genId();
+                    await dbSave('messages', msgId, { id: msgId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, text: text });
+                    input.value = '';
+                }
+            }
+            if (e.target.closest('#btn-send-internal')) {
+                const input = getEl('internal-note-text'); const text = input.value.trim();
+                const linkInput = getEl('internal-note-link'); const link = linkInput ? linkInput.value.trim() : '';
+                
+                if((text || link) && currentViewedTicketId) {
+                    const tag = getEl('internal-note-tag').value;
+                    const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const noteId = genId();
+                    await dbSave('internalNotes', noteId, { id: noteId, ticketId: currentViewedTicketId, sender: currentUser, timestamp: ts, tag: tag, text: text, fileUrl: link });
+                    input.value = ''; if(linkInput) linkInput.value = '';
+                }
+            }
+            
+            // Settings CRUD Open/Edit Action
+            if (e.target.closest('#btn-add-setting') || e.target.closest('.btn-crud-action[data-action="edit"]') || e.target.closest('.btn-crud-action[data-action="view"]') || e.target.closest('.btn-crud-action[data-action="dup"]')) {
+                getEl('crud-error').classList.add('hidden');
+                const btn = e.target.closest('#btn-add-setting') ? e.target.closest('#btn-add-setting') : e.target.closest('.btn-crud-action');
+                const isAdd = btn.id === 'btn-add-setting';
+                const action = isAdd ? 'add' : btn.dataset.action;
+                const isDup = action === 'dup';
+                const id = isAdd ? null : btn.dataset.id;
+                const item = isAdd ? null : (dataStore[currentContext]||[]).find(x => x.id === id);
+
+                getEl('setting-id').value = isDup ? '' : (item ? item.id : ''); 
+                getEl('setting-id').disabled = !(isAdd || isDup);
+                getEl('setting-name').value = isDup ? `Copy of ${item.name}` : (item ? item.name : ''); 
+                getEl('setting-name').disabled = action === 'view';
+                getEl('setting-is-new').value = (isAdd || isDup) ? 'true' : 'false';
+                
+                getEl('setting-role-container').classList.add('hidden');
+                getEl('setting-role-type-container').classList.add('hidden');
+                getEl('setting-status-type-container').classList.add('hidden');
+                getEl('setting-sla-container').classList.add('hidden');
+
+                const formDisabled = action === 'view';
+                getEl('btn-save-crud').style.display = formDisabled ? 'none' : 'block';
+
+                if (currentContext === 'users') {
+                    getEl('modal-crud-title').textContent = isAdd ? "Add User" : (action === 'edit' ? "Edit User" : "View User");
+                    getEl('label-setting-id').textContent = 'Email Address *'; getEl('label-setting-name').textContent = 'Full Name *';
+                    getEl('setting-role-container').classList.remove('hidden');
+                    getEl('setting-role').innerHTML = (dataStore.roles||[]).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                    getEl('setting-role').disabled = formDisabled;
+                    if(item) getEl('setting-role').value = item.roleId;
+
+                } else if (currentContext === 'roles') {
+                    getEl('modal-crud-title').textContent = isAdd ? "Add Role" : (action === 'edit' ? "Edit Role" : "View Role");
+                    getEl('label-setting-id').textContent = 'Role ID (e.g. ROLE-01) *'; getEl('label-setting-name').textContent = 'Role Name *';
+                    getEl('setting-role-type-container').classList.remove('hidden');
+                    getEl('setting-role-type').disabled = formDisabled;
+                    getEl('setting-role-type').value = item ? item.type : 'System User';
+
+                } else if (currentContext === 'status') {
+                    getEl('modal-crud-title').textContent = isAdd ? "Add Status" : (action === 'edit' ? "Edit Status" : "View Status");
+                    getEl('label-setting-id').textContent = 'Status ID Code *'; getEl('label-setting-name').textContent = 'Status Name *';
+                    getEl('setting-status-type-container').classList.remove('hidden');
+                    getEl('setting-status-type').disabled = formDisabled;
+                    getEl('setting-status-type').value = item ? (item.type || 'Open-Start') : 'Open-Start';
+
+                } else if (currentContext === 'sla') {
+                    getEl('modal-crud-title').textContent = isAdd ? "Add SLA Policy" : (action === 'edit' ? "Edit SLA Policy" : (isDup ? "Duplicate SLA Policy" : "View SLA Policy"));
+                    getEl('label-setting-id').textContent = 'SLA ID Code *'; getEl('label-setting-name').textContent = 'Policy Name *';
+                    getEl('setting-sla-container').classList.remove('hidden');
+                    getEl('setting-sla-container').classList.add('flex');
+                    
+                    getEl('setting-sla-hours').disabled = formDisabled;
+                    getEl('setting-sla-hours').value = item ? (item.hours || 24) : 24;
+                    
+                    getEl('setting-sla-env').innerHTML = dataStore.env.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+                    getEl('setting-sla-sev').innerHTML = dataStore.sev.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                    getEl('setting-sla-env').disabled = formDisabled; getEl('setting-sla-sev').disabled = formDisabled;
+                    if (item) { getEl('setting-sla-env').value = item.envId; getEl('setting-sla-sev').value = item.sevId; }
+
+                    // Reset & Load Graph Builder
+                    wfNodes = item && item.nodes ? JSON.parse(JSON.stringify(item.nodes)) : [];
+                    wfLinks = item && item.links ? JSON.parse(JSON.stringify(item.links)) : [];
+                    isLinkingFrom = null;
+                    
+                    getEl('wf-add-status-select').innerHTML = dataStore.status.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                    const addControls = getEl('wf-add-controls');
+                    if (addControls) {
+                        addControls.style.display = formDisabled ? 'none' : 'flex';
+                    }
+                    
+                    setTimeout(() => drawWf(), 50); // allow container to render before drawing
+                    
+                } else {
+                    getEl('modal-crud-title').textContent = isAdd ? "Add Record" : (action === 'edit' ? "Edit Record" : "View Record");
+                    getEl('label-setting-id').textContent = 'ID Code *'; getEl('label-setting-name').textContent = 'Display Name *';
+                }
+                getEl('crud-modal').classList.remove('hidden');
+            }
+
+            if (e.target.closest('#btn-close-crud') || e.target.closest('#btn-cancel-crud') || e.target.closest('#crud-modal-bg')) {
+                getEl('crud-modal').classList.add('hidden');
+                if (isWfFullscreen) { getEl('btn-wf-fullscreen').click(); }
+            }
+            
+            // Save Settings CRUD
+            if (e.target.closest('#btn-save-crud')) {
+                const errEl = getEl('crud-error'); errEl.classList.add('hidden');
+                const idVal = getEl('setting-id').value.trim(); const nameVal = getEl('setting-name').value.trim();
+                const isNew = getEl('setting-is-new').value === 'true';
+                
+                if(!idVal || !nameVal) {
+                    errEl.textContent = "ID Code and Display Name are required."; errEl.classList.remove('hidden'); return;
+                }
+
+                if (currentContext === 'sla') {
+                    const envId = getEl('setting-sla-env').value;
+                    const sevId = getEl('setting-sla-sev').value;
+                    
+                    const nameExists = dataStore.sla.find(s => s.name.toLowerCase() === nameVal.toLowerCase() && s.id !== (isNew ? null : idVal));
+                    if (nameExists) {
+                        errEl.textContent = "An SLA Policy with this name already exists."; errEl.classList.remove('hidden'); return;
+                    }
+                    
+                    const conditionExists = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId && s.id !== (isNew ? null : idVal));
+                    if (conditionExists) {
+                        errEl.textContent = "An SLA Policy for this Environment and Severity combination already exists."; errEl.classList.remove('hidden'); return;
+                    }
+                }
+                
+                const existing = (dataStore[currentContext]||[]).find(x => x.id === idVal);
+                if (isNew && existing) {
+                    errEl.textContent = "This ID Code is already in use."; errEl.classList.remove('hidden'); return;
+                }
+
+                const newItem = {
+                    id: idVal, name: nameVal,
+                    createdBy: isNew ? currentUser : (existing ? existing.createdBy : currentUser),
+                    createdDate: isNew ? getTodayStr() : (existing ? existing.createdDate : getTodayStr()),
+                    modifiedBy: currentUser, modifiedDate: getTodayStr()
+                };
+
+                if (currentContext === 'users') newItem.roleId = getEl('setting-role').value;
+                if (currentContext === 'roles') newItem.type = getEl('setting-role-type').value;
+                if (currentContext === 'status') newItem.type = getEl('setting-status-type').value;
+                if (currentContext === 'sla') {
+                    newItem.hours = parseInt(getEl('setting-sla-hours').value) || 24;
+                    newItem.envId = getEl('setting-sla-env').value;
+                    newItem.sevId = getEl('setting-sla-sev').value;
+                    newItem.nodes = wfNodes;
+                    newItem.links = wfLinks;
+                }
+
+                await dbSave(currentContext, idVal, newItem);
+                getEl('crud-modal').classList.add('hidden');
+            }
+            
+            // Delete Confirmation Flow
+            const delBtn = e.target.closest('.btn-crud-action[data-action="del"]');
+            if (delBtn) { pendingDeleteId = delBtn.dataset.id; getEl('delete-confirm-modal').classList.remove('hidden'); }
+            if (e.target.closest('#btn-cancel-delete') || e.target.closest('#delete-modal-bg')) {
+                getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; pendingDeleteTicketId = null;
+            }
+            if (e.target.closest('#btn-confirm-delete')) {
+                if (pendingDeleteId !== null) { await dbDeleteRecord(currentContext, pendingDeleteId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteId = null; } 
+                else if (pendingDeleteTicketId !== null) { await dbDeleteRecord('tickets', pendingDeleteTicketId); getEl('delete-confirm-modal').classList.add('hidden'); pendingDeleteTicketId = null; }
+            }
+            
+            // Create Ticket Flow with AUTO SLA ASSIGN
+            if (e.target.closest('#btn-new-ticket')) {
+                const popSel = (id, type) => getEl(id).innerHTML = (dataStore[type]||[]).map(x => `<option value="${x.id}">${x.name}</option>`).join('');
+                popSel('new-ticket-acc', 'acc'); popSel('new-ticket-env', 'env'); popSel('new-ticket-sev', 'sev'); popSel('new-ticket-mod', 'mod');
+                getEl('new-ticket-subject').value = ''; getEl('new-ticket-desc').value = '';
+                getEl('ticket-modal').classList.remove('hidden');
+            }
+            if (e.target.closest('#btn-close-ticket') || e.target.closest('#btn-cancel-ticket') || e.target.closest('#ticket-modal-bg')) getEl('ticket-modal').classList.add('hidden');
+            
+            if (e.target.closest('#btn-save-ticket')) {
+                const subj = getEl('new-ticket-subject').value.trim(); const desc = getEl('new-ticket-desc').value.trim();
+                if(!subj || !desc) return;
+                const newId = `ARK-${1000 + Math.floor(Math.random()*9000)}`;
+                
+                const envId = getEl('new-ticket-env').value;
+                const sevId = getEl('new-ticket-sev').value;
+                
+                // Core SLA Matching Logic
+                const matchingSla = dataStore.sla.find(s => s.envId === envId && s.sevId === sevId);
+                const slaId = matchingSla ? matchingSla.id : null;
+                
+                // Determine initial status
+                let defaultStatus = 'STAT-OPN';
+                if(matchingSla && matchingSla.nodes && matchingSla.nodes.length > 0) {
+                    defaultStatus = matchingSla.nodes[0].id; // Assign to first step of workflow
+                }
+                
+                await dbSave('tickets', newId, {
+                    id: newId, subject: subj, desc: desc, createdDate: getTodayStr(), submittedByEmail: currentUserEmail, assigneeEmail: null,
+                    statusId: defaultStatus, accId: getEl('new-ticket-acc').value, modId: getEl('new-ticket-mod').value, envId: envId, sevId: sevId, slaId: slaId
+                });
+
+                if(slaId) {
+                    const msgId = genId();
+                    await dbSave('messages', msgId, { id: msgId, ticketId: newId, sender: 'System', timestamp: getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), text: `SLA Policy [${matchingSla.name}] applied based on Env/Sev match.` });
+                }
+
+                getEl('ticket-modal').classList.add('hidden');
+                switchView('tickets', 'Tickets');
+            }
+
+            // Workflow Graph Interactivity
+            const clickedLine = e.target.closest && e.target.closest('.wf-link-bg');
+            if (clickedLine || (e.target.classList && e.target.classList.contains('wf-link-bg'))) {
+                const targetEl = clickedLine || e.target;
+                const idx = parseInt(targetEl.getAttribute('data-index'), 10);
+                if (!isNaN(idx)) {
+                    wfLinks.splice(idx, 1);
+                    drawWf();
+                }
+            }
+
+            const btnLink = e.target.closest('.btn-wf-link');
+            if(btnLink) {
+                const nodeId = btnLink.closest('.wf-node').dataset.id;
+                if (isLinkingFrom === nodeId) {
+                    isLinkingFrom = null; 
+                } else if (isLinkingFrom) {
+                    if (!wfLinks.find(l => l.source === isLinkingFrom && l.target === nodeId) && isLinkingFrom !== nodeId) {
+                        wfLinks.push({source: isLinkingFrom, target: nodeId});
+                    }
+                    isLinkingFrom = null;
+                } else {
+                    isLinkingFrom = nodeId;
+                }
+                drawWf();
+            }
+            const btnDel = e.target.closest('.btn-wf-del');
+            if(btnDel) {
+                const nodeId = btnDel.closest('.wf-node').dataset.id;
+                wfNodes = wfNodes.filter(n => n.id !== nodeId);
+                wfLinks = wfLinks.filter(l => l.source !== nodeId && l.target !== nodeId);
+                if(isLinkingFrom === nodeId) isLinkingFrom = null;
+                drawWf();
+            }
+
+            if (e.target.closest('#btn-wf-add')) {
+                const statId = getEl('wf-add-status-select').value;
+                if(!statId || wfNodes.find(n => n.id === statId)) return;
+                wfNodes.push({id: statId, x: 50, y: 50});
+                drawWf();
+            }
+
+            if (e.target.closest('#btn-wf-fullscreen')) {
+                const container = getEl('workflow-canvas-container').parentElement;
+                isWfFullscreen = !isWfFullscreen;
+                if(isWfFullscreen) {
+                    const placeholder = document.createElement('div');
+                    placeholder.id = 'wf-container-placeholder';
+                    placeholder.className = 'flex-1 min-h-[350px]';
+                    container.parentNode.insertBefore(placeholder, container);
+                    document.body.appendChild(container);
+                    
+                    container.classList.add('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                    container.classList.remove('rounded-xl', 'relative', 'p-4');
+                    getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 16 21 16"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
+                } else {
+                    const placeholder = getEl('wf-container-placeholder');
+                    if (placeholder) {
+                        placeholder.parentNode.insertBefore(container, placeholder);
+                        placeholder.remove();
+                    }
+                    
+                    container.classList.remove('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                    container.classList.add('rounded-xl', 'relative', 'p-4');
+                    getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>`;
+                }
+                setTimeout(() => drawWf(), 50);
+            }
         });
+
+        // Handle Keydowns
+        document.body.addEventListener('keydown', (e) => {
+            if (e.target.id === 'input-reply' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-reply').click(); }
+            if (e.target.id === 'internal-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-internal').click(); }
+        });
+
+        // Filter Change Handlers
+        const filterPanel = getEl('tickets-filter-panel');
+        if(filterPanel) {
+            filterPanel.addEventListener('change', (e) => {
+                if(e.target.id.startsWith('filter-')) {
+                    const key = e.target.id.replace('filter-', '');
+                    activeFilters[key] = e.target.value;
+                    ticketsPage = 1;
+                    renderTickets();
+                }
+            });
+        }
+
+        // Search Handlers
+        const searchTicketsEl = getEl('search-tickets');
+        if (searchTicketsEl) { searchTicketsEl.addEventListener('input', (e) => { ticketsSearch = e.target.value.trim(); ticketsPage = 1; renderTickets(); }); }
+        const searchSettingsEl = getEl('search-settings');
+        if (searchSettingsEl) { searchSettingsEl.addEventListener('input', (e) => { settingsSearch = e.target.value.trim(); settingsPage = 1; renderSettings(); }); }
     </script>
 </body>
 </html>
