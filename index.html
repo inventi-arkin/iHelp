@@ -265,7 +265,6 @@
                     </div>
                 </div>
 
-                <!-- CONTENT: Tickets -->
                 <div id="content-tickets" class="content-section p-6 max-w-7xl mx-auto w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
@@ -513,7 +512,6 @@
         </main>
     </div>
 
-    <!-- MODALS -->
     
     <!-- Unified CRUD Modal with SLA Graph Builder -->
     <div id="crud-modal" class="fixed inset-0 z-[200] hidden">
@@ -609,6 +607,42 @@
                 <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50 shrink-0">
                     <button id="btn-cancel-crud" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
                     <button id="btn-save-crud" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Save Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Node Authorization Modal (Z-Index Set Above Expanded Canvas Overlay) -->
+    <div id="wf-auth-modal" class="fixed inset-0 z-[10000] hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" id="wf-auth-modal-bg"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm pointer-events-auto flex flex-col relative z-10 modal-enter border border-slate-200">
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h3 class="text-sm font-bold text-slate-900" id="wf-auth-title">Transition Access</h3>
+                    <button id="btn-close-wf-auth" class="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-1 rounded-md transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <p class="text-xs text-slate-500">Restrict who can transition tickets <b>out</b> of this status to the next linked step.</p>
+                    
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-3 rounded border border-slate-200">
+                        <input type="checkbox" id="wf-auth-restrict-toggle" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                        <span class="text-sm font-bold text-slate-800">Limit Access to specific Roles/Users</span>
+                    </label>
+                    
+                    <div id="wf-auth-lists" class="hidden flex-col gap-5 mt-3 pt-3 border-t border-slate-100 max-h-64 overflow-y-auto custom-scrollbar">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Allowed Roles</label>
+                            <div id="wf-auth-roles-list" class="space-y-1"></div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Allowed Specific Users</label>
+                            <div id="wf-auth-users-list" class="space-y-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl bg-slate-50">
+                    <button id="btn-cancel-wf-auth" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button id="btn-save-wf-auth" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm cursor-pointer">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -729,7 +763,6 @@
         </div>
     </div>
 
-    <!-- MAIN SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -783,7 +816,8 @@
                 { id: 'arkin.paroan@inventi.ph', name: 'Arkin Paroan', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'manager@inventi.ph', name: 'Desk Manager', roleId: 'ROLE-OVERRIDE', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
                 { id: 'devops@inventi.ph', name: 'DevOps Lead', roleId: 'ROLE-ADMIN', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
-                { id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
+                { id: 'staff@inventi.ph', name: 'General Staff', roleId: 'ROLE-USER', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
+                { id: 'preview@inventi.ph', name: 'Preview User', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             acc: [
                 { id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
@@ -832,13 +866,14 @@
             ]
         };
 
-        // --- WORKFLOW GRAPH BUILDER ENGINE ---
+        // Workflow Graph Canvas Variables
         let wfNodes = [];
         let wfLinks = [];
         let isLinkingFrom = null;
         let isWfFullscreen = false;
         let draggedNode = null;
         let dragOffset = { x: 0, y: 0 };
+        let activeAuthNodeId = null;
 
         const palette = ['#3b82f6', '#10b981', '#a855f7', '#f59e0b', '#ec4899', '#06b6d4', '#84cc16', '#f43f5e'];
 
@@ -866,7 +901,7 @@
                     const sOutIdx = outLinks.indexOf(l);
                     const tInIdx = inLinks.indexOf(l);
 
-                    const BW = 120, BH = 60;
+                    const BW = 120, BH = 65;
                     const cx1 = s.x + BW/2, cy1 = s.y + BH/2;
                     const cx2 = t.x + BW/2, cy2 = t.y + BH/2;
 
@@ -917,13 +952,22 @@
             wfNodes.forEach(n => {
                 const stat = dataStore.status.find(s => s.id === n.id);
                 const name = stat ? stat.name : n.id;
+                const isRestricted = n.restricted;
+                
+                const lockIcon = isRestricted 
+                    ? `<svg class="w-3 h-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
+                    : `<svg class="w-3 h-3 text-slate-400 hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+
                 const div = document.createElement('div');
                 div.className = 'wf-node flex flex-col items-center justify-between p-2 rounded-lg border border-slate-600 bg-slate-800 text-white shadow-lg pointer-events-auto';
-                div.style.width = '120px'; div.style.height = '60px';
+                div.style.width = '120px'; div.style.height = '65px';
                 div.style.left = n.x + 'px'; div.style.top = n.y + 'px';
                 div.innerHTML = `
-                    <div class="text-[10px] font-bold truncate w-full text-center">${name}</div>
-                    <div class="flex w-full gap-1 mt-1">
+                    <div class="flex justify-between items-center w-full mb-1">
+                        <div class="text-[10px] font-bold truncate flex-1">${name}</div>
+                        <button type="button" class="btn-wf-auth p-0.5 rounded hover:bg-slate-700 transition-colors" title="Authorization Config">${lockIcon}</button>
+                    </div>
+                    <div class="flex w-full gap-1">
                         <button type="button" class="btn-wf-link flex-1 bg-blue-600 hover:bg-blue-500 rounded text-[9px] font-bold py-1 transition-colors">${isLinkingFrom === n.id ? 'Cancel' : 'Link'}</button>
                         <button type="button" class="btn-wf-del bg-red-600 hover:bg-red-500 rounded px-1.5 text-[9px] font-bold transition-colors">&times;</button>
                     </div>
@@ -931,7 +975,7 @@
                 div.dataset.id = n.id;
                 
                 div.addEventListener('mousedown', (e) => {
-                    if(e.target.closest('.btn-wf-link') || e.target.closest('.btn-wf-del')) return;
+                    if(e.target.closest('.btn-wf-link') || e.target.closest('.btn-wf-del') || e.target.closest('.btn-wf-auth')) return;
                     draggedNode = n;
                     const containerRect = getEl('workflow-canvas-container').getBoundingClientRect();
                     dragOffset.x = e.clientX - containerRect.left - n.x;
@@ -950,7 +994,7 @@
                 let ny = e.clientY - containerRect.top - dragOffset.y;
                 
                 nx = Math.max(0, Math.min(nx, containerRect.width - 120));
-                ny = Math.max(0, Math.min(ny, containerRect.height - 60));
+                ny = Math.max(0, Math.min(ny, containerRect.height - 65));
                 
                 draggedNode.x = nx; draggedNode.y = ny;
                 drawWf();
@@ -999,6 +1043,32 @@
                 if (idx > -1) dataStore[colName][idx] = { ...dataStore[colName][idx], ...dataObj };
                 else dataStore[colName].push(dataObj);
                 refreshActiveViews();
+            }
+
+            // Sync current user role if they were just updated
+            if (colName === 'users' && docId === currentUserEmail) {
+                const updatedUser = dataStore.users.find(u => u.id === currentUserEmail);
+                if (updatedUser && updatedUser.roleId) {
+                    const roleObj = dataStore.roles.find(r => r.id === updatedUser.roleId);
+                    if (roleObj) {
+                        currentUserRoleType = roleObj.type;
+                        getEl('user-display-role').textContent = currentUserRoleType;
+                        applyRBAC();
+                    }
+                }
+            }
+            
+            // Sync all users if roles are modified
+            if (colName === 'roles') {
+                const updatedUser = dataStore.users.find(u => u.id === currentUserEmail);
+                if (updatedUser && updatedUser.roleId === docId) {
+                     const roleObj = dataStore.roles.find(r => r.id === docId);
+                     if (roleObj) {
+                         currentUserRoleType = roleObj.type;
+                         getEl('user-display-role').textContent = currentUserRoleType;
+                         applyRBAC();
+                     }
+                }
             }
         }
 
@@ -1056,7 +1126,7 @@
                 renderMessages(); renderInternalNotes();
                 const ticket = dataStore.tickets.find(t => t.id === currentViewedTicketId);
                 if(ticket) {
-                    getEl('detail-status-select').value = ticket.statusId;
+                    populateStatusDropdownForTicket(ticket);
                     getEl('detail-assignee-select').value = ticket.assigneeEmail || '';
                 }
             }
@@ -1430,7 +1500,10 @@
                     else if(currentContext === 'sla') {
                         const envName = getName('env', item.envId);
                         const sevName = getName('sev', item.sevId);
-                        const stepsHtml = (item.nodes||[]).map(n => getName('status', n.id)).join(' <span class="mx-1 text-slate-300">&rarr;</span> ');
+                        const stepsHtml = (item.nodes||[]).map(n => {
+                            let lockIcon = n.restricted ? `<svg class="w-2.5 h-2.5 inline text-amber-500 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> ` : '';
+                            return lockIcon + getName('status', n.id);
+                        }).join(' <span class="mx-1 text-slate-300">&rarr;</span> ');
                         nameCol = `<div class="font-semibold text-slate-800 mb-1">${item.name} <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">${item.hours}H</span></div><div class="text-[10px] font-bold text-slate-500 mb-1">Matches: <span class="text-blue-600">${envName}</span> + <span class="text-red-500">${sevName}</span></div><div class="text-[10px] text-slate-400 font-medium flex items-center flex-wrap">${stepsHtml}</div>`;
                     }
 
@@ -1462,6 +1535,46 @@
             }
         }
 
+        function populateStatusDropdownForTicket(ticket, targetSelectId = 'detail-status-select') {
+            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
+            let validNextStatuses = new Set([ticket.statusId]); 
+            let canChangeStatus = true;
+
+            if (ticketSla) {
+                if (ticketSla.links) {
+                    ticketSla.links.forEach(l => { if (l.source === ticket.statusId) validNextStatuses.add(l.target); });
+                }
+                
+                const currentNode = ticketSla.nodes?.find(n => n.id === ticket.statusId);
+                if (currentNode && currentNode.restricted) {
+                    const userObj = dataStore.users.find(u => u.id === currentUserEmail);
+                    const userRoleId = userObj ? userObj.roleId : null;
+                    const roleAllowed = currentNode.allowedRoles && currentNode.allowedRoles.includes(userRoleId);
+                    const userAllowed = currentNode.allowedUsers && currentNode.allowedUsers.includes(currentUserEmail);
+                    const isRoot = currentUserRoleType === 'Root';
+                    
+                    if (!roleAllowed && !userAllowed && !isRoot) {
+                        canChangeStatus = false;
+                    }
+                }
+            } else {
+                dataStore.status.forEach(s => validNextStatuses.add(s.id)); 
+            }
+
+            const selectEl = getEl(targetSelectId);
+            if (!canChangeStatus) {
+                selectEl.innerHTML = `<option value="${ticket.statusId}">${getName('status', ticket.statusId)}</option>`;
+                selectEl.disabled = true;
+            } else {
+                selectEl.innerHTML = dataStore.status
+                    .filter(s => validNextStatuses.has(s.id))
+                    .map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`)
+                    .join('');
+                selectEl.disabled = false;
+            }
+            return canChangeStatus;
+        }
+
         function openTicketDetails(ticketId) {
             const ticket = dataStore.tickets.find(t => t.id === ticketId);
             if (!ticket) return;
@@ -1487,21 +1600,10 @@
             getEl('detail-account-select').disabled = !isOverride;
             getEl('detail-env-select').disabled = !isOverride;
             getEl('detail-assignee-select').disabled = !isOverride;
-            getEl('btn-update-details').disabled = false;
+            getEl('btn-update-details').disabled = true;
 
             // Strict SLA Status Logic
-            const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
-            let validNextStatuses = new Set([ticket.statusId]); 
-            if (ticketSla && ticketSla.links) {
-                ticketSla.links.forEach(l => { if (l.source === ticket.statusId) validNextStatuses.add(l.target); });
-            } else {
-                dataStore.status.forEach(s => validNextStatuses.add(s.id)); 
-            }
-
-            getEl('detail-status-select').innerHTML = dataStore.status
-                .filter(s => validNextStatuses.has(s.id))
-                .map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`)
-                .join('');
+            populateStatusDropdownForTicket(ticket, 'detail-status-select');
             
             // Resync SLA logic for Admins
             let slaContent = ticket.slaId ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold">${getName('sla', ticket.slaId)}</span>` : `<span class="text-slate-400 italic text-[10px]">None</span>`;
@@ -1625,6 +1727,11 @@
             if (e.target.closest('#btn-bypass-login')) {
                 isCloudMode = false;
                 currentUser = "Preview User"; currentUserEmail = "preview@inventi.ph"; currentUserRoleType = "Root";
+                
+                if(!dataStore.users.find(u => u.id === currentUserEmail)) {
+                    dataStore.users.push({ id: currentUserEmail, name: currentUser, roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: getTodayStr(), modifiedBy: 'System', modifiedDate: getTodayStr() });
+                }
+
                 getEl('user-display-name').textContent = currentUser; getEl('user-display-role').textContent = currentUserRoleType;
                 
                 applyRBAC();
@@ -1697,13 +1804,8 @@
                     const ticket = dataStore.tickets.find(t => t.id === ticketId);
                     if (ticket) { 
                         currentViewedTicketId = ticket.id; 
-                        const ticketSla = dataStore.sla.find(s => s.id === ticket.slaId);
-                        let allowedStatuses = dataStore.status;
-                        if (ticketSla && ticketSla.nodes && ticketSla.nodes.length > 0) {
-                            const allowedIds = ticketSla.nodes.map(n=>n.id);
-                            allowedStatuses = dataStore.status.filter(s => allowedIds.includes(s.id));
-                        }
-                        getEl('quick-status-select').innerHTML = allowedStatuses.map(s => `<option value="${s.id}" ${s.id === ticket.statusId ? 'selected' : ''}>${s.name}</option>`).join(''); 
+                        const canChange = populateStatusDropdownForTicket(ticket, 'quick-status-select');
+                        getEl('btn-save-quick-status').disabled = !canChange;
                         getEl('quick-status-modal').classList.remove('hidden'); 
                     }
                 } 
@@ -1760,6 +1862,7 @@
 
                     const btn = e.target.closest('#btn-update-details'); const originalText = btn.textContent;
                     btn.textContent = "Saved!"; btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white'); btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+                    btn.disabled = true;
                     setTimeout(() => { btn.textContent = originalText; btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700'); btn.classList.add('bg-slate-800', 'hover:bg-slate-700'); }, 2000);
                 }
             }
@@ -1999,7 +2102,46 @@
                 switchView('tickets', 'Tickets');
             }
 
-            // Workflow Graph Interactivity
+            // Quick Assign Handlers
+            if (e.target.closest('#btn-close-quick-assign') || e.target.closest('#btn-cancel-quick-assign') || e.target.closest('#quick-assign-modal-bg')) {
+                getEl('quick-assign-modal').classList.add('hidden');
+            }
+            if (e.target.closest('#btn-save-quick-assign')) {
+                const ticket = dataStore.tickets.find(t => t.id === currentViewedTicketId);
+                if (ticket) {
+                    const newEmail = getEl('quick-assign-select').value;
+                    if (ticket.assigneeEmail !== newEmail) {
+                        ticket.assigneeEmail = newEmail;
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const msgId = genId();
+                        await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Ticket assigned to [${newEmail ? getUserName(newEmail) : 'Unassigned'}] by ${currentUser}.` });
+                        await dbSave('tickets', ticket.id, ticket);
+                    }
+                }
+                getEl('quick-assign-modal').classList.add('hidden');
+                renderTickets();
+            }
+
+            // Quick Status Handlers
+            if (e.target.closest('#btn-close-quick-status') || e.target.closest('#btn-cancel-quick-status') || e.target.closest('#quick-status-modal-bg')) {
+                getEl('quick-status-modal').classList.add('hidden');
+            }
+            if (e.target.closest('#btn-save-quick-status')) {
+                const ticket = dataStore.tickets.find(t => t.id === currentViewedTicketId);
+                if (ticket) {
+                    const newStatusId = getEl('quick-status-select').value;
+                    if (ticket.statusId !== newStatusId) {
+                        ticket.statusId = newStatusId;
+                        const ts = getTodayStr() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const msgId = genId();
+                        await dbSave('messages', msgId, { id: msgId, ticketId: ticket.id, sender: 'System', timestamp: ts, text: `Status updated to [${getName('status', newStatusId)}] by ${currentUser}.` });
+                        await dbSave('tickets', ticket.id, ticket);
+                    }
+                }
+                getEl('quick-status-modal').classList.add('hidden');
+                renderTickets();
+            }
+
             const clickedLine = e.target.closest && e.target.closest('.wf-link-bg');
             if (clickedLine || (e.target.classList && e.target.classList.contains('wf-link-bg'))) {
                 const targetEl = clickedLine || e.target;
@@ -2034,6 +2176,59 @@
                 drawWf();
             }
 
+            // Node Auth Modal Trigger
+            if (e.target.closest('.btn-wf-auth')) {
+                e.stopPropagation();
+                const nodeId = e.target.closest('.wf-node').dataset.id;
+                const node = wfNodes.find(n => n.id === nodeId);
+                if (!node) return;
+                activeAuthNodeId = nodeId;
+                
+                getEl('wf-auth-title').textContent = `Authorize: ${getName('status', nodeId)}`;
+                const toggle = getEl('wf-auth-restrict-toggle');
+                toggle.checked = !!node.restricted;
+                if(toggle.checked) getEl('wf-auth-lists').classList.remove('hidden');
+                else getEl('wf-auth-lists').classList.add('hidden');
+                
+                getEl('wf-auth-roles-list').innerHTML = dataStore.roles.map(r => `
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1.5 rounded">
+                        <input type="checkbox" value="${r.id}" class="auth-role-cb w-3.5 h-3.5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" ${node.allowedRoles && node.allowedRoles.includes(r.id) ? 'checked' : ''}>
+                        <span class="text-xs font-semibold text-slate-700">${r.name}</span>
+                    </label>
+                `).join('');
+
+                getEl('wf-auth-users-list').innerHTML = dataStore.users.map(u => `
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1.5 rounded">
+                        <input type="checkbox" value="${u.id}" class="auth-user-cb w-3.5 h-3.5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" ${node.allowedUsers && node.allowedUsers.includes(u.id) ? 'checked' : ''}>
+                        <span class="text-xs font-semibold text-slate-700">${u.name}</span>
+                    </label>
+                `).join('');
+
+                getEl('wf-auth-modal').classList.remove('hidden');
+            }
+
+            if (e.target.id === 'wf-auth-restrict-toggle') {
+                if(e.target.checked) getEl('wf-auth-lists').classList.remove('hidden');
+                else getEl('wf-auth-lists').classList.add('hidden');
+            }
+
+            if (e.target.closest('#btn-save-wf-auth')) {
+                const node = wfNodes.find(n => n.id === activeAuthNodeId);
+                if(node) {
+                    node.restricted = getEl('wf-auth-restrict-toggle').checked;
+                    node.allowedRoles = Array.from(document.querySelectorAll('.auth-role-cb:checked')).map(cb => cb.value);
+                    node.allowedUsers = Array.from(document.querySelectorAll('.auth-user-cb:checked')).map(cb => cb.value);
+                }
+                getEl('wf-auth-modal').classList.add('hidden');
+                activeAuthNodeId = null;
+                drawWf();
+            }
+
+            if (e.target.closest('#btn-close-wf-auth') || e.target.closest('#btn-cancel-wf-auth') || e.target.closest('#wf-auth-modal-bg')) {
+                 getEl('wf-auth-modal').classList.add('hidden');
+                 activeAuthNodeId = null;
+            }
+
             if (e.target.closest('#btn-wf-add')) {
                 const statId = getEl('wf-add-status-select').value;
                 if(!statId || wfNodes.find(n => n.id === statId)) return;
@@ -2051,7 +2246,7 @@
                     container.parentNode.insertBefore(placeholder, container);
                     document.body.appendChild(container);
                     
-                    container.classList.add('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                    container.classList.add('fixed', 'inset-0', 'z-[200]', 'p-6', 'bg-white');
                     container.classList.remove('rounded-xl', 'relative', 'p-4');
                     getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 16 21 16"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
                 } else {
@@ -2061,7 +2256,7 @@
                         placeholder.remove();
                     }
                     
-                    container.classList.remove('fixed', 'inset-0', 'z-[9999]', 'p-6', 'bg-white');
+                    container.classList.remove('fixed', 'inset-0', 'z-[200]', 'p-6', 'bg-white');
                     container.classList.add('rounded-xl', 'relative', 'p-4');
                     getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>`;
                 }
@@ -2069,7 +2264,7 @@
             }
         });
 
-        // Handle Keydowns
+        // Keydown Event Listener
         document.body.addEventListener('keydown', (e) => {
             if (e.target.id === 'input-reply' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-reply').click(); }
             if (e.target.id === 'internal-note-text' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); getEl('btn-send-internal').click(); }
@@ -2087,6 +2282,25 @@
                 }
             });
         }
+
+        // Ticket Properties Change Handler
+        document.body.addEventListener('change', (e) => {
+            const propertySelects = ['detail-status-select', 'detail-assignee-select', 'detail-severity-select', 'detail-module-select', 'detail-account-select', 'detail-env-select'];
+            if (propertySelects.includes(e.target.id)) {
+                const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                if (ticket) {
+                    const hasChanged = 
+                        getEl('detail-status-select').value !== ticket.statusId ||
+                        getEl('detail-assignee-select').value !== (ticket.assigneeEmail || '') ||
+                        getEl('detail-severity-select').value !== ticket.sevId ||
+                        getEl('detail-module-select').value !== (ticket.modId || '') ||
+                        getEl('detail-account-select').value !== ticket.accId ||
+                        getEl('detail-env-select').value !== ticket.envId;
+                    
+                    getEl('btn-update-details').disabled = !hasChanged;
+                }
+            }
+        });
 
         // Search Handlers
         const searchTicketsEl = getEl('search-tickets');
