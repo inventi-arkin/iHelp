@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iHelp - Powered by ARKINIUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; overflow: hidden; background-color: #0f172a; }
@@ -29,7 +30,6 @@
             position: relative; z-index: 10;
         }
 
-        /* Sidebar Styling */
         .sidebar { width: 80px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 40; }
         .sidebar:hover { width: 260px; }
         .sidebar:not(:hover) .sidebar-brand-text, .sidebar:not(:hover) .nav-text, .sidebar:not(:hover) .logout-text, 
@@ -38,7 +38,6 @@
         .sidebar:not(:hover) .sidebar-brand-icon { display: flex; }
         .sidebar:not(:hover) .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
 
-        /* View Management */
         .view-section { display: none !important; opacity: 0; transition: opacity 0.3s ease; }
         .view-section.active { display: flex !important; opacity: 1; z-index: 50; }
         
@@ -59,7 +58,6 @@
         .wf-link-line { fill: none; stroke-width: 2.5; transition: stroke-width 0.2s, stroke 0.2s; pointer-events: none; }
         .wf-link-bg:hover + .wf-link-line { stroke-width: 4 !important; stroke: #ef4444 !important; }
 
-        /* Chart tooltip positioning */
         #chart-tooltip { pointer-events: none; transition: left 0.1s ease-out, opacity 0.2s; }
         .chart-hover-col:hover { fill: rgba(59, 130, 246, 0.05); }
     </style>
@@ -177,15 +175,15 @@
                     
                     <!-- KPI Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card" data-widget="total">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tickets</h3>
                             <div class="text-3xl font-black text-slate-800" id="dash-total">0</div>
                         </div>
-                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm cursor-pointer hover:border-blue-300 transition-all widget-card" data-widget="open">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Open / Active</h3>
                             <div class="text-3xl font-black text-blue-600" id="dash-open">0</div>
                         </div>
-                        <div class="bg-gradient-to-br from-[#0f172a] to-slate-800 rounded-xl p-5 text-white shadow-md cursor-pointer hover:from-slate-800 transition-all widget-card">
+                        <div class="bg-gradient-to-br from-[#0f172a] to-slate-800 rounded-xl p-5 text-white shadow-md cursor-pointer hover:from-slate-800 transition-all widget-card" data-widget="resolved">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Resolved</h3>
                             <div class="text-3xl font-black" id="dash-resolved">0</div>
                         </div>
@@ -200,7 +198,7 @@
                                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> Resolved</span>
                             </div>
                         </div>
-                        <div class="p-5 h-[300px] w-full relative overflow-visible" id="dash-chart-container">
+                        <div class="pt-5 px-5 pb-0 h-[300px] w-full relative overflow-hidden rounded-b-xl" id="dash-chart-container">
                             <svg id="dash-chart-svg" class="w-full h-full overflow-visible"></svg>
                             <!-- Floating Dark Tooltip -->
                             <div id="chart-tooltip" class="absolute bg-slate-900 text-white rounded-lg p-3 text-xs shadow-xl opacity-0 z-50 transform -translate-y-[110%] -translate-x-1/2 pointer-events-none transition-all duration-75">
@@ -213,35 +211,33 @@
                         </div>
                     </div>
 
-                    <!-- Top 10 Active Analysis Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
-                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Accounts (Active)</h3>
+                    <!-- Active Analysis Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden h-[256px]">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100 shrink-0">
+                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top 5 Modules (Active)</h3>
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-acc"></div>
+                            <div class="p-3 flex-1 overflow-y-auto custom-scrollbar" id="dash-top-mod"></div>
                         </div>
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
-                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Modules (Active)</h3>
+                        
+                        <!-- Master Detail Environment Widget (Updated to Pie Charts) -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden relative h-[256px]">
+                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between z-10 shrink-0 h-[41px]">
+                                <div class="flex items-center gap-2">
+                                    <button id="btn-env-back" class="hidden text-slate-400 hover:text-blue-600 transition-colors p-1 -ml-1 rounded hover:bg-blue-50 focus:outline-none cursor-pointer">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                    </button>
+                                    <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider" id="env-sev-title">Environments</h3>
+                                </div>
+                                <span class="text-[9px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">Breakdown</span>
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-mod"></div>
-                        </div>
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
-                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Top Environments (Active)</h3>
+                            <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50/30" id="dash-env-content">
+                                <!-- Dynamic Master/Detail Pie Charts content -->
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-env"></div>
-                        </div>
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-                            <div class="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
-                                <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Severities (Active)</h3>
-                            </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-64" id="dash-top-sev"></div>
                         </div>
                     </div>
 
-                    <!-- Recent Activity Table (Restored) -->
+                    <!-- Recent Activity Table -->
                     <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col overflow-hidden">
                         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <h3 class="text-sm font-bold text-slate-800">Recent Ticket Activity</h3>
@@ -308,7 +304,7 @@
                         </div>
                     </div>
 
-                    <!-- Tickets Table with Merged Columns -->
+                    <!-- Tickets Table -->
                     <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-[500px] relative overflow-hidden">
                         <div class="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 relative">
                             <table class="w-full text-left text-sm whitespace-nowrap min-w-full">
@@ -431,7 +427,7 @@
                                         <select id="detail-env-select" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"></select>
                                     </div>
                                     
-                                    <button id="btn-update-details" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+                                    <button id="btn-update-details" disabled class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm mt-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
                                         Save Properties
                                     </button>
                                 </div>
@@ -580,7 +576,7 @@
                         <div class="flex-1 flex flex-col min-h-[350px]">
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Workflow Graph Builder</label>
                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-start gap-2 relative flex-1">
-                                <p class="text-xs text-slate-500 mb-2 shrink-0">Drag boxes to map flow. Click <b>Link</b> to map transitions. Click a line to delete.</p>
+                                <p class="text-xs text-slate-500 mb-2 shrink-0">Drag boxes to map flow. Click <b>Link</b> to map transitions. Click <svg class="w-3 h-3 inline text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> to set access restrictions.</p>
                                 
                                 <div class="w-full flex items-center justify-between mb-2 shrink-0 relative z-50">
                                     <button type="button" id="btn-wf-fullscreen" class="flex flex-col items-center justify-center bg-white border border-slate-300 p-1.5 rounded shadow-sm hover:bg-slate-50 text-slate-700 focus:outline-none transition-colors cursor-pointer">
@@ -612,7 +608,7 @@
         </div>
     </div>
 
-    <!-- Node Authorization Modal (Z-Index Set Above Expanded Canvas Overlay) -->
+    <!-- Node Authorization Modal -->
     <div id="wf-auth-modal" class="fixed inset-0 z-[10000] hidden">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" id="wf-auth-modal-bg"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -797,7 +793,7 @@
         const ITEMS_PER_PAGE = 8;
         let ticketsPage = 1;
         let ticketsSearch = '';
-        let activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
+        let activeFilters = { acc: '', env: '', status: '', sev: '', mod: '', meta: '' };
         let settingsPage = 1;
         let settingsSearch = '';
         
@@ -820,10 +816,12 @@
                 { id: 'preview@inventi.ph', name: 'Preview User', roleId: 'ROLE-ROOT', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' }
             ],
             acc: [
-                { id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
+                { id: 'ACC-001', name: 'Acme Corp', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' },
+                { id: 'ACC-002', name: 'Global Tech Solutions', createdBy: 'SysAdmin', createdDate: '2025-11-05', modifiedBy: 'SysAdmin', modifiedDate: '2026-07-15' }
             ],
             env: [
-                { id: 'ENV-PRD', name: 'Production Global', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' }
+                { id: 'ENV-PRD', name: 'Production Global', createdBy: 'SysAdmin', createdDate: '2025-10-12', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-20' },
+                { id: 'ENV-STG', name: 'Staging Release', createdBy: 'SysAdmin', createdDate: '2025-10-15', modifiedBy: 'SysAdmin', modifiedDate: '2026-06-22' }
             ],
             sev: [
                 { id: 'SEV-1', name: 'Critical / Outage', createdBy: 'System', createdDate: '2025-01-01', modifiedBy: 'System', modifiedDate: '2025-01-01' },
@@ -856,7 +854,7 @@
             ],
             tickets: [
                 { id: 'ARK-1042', subject: 'Database Connection Timeout', desc: 'Multiple timeouts on replica.', createdDate: '2026-08-03', submittedByEmail: 'devops@inventi.ph', assigneeEmail: 'arkin.paroan@inventi.ph', statusId: 'STAT-OPN', sevId: 'SEV-1', envId: 'ENV-PRD', accId: 'ACC-001', modId: 'MOD-DB', slaId: 'SLA-CRIT' },
-                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-PRD', accId: 'ACC-001', slaId: 'SLA-STD' }
+                { id: 'ARK-1041', subject: 'Requesting Staging Access', desc: 'Need access to staging environment.', createdDate: '2026-08-01', submittedByEmail: 'staff@inventi.ph', assigneeEmail: null, statusId: 'STAT-APP', sevId: 'SEV-3', envId: 'ENV-STG', accId: 'ACC-002', slaId: 'SLA-STD' }
             ],
             messages: [
                 { id: 'MSG-1', ticketId: 'ARK-1042', sender: 'System', timestamp: '2026-08-03 10:00', text: 'Ticket automatically assigned based on Env/Sev criteria.' }
@@ -1004,7 +1002,7 @@
             if(draggedNode) { draggedNode = null; drawWf(); }
         });
 
-        // --- CLOUD SYNC & DB WRAPPERS ---
+        // Firebase Realtime Sync Engine
         async function initCloudSync() {
             const collections = ['users', 'roles', 'acc', 'env', 'sev', 'status', 'mod', 'sla', 'tickets', 'messages', 'internalNotes'];
             try {
@@ -1081,7 +1079,7 @@
             }
         }
 
-        // --- CORE LOGIC & HELPERS ---
+        // Core App Logic
         function applyRBAC() {
             const isStandardUser = currentUserRoleType === 'System User';
             const adminHeader = getEl('nav-header-admin');
@@ -1199,6 +1197,212 @@
             });
         }
 
+        // --- DASHBOARD WIDGETS ---
+        let activeEnvWidgetId = null;
+        let currentEnvData = [];
+
+        function drawPieChart(containerId, data, isEnv = true, size = 160) {
+            const container = getEl(containerId);
+            if (!container) return;
+            container.innerHTML = ''; // Clear previous chart
+
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-400 italic text-center w-full mt-10">No data available.</div>`;
+                return;
+            }
+
+            const radius = size / 2;
+            const paddedSize = size + 20; // Add padding to SVG so hover animations and strokes don't get clipped
+            const svg = d3.select(`#${containerId}`)
+                .append("svg")
+                .attr("width", paddedSize)
+                .attr("height", paddedSize)
+                .style("overflow", "visible")
+                .append("g")
+                .attr("transform", `translate(${paddedSize / 2},${paddedSize / 2})`);
+
+            const pie = d3.pie().value(d => d.count).sort(null);
+            const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius);
+            const hoverArc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius + 5);
+
+            // Color scale based on context
+            const getColor = (d) => {
+                if (!isEnv) {
+                    // Severity colors
+                    const lower = d.data.name.toLowerCase();
+                    if(lower.includes('critical') || lower.includes('outage')) return '#dc2626'; // red-600
+                    if(lower.includes('high')) return '#f59e0b'; // amber-500
+                    if(lower.includes('medium')) return '#3b82f6'; // blue-500
+                    return '#94a3b8'; // slate-400
+                } else {
+                    // Environment colors (generate from palette based on index or hash)
+                    const hash = Array.from(d.data.name).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    return palette[hash % palette.length];
+                }
+            };
+
+            // Tooltip div setup
+            const tooltipId = `pie-tooltip-${containerId}`;
+            let tooltip = d3.select(`#${tooltipId}`);
+            if (tooltip.empty()) {
+                tooltip = d3.select("body").append("div")
+                    .attr("id", tooltipId)
+                    .attr("class", "absolute bg-slate-900 text-white rounded-lg p-2 text-xs shadow-xl pointer-events-none opacity-0 z-[1000] transition-opacity duration-200")
+                    .style("transform", "translate(-50%, -100%)")
+                    .style("margin-top", "-10px");
+            }
+
+            const paths = svg.selectAll('path')
+                .data(pie(data))
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', d => getColor(d))
+                .attr("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("cursor", "pointer")
+                .style("transition", "d 0.2s ease, opacity 0.2s ease");
+
+            // Interactions
+            paths.on("mouseover", function(event, d) {
+                d3.select(this).attr("d", hoverArc).style("opacity", 0.9);
+                
+                tooltip.html(`<div class="font-bold text-center">${d.data.name}</div><div class="text-center text-slate-300">${d.data.count} Ticket${d.data.count !== 1 ? 's' : ''}</div>`)
+                    .style("opacity", 1)
+                    .style("left", (event.pageX) + "px")
+                    .style("top", (event.pageY) + "px");
+            })
+            .on("mousemove", function(event) {
+                tooltip.style("left", (event.pageX) + "px").style("top", (event.pageY) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this).attr("d", arc).style("opacity", 1);
+                tooltip.style("opacity", 0);
+            });
+
+            if (isEnv) {
+                paths.on("click", function(event, d) {
+                    tooltip.style("opacity", 0); // Hide tooltip on click
+                    activeEnvWidgetId = d.data.id;
+                    renderEnvSevMasterDetail(); // Drill down
+                });
+            } else {
+                paths.on("click", function(event, d) {
+                    tooltip.style("opacity", 0); // Hide tooltip on click
+                    
+                    ticketsPage = 1; document.getElementById('search-tickets').value = '';
+                    activeFilters = { acc: '', env: activeEnvWidgetId, status: '', sev: d.data.id, mod: '', meta: '' };
+                    document.getElementById('tickets-filter-panel').classList.remove('hidden');
+                    switchView('tickets', 'Tickets');
+                    populateFilters();
+                });
+            }
+
+            // Center text (Total count)
+            const total = d3.sum(data, d => d.count);
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "0.3em")
+                .style("font-size", "20px") // Adjusted for smaller fit
+                .style("font-weight", "900")
+                .style("fill", "#1e293b") // slate-800
+                .text(total);
+                
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "1.8em") // Tighter spacing
+                .style("font-size", "8px")
+                .style("font-weight", "700")
+                .style("fill", "#94a3b8") // slate-400
+                .style("letter-spacing", "0.1em")
+                .style("text-transform", "uppercase")
+                .text("Total");
+
+            // Render Legend tighter
+            const legendContainer = document.createElement('div');
+            legendContainer.className = "flex flex-wrap justify-center gap-1.5 mt-2 w-full px-2";
+            legendContainer.innerHTML = data.map(d => {
+                const color = getColor({data: d});
+                return `
+                <div class="flex items-center gap-1 bg-white border border-slate-100 px-1.5 py-0.5 rounded shadow-sm text-[9px]">
+                    <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${color}"></span>
+                    <span class="font-semibold text-slate-700 truncate max-w-[70px]" title="${d.name}">${d.name}</span>
+                    <span class="font-black text-slate-900">${d.count}</span>
+                </div>
+                `;
+            }).join('');
+            
+            getEl(containerId).appendChild(legendContainer);
+        }
+
+        function renderEnvSevMasterDetail(data) {
+            if(data) currentEnvData = data;
+            const container = getEl('dash-env-content');
+            const title = getEl('env-sev-title');
+            const btnBack = getEl('btn-env-back');
+            
+            if(!container) return;
+
+            if (currentEnvData.length === 0) {
+                title.textContent = 'Environments';
+                btnBack.classList.add('hidden');
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center p-6 text-slate-400 italic text-xs">No active records found.</div>`;
+                return;
+            }
+
+            if (activeEnvWidgetId === null) {
+                // View: All Environments (Pie Chart)
+                title.textContent = 'Environments Overview';
+                btnBack.classList.add('hidden');
+                
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full w-full py-2 modal-enter">
+                        <p class="text-[10px] text-slate-500 mb-1 font-medium shrink-0">Click a slice to view severity breakdown</p>
+                        <div id="env-master-pie" class="w-full flex flex-col items-center justify-center relative flex-1 min-h-0"></div>
+                    </div>
+                `;
+
+                // Render with scaled down size to fit inside 256px card without scroll
+                setTimeout(() => {
+                    drawPieChart('env-master-pie', currentEnvData, true, 110);
+                }, 10);
+                
+                // Ensure event listeners are attached only once by cloning
+                btnBack.replaceWith(btnBack.cloneNode(true));
+
+            } else {
+                // View: Specific Environment Severities (Pie Chart)
+                const env = currentEnvData.find(e => e.id === activeEnvWidgetId);
+                if(!env) { activeEnvWidgetId = null; return renderEnvSevMasterDetail(); }
+
+                title.textContent = `${env.name} Severities`;
+                btnBack.classList.remove('hidden');
+
+                const newBtnBack = getEl('btn-env-back');
+                newBtnBack.replaceWith(newBtnBack.cloneNode(true));
+                getEl('btn-env-back').addEventListener('click', () => {
+                    activeEnvWidgetId = null;
+                    renderEnvSevMasterDetail();
+                });
+
+                if(!env.severities || env.severities.length === 0) {
+                     container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center p-6 text-slate-400 italic text-xs modal-enter">No severities logged for this environment.</div>`;
+                     return;
+                }
+
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full w-full py-2 modal-enter">
+                        <div id="env-detail-pie" class="w-full flex flex-col items-center justify-center relative flex-1 min-h-0"></div>
+                    </div>
+                `;
+
+                // Render with scaled down size
+                setTimeout(() => {
+                    drawPieChart('env-detail-pie', env.severities, false, 110);
+                }, 10);
+            }
+        }
+
         // --- RENDER FUNCTIONS ---
         function renderDashboard() {
             const allowedTickets = getFilteredTickets();
@@ -1209,40 +1413,48 @@
             getEl('dash-open').textContent = allowedTickets.filter(t => openStatuses.includes(t.statusId)).length;
             getEl('dash-resolved').textContent = allowedTickets.filter(t => resolvedStatuses.includes(t.statusId)).length;
             
-            // Top 10 Widgets logic
             const openT = allowedTickets.filter(t => openStatuses.includes(t.statusId));
             
-            const getTop = (key, type) => {
+            const getTop = (key, type, limit = 10) => {
                 const counts = {};
                 openT.forEach(t => { if(t[key]) counts[t[key]] = (counts[t[key]]||0)+1; });
-                return Object.entries(counts).map(([k, v]) => ({id: k, count: v, name: getName(type, k)})).sort((a,b)=>b.count-a.count).slice(0, 10);
+                return Object.entries(counts).map(([k, v]) => ({id: k, count: v, name: getName(type, k)})).sort((a,b)=>b.count-a.count).slice(0, limit);
             };
             
-            const renderWidgetList = (containerId, data) => {
-                const el = getEl(containerId);
-                if (!el) return;
-                if (data.length === 0) {
-                    el.innerHTML = `<div class="text-center text-[10px] text-slate-400 italic py-4">No active records</div>`;
-                    return;
+            // Top 5 Modules Enhanced UI
+            const topMods = getTop('modId', 'mod', 5);
+            const modContainer = getEl('dash-top-mod');
+            if (modContainer) {
+                if (topMods.length === 0) {
+                    modContainer.innerHTML = `<div class="flex h-full items-center justify-center text-[10px] text-slate-400 italic">No active records found.</div>`;
+                } else {
+                    modContainer.innerHTML = topMods.map((d, idx) => `
+                        <div class="flex items-center justify-between p-3 mb-2.5 last:mb-0 bg-slate-50/80 hover:bg-blue-50/50 border border-slate-100 hover:border-blue-200 rounded-xl transition-all hover:shadow-sm group cursor-pointer mod-widget-item" data-id="${d.id}">
+                            <div class="flex items-center gap-3">
+                                <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-[11px] font-black text-slate-400 group-hover:text-blue-600 group-hover:border-blue-300 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">
+                                    ${idx + 1}
+                                </div>
+                                <span class="font-bold text-slate-700 text-xs truncate max-w-[140px]" title="${d.name}">${d.name}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-md border border-slate-100 shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:border-blue-200 transition-colors">
+                                <span class="text-sm font-black text-slate-800 group-hover:text-blue-700">${d.count}</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Tix</span>
+                            </div>
+                        </div>
+                    `).join('');
                 }
-                const maxCount = Math.max(...data.map(d => d.count), 1);
-                el.innerHTML = data.map(d => `
-                    <div class="mb-3 last:mb-0">
-                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-700 mb-1">
-                            <span class="truncate pr-2">${d.name}</span>
-                            <span>${d.count}</span>
-                        </div>
-                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${(d.count / maxCount) * 100}%"></div>
-                        </div>
-                    </div>
-                `).join('');
-            };
+            }
 
-            renderWidgetList('dash-top-acc', getTop('accId', 'acc'));
-            renderWidgetList('dash-top-mod', getTop('modId', 'mod'));
-            renderWidgetList('dash-top-env', getTop('envId', 'env'));
-            renderWidgetList('dash-top-sev', getTop('sevId', 'sev'));
+            const envCounts = {};
+            openT.forEach(t => { if(t.envId) envCounts[t.envId] = (envCounts[t.envId]||0)+1; });
+            const envData = Object.entries(envCounts).map(([k, v]) => ({id: k, count: v, name: getName('env', k)})).sort((a,b)=>b.count-a.count);
+            envData.forEach(e => {
+                const sevCounts = {};
+                openT.filter(t => t.envId === e.id).forEach(t => { if(t.sevId) sevCounts[t.sevId] = (sevCounts[t.sevId]||0)+1; });
+                e.severities = Object.entries(sevCounts).map(([k, v]) => ({id: k, count: v, name: getName('sev', k)})).sort((a,b)=>b.count-a.count);
+            });
+
+            renderEnvSevMasterDetail(envData);
 
             // Recent Activity Logic
             const recentTickets = allowedTickets.slice().sort((a,b) => new Date(b.createdDate) - new Date(a.createdDate)).slice(0, 5);
@@ -1314,10 +1526,11 @@
             const w = container.offsetWidth;
             const h = container.offsetHeight;
             const padX = 20;
+            const padBottom = 25;
             const stepX = (w - padX * 2) / 6;
             
             const getX = (idx) => padX + (idx * stepX);
-            const getY = (val) => h - 30 - ((val / maxVal) * (h - 60));
+            const getY = (val) => h - padBottom - ((val / maxVal) * (h - padBottom - 20));
 
             const buildSmoothPath = (data, isArea = false) => {
                 if(data.length === 0) return "";
@@ -1326,7 +1539,7 @@
                     const cx = (getX(i) + getX(i+1)) / 2;
                     path += ` C ${cx} ${getY(data[i])}, ${cx} ${getY(data[i+1])}, ${getX(i+1)} ${getY(data[i+1])}`;
                 }
-                if (isArea) path += ` L ${getX(data.length-1)} ${h-30} L ${getX(0)} ${h-30} Z`;
+                if (isArea) path += ` L ${getX(data.length-1)} ${h-padBottom} L ${getX(0)} ${h-padBottom} Z`;
                 return path;
             };
 
@@ -1348,14 +1561,14 @@
 
             last7Days.forEach((date, i) => {
                 const cx = getX(i);
-                labelsHtml += `<text x="${cx}" y="${h - 10}" fill="#94a3b8" font-size="10" font-weight="600" text-anchor="middle">${dayLabels[i]}</text>`;
+                labelsHtml += `<text x="${cx}" y="${h - 5}" fill="#94a3b8" font-size="10" font-weight="600" text-anchor="middle">${dayLabels[i]}</text>`;
                 
                 pointsHtml += `<circle cx="${cx}" cy="${getY(openData[i])}" r="4" fill="white" stroke="#3b82f6" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"/>`;
                 pointsHtml += `<circle cx="${cx}" cy="${getY(closedData[i])}" r="4" fill="white" stroke="#10b981" stroke-width="2" class="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"/>`;
                 
                 const rx = i === 0 ? padX : cx - halfStep;
                 const rw = i === 0 ? halfStep : (i === 6 ? halfStep : stepX);
-                hoverOverlayHtml += `<rect x="${rx}" y="0" width="${rw}" height="${h-30}" class="chart-hover-col group outline-none" fill="transparent" data-date="${dayLabels[i]}" data-open="${openData[i]}" data-closed="${closedData[i]}" data-cx="${cx}" cursor="crosshair"/>`;
+                hoverOverlayHtml += `<rect x="${rx}" y="0" width="${rw}" height="${h-padBottom}" class="chart-hover-col group outline-none" fill="transparent" data-date="${dayLabels[i]}" data-open="${openData[i]}" data-closed="${closedData[i]}" data-cx="${cx}" cursor="crosshair"/>`;
             });
 
             svg.innerHTML = `
@@ -1374,7 +1587,6 @@
                 ${pointsHtml}
             `;
             
-            // Tooltip logic
             const tooltip = getEl('chart-tooltip');
             svg.querySelectorAll('.chart-hover-col').forEach(col => {
                 col.addEventListener('mouseenter', (e) => {
@@ -1392,6 +1604,14 @@
         function renderTickets() {
             const allowedTickets = getFilteredTickets();
             const filteredTickets = allowedTickets.filter(t => {
+                if (activeFilters.meta === 'open') {
+                     const openStatuses = dataStore.status.filter(s => s.type === 'Open-Start' || s.type === 'Open-Ongoing').map(s => s.id);
+                     if (!openStatuses.includes(t.statusId)) return false;
+                }
+                if (activeFilters.meta === 'resolved') {
+                     const resolvedStatuses = dataStore.status.filter(s => s.type === 'Closed-End').map(s => s.id);
+                     if (!resolvedStatuses.includes(t.statusId)) return false;
+                }
                 if (activeFilters.acc && t.accId !== activeFilters.acc) return false;
                 if (activeFilters.env && t.envId !== activeFilters.env) return false;
                 if (activeFilters.status && t.statusId !== activeFilters.status) return false;
@@ -1563,7 +1783,7 @@
 
             const selectEl = getEl(targetSelectId);
             if (!canChangeStatus) {
-                selectEl.innerHTML = `<option value="${ticket.statusId}">${getName('status', ticket.statusId)}</option>`;
+                selectEl.innerHTML = `<option value="${ticket.statusId}">Locked (Unauthorized)</option>`;
                 selectEl.disabled = true;
             } else {
                 selectEl.innerHTML = dataStore.status
@@ -1766,9 +1986,35 @@
                 switchView('settings', 'System Settings');
             }
             
-            if (e.target.closest('.widget-card') || e.target.closest('.btn-view-tickets')) {
-                ticketsPage = 1; ticketsSearch = ''; activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' }; getEl('search-tickets').value = '';
+            if (e.target.closest('.widget-card')) {
+                const widgetCard = e.target.closest('.widget-card');
+                const wType = widgetCard.dataset.widget;
+                let metaFilter = '';
+                if (wType === 'open') metaFilter = 'open';
+                else if (wType === 'resolved') metaFilter = 'resolved';
+                
+                ticketsPage = 1; ticketsSearch = ''; getEl('search-tickets').value = '';
+                activeFilters = { acc: '', env: '', status: '', sev: '', mod: '', meta: metaFilter };
+                getEl('tickets-filter-panel').classList.add('hidden');
                 switchView('tickets', 'Tickets');
+                populateFilters();
+            }
+
+            if (e.target.closest('.btn-view-tickets')) {
+                ticketsPage = 1; ticketsSearch = ''; getEl('search-tickets').value = '';
+                activeFilters = { acc: '', env: '', status: '', sev: '', mod: '', meta: '' };
+                getEl('tickets-filter-panel').classList.add('hidden');
+                switchView('tickets', 'Tickets');
+                populateFilters();
+            }
+
+            if (e.target.closest('.mod-widget-item')) {
+                const modId = e.target.closest('.mod-widget-item').dataset.id;
+                ticketsPage = 1; ticketsSearch = ''; getEl('search-tickets').value = '';
+                activeFilters = { acc: '', env: '', status: '', sev: '', mod: modId, meta: '' };
+                getEl('tickets-filter-panel').classList.remove('hidden');
+                switchView('tickets', 'Tickets');
+                populateFilters();
             }
             
             // Filters
@@ -1778,7 +2024,7 @@
                 if (!panel.classList.contains('hidden')) populateFilters();
             }
             if (e.target.closest('#btn-clear-filters')) {
-                activeFilters = { acc: '', env: '', status: '', sev: '', mod: '' };
+                activeFilters = { acc: '', env: '', status: '', sev: '', mod: '', meta: '' };
                 populateFilters(); ticketsPage = 1; renderTickets();
             }
             
@@ -2142,6 +2388,7 @@
                 renderTickets();
             }
 
+            // Workflow Graph Interactivity
             const clickedLine = e.target.closest && e.target.closest('.wf-link-bg');
             if (clickedLine || (e.target.classList && e.target.classList.contains('wf-link-bg'))) {
                 const targetEl = clickedLine || e.target;
@@ -2190,7 +2437,7 @@
                 if(toggle.checked) getEl('wf-auth-lists').classList.remove('hidden');
                 else getEl('wf-auth-lists').classList.add('hidden');
                 
-                getEl('wf-auth-roles-list').innerHTML = dataStore.roles.map(r => `
+                getEl('wf-auth-roles-list').innerHTML = dataStore.roles.filter(r => r.type !== 'Root').map(r => `
                     <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1.5 rounded">
                         <input type="checkbox" value="${r.id}" class="auth-role-cb w-3.5 h-3.5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" ${node.allowedRoles && node.allowedRoles.includes(r.id) ? 'checked' : ''}>
                         <span class="text-xs font-semibold text-slate-700">${r.name}</span>
@@ -2248,7 +2495,7 @@
                     
                     container.classList.add('fixed', 'inset-0', 'z-[200]', 'p-6', 'bg-white');
                     container.classList.remove('rounded-xl', 'relative', 'p-4');
-                    getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 16 21 16"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
+                    getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 8 8 3 8"></polyline><polyline points="16 3 16 8 21 8"></polyline><polyline points="16 21 16 21 16 21"></polyline><polyline points="8 21 8 16 3 16"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Exit</span>`;
                 } else {
                     const placeholder = getEl('wf-container-placeholder');
                     if (placeholder) {
@@ -2261,6 +2508,25 @@
                     getEl('btn-wf-fullscreen').innerHTML = `<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 3 3 8 3"></polyline><polyline points="21 8 21 3 16 3"></polyline><polyline points="21 16 21 21 16 21"></polyline><polyline points="3 16 3 21 8 21"></polyline></svg><span class="text-[8px] font-bold uppercase tracking-wider">Expand</span>`;
                 }
                 setTimeout(() => drawWf(), 50);
+            }
+        });
+
+        // Ticket Properties Change Handler
+        document.body.addEventListener('change', (e) => {
+            const propertySelects = ['detail-status-select', 'detail-assignee-select', 'detail-severity-select', 'detail-module-select', 'detail-account-select', 'detail-env-select'];
+            if (propertySelects.includes(e.target.id)) {
+                const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
+                if (ticket) {
+                    const hasChanged = 
+                        getEl('detail-status-select').value !== ticket.statusId ||
+                        getEl('detail-assignee-select').value !== (ticket.assigneeEmail || '') ||
+                        getEl('detail-severity-select').value !== ticket.sevId ||
+                        getEl('detail-module-select').value !== (ticket.modId || '') ||
+                        getEl('detail-account-select').value !== ticket.accId ||
+                        getEl('detail-env-select').value !== ticket.envId;
+                    
+                    getEl('btn-update-details').disabled = !hasChanged;
+                }
             }
         });
 
@@ -2282,25 +2548,6 @@
                 }
             });
         }
-
-        // Ticket Properties Change Handler
-        document.body.addEventListener('change', (e) => {
-            const propertySelects = ['detail-status-select', 'detail-assignee-select', 'detail-severity-select', 'detail-module-select', 'detail-account-select', 'detail-env-select'];
-            if (propertySelects.includes(e.target.id)) {
-                const ticket = dataStore.tickets.find(x => x.id === currentViewedTicketId);
-                if (ticket) {
-                    const hasChanged = 
-                        getEl('detail-status-select').value !== ticket.statusId ||
-                        getEl('detail-assignee-select').value !== (ticket.assigneeEmail || '') ||
-                        getEl('detail-severity-select').value !== ticket.sevId ||
-                        getEl('detail-module-select').value !== (ticket.modId || '') ||
-                        getEl('detail-account-select').value !== ticket.accId ||
-                        getEl('detail-env-select').value !== ticket.envId;
-                    
-                    getEl('btn-update-details').disabled = !hasChanged;
-                }
-            }
-        });
 
         // Search Handlers
         const searchTicketsEl = getEl('search-tickets');
